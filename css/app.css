@@ -96,15 +96,18 @@
      #app fills the screen edge-to-edge on its own — no separate mobile rule
      needed. */
   @media (min-width: 40rem) {
-    body { background: url('../assets/img/bg-desktop.png') center/cover no-repeat; }
-    /* Only the cover screen is meant to be one continuous 16:9 image behind
-       everything — every other screen is deliberately light and keeps its
-       own card look. app.js toggles body.cover-active only while the cover
-       screen is showing. Rather than layering a second (portrait) cover
-       image inside #app and trying to blend the seam between two different
-       crops, just make #app and .cover-screen transparent here so body's
-       single landscape image shows through uninterrupted underneath the
-       content — there's no seam because there's only one image. */
+    /* Every other screen is deliberately light, so its desktop margins get
+       the light seafoam backdrop — a light card floating on a dark green
+       margin (the old default) read as mismatched. */
+    body { background: url('../assets/img/bg-desktop-light.png') center/cover no-repeat; }
+    /* Only the cover screen is meant to be one continuous dark-green 16:9
+       image behind everything. app.js toggles body.cover-active only while
+       the cover screen is showing. Rather than layering a second (portrait)
+       cover image inside #app and trying to blend the seam between two
+       different crops, just make #app and .cover-screen transparent here so
+       body's single landscape image shows through uninterrupted underneath
+       the content — there's no seam because there's only one image. */
+    body.cover-active { background: url('../assets/img/bg-desktop.png') center/cover no-repeat; }
     body.cover-active #app { background: transparent; box-shadow: none; }
     body.cover-active #screen-cover { background: transparent; }
     body.cover-active .cover-screen { background: transparent; }
