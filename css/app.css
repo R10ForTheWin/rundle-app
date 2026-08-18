@@ -96,16 +96,17 @@
      #app fills the screen edge-to-edge on its own — no separate mobile rule
      needed. */
   @media (min-width: 40rem) {
-    /* Every other screen is deliberately light. The earlier seam wasn't
-       about the image family being wrong — #app's own background
-       (bg-light.jpg) is already this same seafoam style, just a portrait
-       crop. #app and body share the same height but different widths;
-       cover-fitting a *portrait* image into a narrow-tall column vs. a
-       wide-short margin zooms it very differently between the two, which is
-       what actually read as a seam. A landscape crop scales far more
-       consistently across both, so use the same landscape image for both. */
-    body { background: url('../assets/img/bg-desktop-light.png') center/cover no-repeat; }
-    body:not(.cover-active) #app { background: url('../assets/img/bg-desktop-light.png') center/cover no-repeat; }
+    /* Every other screen is deliberately light. Landscape vs. portrait
+       wasn't the actual bug: background-size:cover computes its zoom
+       relative to EACH element's own box, and #app (tall, narrow) has a
+       very different aspect ratio than the margin (short, wide) — so even
+       the identical image zooms differently in each and still shows a seam.
+       background-attachment:fixed anchors the sizing to the viewport
+       instead of each element's own box, so #app and body render the exact
+       same pixels at the exact same scale — true continuity, not just a
+       closer approximation. */
+    body { background: url('../assets/img/bg-desktop-light.png') center/cover no-repeat fixed; }
+    body:not(.cover-active) #app { background: url('../assets/img/bg-desktop-light.png') center/cover no-repeat fixed; }
     /* Only the cover screen is meant to be one continuous dark-green 16:9
        image behind everything. app.js toggles body.cover-active only while
        the cover screen is showing. Rather than layering a second (portrait)
