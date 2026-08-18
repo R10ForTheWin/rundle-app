@@ -21,6 +21,7 @@
       var el = document.getElementById('screen-' + s);
       if (el) el.classList.toggle('active', s === id);
     });
+    document.body.classList.toggle('cover-active', id === 'cover');
     onScreenShow(id);
   }
 
