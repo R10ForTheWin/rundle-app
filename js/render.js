@@ -117,6 +117,25 @@ function typeInto(el, text, speed, done) {
   })();
 }
 
+// Password field: each letter is visible for one beat, then folds into a
+// dot as the next letter appears — slow enough to actually read the joke.
+function typePasswordReveal(el, text, speed, done) {
+  if (reduceMotion) { el.textContent = '•'.repeat(text.length); if (done) done(); return; }
+  var i = 0;
+  (function step() {
+    if (i >= text.length) {
+      setTimeout(function () {
+        el.textContent = '•'.repeat(text.length);
+        if (done) done();
+      }, speed);
+      return;
+    }
+    el.textContent = '•'.repeat(i) + text[i];
+    i++;
+    setTimeout(step, speed);
+  })();
+}
+
 function playLoginTypewriter() {
   var loginUser = document.getElementById('login-user');
   var loginPass = document.getElementById('login-pass');
@@ -135,9 +154,7 @@ function playLoginTypewriter() {
     typeInto(loginUser, 'Demo Login', 110, function () {
       if (caretUser) caretUser.style.display = 'none';
       setTimeout(function () {
-        var funPassword = 'PartylikeKramer!';
-        var maskedPassword = funPassword[0] + '•'.repeat(funPassword.length - 1);
-        typeInto(loginPass, maskedPassword, 110, function () {
+        typePasswordReveal(loginPass, 'DATA_FLYWHEEL', 380, function () {
           if (caretPass) caretPass.style.display = 'none';
           status.textContent = 'Tap Log in to connect to AHIMA.';
         });
@@ -224,6 +241,77 @@ function playDownload(persona, onDone) {
 // Screens 6-13
 // ============================================================
 var tierLabel = { expert: 'Expert', advanced: 'Advanced', developing: 'Developing' };
+
+// ============================================================
+// Chart review ("strengthen this evidence") — optional, untimed,
+// no fixed answer key. Same 3 charts regardless of persona/skill.
+// ============================================================
+var CHART_REVIEW_CHARTS = [
+  {
+    id: 'Encounter #4471', type: 'Inpatient · 3-day stay',
+    rows: [
+      { label: 'Principal diagnosis', code: 'I50.9' },
+      { label: 'Secondary diagnosis', code: 'E11.9', flagged: true },
+      { label: 'Procedure', code: '5A1955Z' }
+    ],
+    prompt: 'The AI wasn’t confident E11.9 captures the full picture here. Does the documentation support a more specific code?'
+  },
+  {
+    id: 'Encounter #2938', type: 'Outpatient visit',
+    rows: [
+      { label: 'Principal diagnosis', code: 'J45.909', flagged: true },
+      { label: 'Secondary diagnosis', code: 'Z79.899' }
+    ],
+    prompt: 'AI flagged possible undercoding on the principal diagnosis — documentation mentions “status asthmaticus.” Worth a closer look?'
+  },
+  {
+    id: 'Encounter #5502', type: 'Inpatient · 6-day stay',
+    rows: [
+      { label: 'Principal diagnosis', code: 'N17.9' },
+      { label: 'Secondary diagnosis', code: 'E87.6', flagged: true }
+    ],
+    prompt: 'Labs show a potassium level of 3.1 mEq/L, but no matching diagnosis code was drafted. Missing something?'
+  }
+];
+var CHART_REVIEW_SUMMARY = CHART_REVIEW_CHARTS.length + ' flagged charts reviewed · 1 real gap caught · Aug 2026';
+
+function renderChartReviewStep(step) {
+  var el = document.getElementById('chart-review-body');
+  if (!el) return;
+  if (step >= CHART_REVIEW_CHARTS.length) {
+    el.innerHTML =
+      '<div class="done-wrap">' +
+        '<div class="done-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>' +
+        '<h2>Review complete</h2>' +
+        '<p>You looked at ' + CHART_REVIEW_CHARTS.length + ' flagged charts. This is now part of your evidence.</p>' +
+        '<div class="evidence-preview">' +
+          '<span class="tag"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>AI-assisted review</span>' +
+          '<div class="line">' + CHART_REVIEW_SUMMARY + '</div></div>' +
+        '<div class="back-cta" id="chart-review-back-btn">Back to skill</div>' +
+      '</div>';
+    return;
+  }
+  var chart = CHART_REVIEW_CHARTS[step];
+  var dots = CHART_REVIEW_CHARTS.map(function (c, i) {
+    return '<div class="progress-dot' + (i < step ? ' done' : (i === step ? ' active' : '')) + '"></div>';
+  }).join('');
+  var rows = chart.rows.map(function (r) {
+    return '<div class="code-row' + (r.flagged ? ' flagged' : '') + '">' +
+      '<div><div class="label">' + r.label + '</div><div class="code mono">' + r.code + '</div></div>' +
+      (r.flagged ? '<span class="flag-chip">Low confidence</span>' : '') +
+      '</div>';
+  }).join('');
+  el.innerHTML =
+    '<div class="progress-row">' + dots + '<span class="progress-label">Chart ' + (step + 1) + ' of ' + CHART_REVIEW_CHARTS.length + '</span></div>' +
+    '<div class="chart-review-scroll">' +
+      '<div class="chart-card"><div class="chart-head"><div><div class="id">' + chart.id + '</div><div class="type">' + chart.type + '</div></div><span class="flag-chip">AI unsure</span></div>' + rows + '</div>' +
+      '<div class="prompt-box">' + chart.prompt + '</div>' +
+    '</div>' +
+    '<div class="choice-row">' +
+      '<div class="choice-btn" data-review-choice="ok">Looks right</div>' +
+      '<div class="choice-btn primary" data-review-choice="flag">Flag a concern</div>' +
+    '</div>';
+}
 
 function renderIdentity(mountId, p) {
   var el = document.getElementById(mountId);
@@ -396,7 +484,7 @@ function renderHome(p, story) {
       '<div class="cta" id="home-see-matches">See all matches <svg><use href="#i-arrow"/></svg></div></div>';
 }
 
-function renderSkillDetail(p, story) {
+function renderSkillDetail(p, story, reviewDone) {
   var titleEl = document.getElementById('skilldetail-title');
   if (titleEl) titleEl.textContent = story.skillDetail.name;
   var el = document.getElementById('skilldetail-body');
@@ -405,12 +493,21 @@ function renderSkillDetail(p, story) {
   var errRows = sd.errors.map(function (e) {
     return '<div style="display:flex;justify-content:space-between;">' + e.t + ' <span class="mono">' + e.n + '</span></div>';
   }).join('');
+  var strengthenBlock = reviewDone
+    ? '<div class="evidence-preview" style="margin-bottom:0.7rem;">' +
+        '<span class="tag"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>AI-assisted review</span>' +
+        '<div class="line">' + CHART_REVIEW_SUMMARY + '</div></div>'
+    : '<div class="card strengthen-card">' +
+        '<div class="card-title-row"><span class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg>Strengthen this evidence</span></div>' +
+        '<p>Rundle flagged ' + CHART_REVIEW_CHARTS.length + ' charts its AI coder wasn’t confident on. Take a look and tell us what you see — untimed, no score.</p>' +
+        '<div class="strengthen-cta" id="strengthen-evidence-btn">Review ' + CHART_REVIEW_CHARTS.length + ' flagged charts <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div></div>';
   el.innerHTML =
     '<div class="card"><div class="card-title-row"><span class="card-title">Rundle evidence</span><span class="tier ' + sd.tier + '">' + tierLabel[sd.tier] + '</span></div>' +
       '<div class="bar-row"><div class="bar-label"><span>Accuracy</span><span class="mono">' + sd.accuracy + '%</span></div><div class="bar-track"><div class="bar-fill" style="width:' + sd.accuracy + '%"></div></div></div>' +
       '<div class="bar-row"><div class="bar-label"><span>' + sd.metricLabel + '</span><span class="mono">' + sd.count + '</span></div></div>' +
       '<div class="divider-label">Common error types</div>' +
       '<div style="font-size:0.72rem;color:var(--ink-soft);line-height:1.9;">' + errRows + '</div></div>' +
+    strengthenBlock +
     '<div class="card"><div class="card-title-row"><span class="card-title">Occupation benchmark</span></div>' +
       '<p style="font-size:0.72rem;color:var(--ink-soft);line-height:1.5;margin:0 0 0.5rem;">O&middot;NET: Medical Records Specialists (29-2072.00) ranks <strong style="color:var(--ink);">Attention to Detail</strong> as the single most important work style for this role &mdash; 100 of 100.</p>' +
       '<div class="bar-track"><div class="bar-fill" style="width:100%"></div></div></div>' +

@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Rundle</title>
-<link rel="stylesheet" href="css/app.css?v=21" />
+<link rel="stylesheet" href="css/app.css?v=22" />
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute">
@@ -64,10 +64,10 @@
       <p class="sub-lead" id="connect-sublead">Select the accounts Rundle should pull Renee's work history from.</p>
     </div>
     <div class="scroll section-pad" style="padding-top:0.3rem;">
-      <div class="check-row checked"><div class="check-box"><svg><use href="#i-check"/></svg></div><div class="check-body"><div class="check-title">O&middot;NET</div><div class="check-sub">Occupation &amp; skill benchmarks</div></div></div>
-      <div class="check-row checked"><div class="check-box"><svg><use href="#i-check"/></svg></div><div class="check-body"><div class="check-title">Bureau of Labor Statistics</div><div class="check-sub">Wage &amp; employment data</div></div></div>
-      <div class="check-row checked"><div class="check-box"><svg><use href="#i-check"/></svg></div><div class="check-body"><div class="check-title">CareerOneStop</div><div class="check-sub">Certification &amp; training lookup</div></div></div>
-      <div class="check-row checked"><div class="check-box"><svg><use href="#i-check"/></svg></div><div class="check-body"><div class="check-title">AHIMA</div><div class="check-sub">Credential verification</div></div></div>
+      <div class="check-row checked"><div class="check-box"><svg><use href="#i-check"/></svg></div><div class="check-logo"><img src="assets/img/logo-onet.png" alt="" /></div><div class="check-body"><div class="check-title">O&middot;NET</div><div class="check-sub">Occupation &amp; skill benchmarks</div></div></div>
+      <div class="check-row checked"><div class="check-box"><svg><use href="#i-check"/></svg></div><div class="check-logo"><img src="assets/img/logo-bls.jpg" alt="" /></div><div class="check-body"><div class="check-title">Bureau of Labor Statistics</div><div class="check-sub">Wage &amp; employment data</div></div></div>
+      <div class="check-row checked"><div class="check-box"><svg><use href="#i-check"/></svg></div><div class="check-logo"><img src="assets/img/logo-cos.png" alt="" /></div><div class="check-body"><div class="check-title">CareerOneStop</div><div class="check-sub">Certification &amp; training lookup</div></div></div>
+      <div class="check-row checked"><div class="check-box"><svg><use href="#i-check"/></svg></div><div class="check-logo wide"><img src="assets/img/logo-ahima.png" alt="" /></div><div class="check-body"><div class="check-title">AHIMA</div><div class="check-sub">Credential verification</div></div></div>
       <div class="cta" id="connect-cta">Connect selected sources <svg><use href="#i-arrow"/></svg></div>
     </div>
 </section>
@@ -138,6 +138,11 @@
     <div class="scroll section-pad" style="padding-top:0.2rem;" id="skilldetail-body"></div>
 </section>
 
+<section class="screen" id="screen-chart-review" data-screen="chart-review">
+    <div class="app-header"><div class="back-btn" data-back="skill-detail" style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;"><svg style="width:1rem;height:1rem;transform:rotate(180deg);color:var(--ink-soft)"><use href="#i-chev"/></svg><div class="name">Chart review</div></div></div>
+    <div id="chart-review-body" style="flex:1;min-height:0;display:flex;flex-direction:column;"></div>
+</section>
+
 <section class="screen" id="screen-matches" data-screen="matches">
     <div class="map-fanfare" id="matches-fanfare"><img src="assets/img/rudy-fanfare.webp" alt="" /></div>
     <div class="section-pad" style="padding-bottom:0.4rem;">
@@ -191,8 +196,8 @@
 </section>
 </div>
 
-<script src="js/data.js?v=21"></script>
-<script src="js/render.js?v=21"></script>
-<script src="js/app.js?v=21"></script>
+<script src="js/data.js?v=22"></script>
+<script src="js/render.js?v=22"></script>
+<script src="js/app.js?v=22"></script>
 </body>
 </html>

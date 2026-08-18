@@ -4,10 +4,12 @@
 
 (function () {
   var SCREENS = ['cover', 'picker', 'connect', 'credentials', 'download', 'mapping',
-    'home', 'skill-detail', 'matches', 'match-detail', 'training', 'profile', 'positions'];
+    'home', 'skill-detail', 'chart-review', 'matches', 'match-detail', 'training', 'profile', 'positions'];
 
   var selectedPersona = PERSONAS[0];
   var matchesFanfarePlayed = false;
+  var chartReviewDone = false;
+  var chartReviewStep = 0;
   var navStack = [];
 
   function showScreen(id, opts) {
@@ -44,6 +46,11 @@
     } else if (id === 'matches' && !matchesFanfarePlayed) {
       matchesFanfarePlayed = true;
       playMatchesFanfare();
+    } else if (id === 'skill-detail') {
+      renderSkillDetail(selectedPersona, STORY[selectedPersona.id], chartReviewDone);
+    } else if (id === 'chart-review') {
+      chartReviewStep = 0;
+      renderChartReviewStep(chartReviewStep);
     }
   }
 
@@ -68,6 +75,8 @@
     if (!picked) return;
     selectedPersona = picked;
     matchesFanfarePlayed = false;
+    chartReviewDone = false;
+    chartReviewStep = 0;
     var mount = document.getElementById('persona-list');
     if (mount) {
       mount.querySelectorAll('.persona-card').forEach(function (c) {
@@ -113,6 +122,18 @@
     if (e.target.closest('#home-view-all-skills')) { showScreen('skill-detail'); return; }
     if (e.target.closest('#home-see-matches')) { showScreen('matches'); return; }
     if (e.target.closest('.skill-row')) { showScreen('skill-detail'); return; }
+
+    if (e.target.closest('#strengthen-evidence-btn')) { showScreen('chart-review'); return; }
+
+    var reviewChoice = e.target.closest('[data-review-choice]');
+    if (reviewChoice) {
+      chartReviewStep++;
+      if (chartReviewStep >= CHART_REVIEW_CHARTS.length) chartReviewDone = true;
+      renderChartReviewStep(chartReviewStep);
+      return;
+    }
+
+    if (e.target.closest('#chart-review-back-btn')) { showScreen('skill-detail', { skipHistory: true }); return; }
 
     var openPositions = e.target.closest('[data-open-positions]');
     if (openPositions) { showScreen('positions'); return; }
