@@ -117,8 +117,8 @@ function typeInto(el, text, speed, done) {
   })();
 }
 
-// Password field: each letter is visible for one beat, then folds into a
-// dot as the next letter appears — slow enough to actually read the joke.
+// Password field: two letters stay visible at a time in a trailing window,
+// then fold into dots as typing continues — slow enough to read the joke.
 function typePasswordReveal(el, text, speed, done) {
   if (reduceMotion) { el.textContent = '•'.repeat(text.length); if (done) done(); return; }
   var i = 0;
@@ -130,7 +130,8 @@ function typePasswordReveal(el, text, speed, done) {
       }, speed);
       return;
     }
-    el.textContent = '•'.repeat(i) + text[i];
+    var dotsEnd = Math.max(0, i - 1);
+    el.textContent = '•'.repeat(dotsEnd) + text.slice(dotsEnd, i + 1);
     i++;
     setTimeout(step, speed);
   })();
@@ -149,14 +150,16 @@ function playLoginTypewriter() {
   if (caretPass) caretPass.style.display = '';
   btn.textContent = 'Log in';
   btn.style.background = '';
+  btn.classList.add('pending');
   status.textContent = 'Demo credentials — nothing is sent anywhere.';
   setTimeout(function () {
-    typeInto(loginUser, 'Demo Login', 110, function () {
+    typeInto(loginUser, 'Demo_Login', 110, function () {
       if (caretUser) caretUser.style.display = 'none';
       setTimeout(function () {
-        typePasswordReveal(loginPass, 'DATA_FLYWHEEL', 380, function () {
+        typePasswordReveal(loginPass, 'DATA_FLYWHEEL!', 380, function () {
           if (caretPass) caretPass.style.display = 'none';
           status.textContent = 'Tap Log in to connect to AHIMA.';
+          btn.classList.remove('pending');
         });
       }, 550);
     });
@@ -225,6 +228,7 @@ function playDownload(persona, onDone) {
       if (slot) {
         flyToInbox(slot);
         slot.outerHTML = docBuilders[s.key](persona);
+        dlMount.scrollTo({ top: dlMount.scrollHeight, behavior: reduceMotion ? 'auto' : 'smooth' });
       }
       received++;
       if (countEl) countEl.textContent = received + '/' + sources.length;
@@ -275,6 +279,55 @@ var CHART_REVIEW_CHARTS = [
 ];
 var CHART_REVIEW_SUMMARY = CHART_REVIEW_CHARTS.length + ' flagged charts reviewed · 1 real gap caught · Aug 2026';
 
+function renderReviewTab(skillName, reviewDone) {
+  var el = document.getElementById('review-body');
+  if (!el) return;
+  if (reviewDone) {
+    el.innerHTML =
+      '<div class="done-wrap" style="padding-top:2.5rem;">' +
+        '<div class="done-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>' +
+        '<h2>Review complete</h2>' +
+        '<p>Nice work — this is now part of your ' + skillName + ' evidence.</p>' +
+        '<div class="evidence-preview">' +
+          '<span class="tag"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>AI-assisted review</span>' +
+          '<div class="line">' + CHART_REVIEW_SUMMARY + '</div></div>' +
+        '<div class="strengthen-cta" id="review-view-evidence-btn" style="width:100%;margin-top:0.9rem;">View updated evidence <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>' +
+      '</div>';
+    return;
+  }
+  el.innerHTML =
+    '<div class="matches-empty-note" style="padding:0 1.1rem 0.9rem;">' +
+      '<img class="matches-empty-avatar" src="assets/img/rudy-note.png?v=2" alt="Rudy" />' +
+      '<div class="matches-empty-bubble"><p>A few charts, your read on them — that&rsquo;s it. No score, no clock.</p></div>' +
+    '</div>' +
+    '<div class="card strengthen-card" style="margin:0 1.1rem;">' +
+      '<div class="card-title-row"><span class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg>Strengthen your evidence</span></div>' +
+      '<p>Rundle flagged ' + CHART_REVIEW_CHARTS.length + ' charts its AI coder wasn’t confident on, from your ' + skillName + ' work. Take a look and tell us what you see — untimed, no score, no fixed answer key.</p>' +
+      '<div class="strengthen-cta" id="strengthen-evidence-btn">Review ' + CHART_REVIEW_CHARTS.length + ' flagged charts <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div></div>';
+}
+
+function renderChartReviewIntro() {
+  var el = document.getElementById('chart-review-body');
+  if (!el) return;
+  var infoRows = [
+    { label: 'What it is', value: 'Rundle flagged ' + CHART_REVIEW_CHARTS.length + ' charts its AI coder wasn’t fully confident on. You review each one and say what you’d flag — the same judgment call a working CDI specialist makes on the job.' },
+    { label: 'Time limit', value: 'None. Take as long as you want on each chart.' },
+    { label: 'Attempts', value: 'Unlimited — there’s no pass or fail, so there’s nothing to retry.' },
+    { label: 'AI tools', value: 'Nothing here is graded against an answer key, so outside AI tools won’t help you — this works best as your own read of the chart.' },
+    { label: 'What happens after', value: 'A short note is added to this skill’s evidence — not a score, not a rank.' }
+  ];
+  var rows = infoRows.map(function (r) {
+    return '<div class="review-info-row"><div class="review-info-label">' + r.label + '</div><div class="review-info-value">' + r.value + '</div></div>';
+  }).join('');
+  el.innerHTML =
+    '<div class="chart-review-scroll" style="padding-top:0.9rem;">' +
+      '<div class="card">' + rows + '</div>' +
+    '</div>' +
+    '<div class="choice-row" style="padding-top:0.3rem;">' +
+      '<div class="strengthen-cta" id="chart-review-start-btn" style="flex:1;">Start review <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>' +
+    '</div>';
+}
+
 function renderChartReviewStep(step) {
   var el = document.getElementById('chart-review-body');
   if (!el) return;
@@ -287,7 +340,7 @@ function renderChartReviewStep(step) {
         '<div class="evidence-preview">' +
           '<span class="tag"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>AI-assisted review</span>' +
           '<div class="line">' + CHART_REVIEW_SUMMARY + '</div></div>' +
-        '<div class="back-cta" id="chart-review-back-btn">Back to skill</div>' +
+        '<div class="back-cta" id="chart-review-back-btn">Back to Review</div>' +
       '</div>';
     return;
   }
@@ -320,29 +373,41 @@ function renderIdentity(mountId, p) {
 }
 
 var MAP_COLORS = ['#C6741E', '#2F6B57', '#A24E20', '#D8994A', '#6B4A2A', '#3E7CA6', '#8B5FA3', '#4F8C6B'];
+var mapMatched = false;
+var mapDrawn = false;
+var mapConnectionsCache = null;
+var mapResizeObserver = null;
 
 // Deterministic pseudo-random in [0,1) — same seed always gives the same
-// value, so the graph doesn't reshuffle on window resize, but it isn't the
-// neat mechanical fan a straight proportional mapping would produce.
+// value, so the graph doesn't reshuffle on redraw.
 function seededRandom(seed) {
   var x = Math.sin(seed * 12.9898 + 78.233) * 43758.5453;
   return x - Math.floor(x);
 }
 
+// Several connections per skill, spread fairly widely around its
+// proportional position — a dense, richly-connected web. A coverage pass
+// then guarantees every role has at least one incoming line.
 function computeMapConnections(nSkills, nRoles) {
   var conns = [];
   for (var i = 0; i < nSkills; i++) {
     var center = nSkills > 1 ? (i / (nSkills - 1)) * (nRoles - 1) : (nRoles - 1) / 2;
-    var r = seededRandom(i * 3.1);
-    var numLinks = r < 0.15 ? 1 : (r < 0.6 ? 2 : 3);
+    var numLinks = 2 + Math.floor(seededRandom(i * 3.1) * 3); // 2, 3, or 4
     var set = {};
     for (var k = 0; k < numLinks; k++) {
-      var spread = (nRoles - 1) * 0.95;
+      var spread = Math.max(2, nRoles * 0.85);
       var jitter = (seededRandom(i * 5.7 + k * 2.3) - 0.5) * spread;
       var idx = Math.max(0, Math.min(nRoles - 1, Math.round(center + jitter)));
       set[idx] = true;
     }
     conns.push(Object.keys(set).map(Number));
+  }
+  var covered = {};
+  conns.forEach(function (roleList) { roleList.forEach(function (ri) { covered[ri] = true; }); });
+  for (var ri = 0; ri < nRoles; ri++) {
+    if (covered[ri]) continue;
+    var skillIdx = Math.min(nSkills - 1, Math.floor(seededRandom(ri * 9.1) * nSkills));
+    conns[skillIdx].push(ri);
   }
   return conns;
 }
@@ -350,6 +415,9 @@ function computeMapConnections(nSkills, nRoles) {
 function renderMap(p, story, onMatched) {
   var el = document.getElementById('map-dynamic');
   if (!el) return;
+  mapMatched = false;
+  mapDrawn = false;
+  mapConnectionsCache = null;
   var first = p.name.split(' ')[0];
   var skillChips = story.map.skills.map(function (s, i) {
     return '<div class="map-chip" data-side="l" data-i="' + i + '" style="animation-delay:' + (i * 0.08) + 's">' + s + '</div>';
@@ -367,20 +435,21 @@ function renderMap(p, story, onMatched) {
     '</svg>' +
     '<div class="back-btn" style="display:flex;align-items:center;gap:0.3rem;cursor:pointer;position:relative;"><svg style="width:1rem;height:1rem;transform:rotate(180deg);color:#6B6258"><use href="#i-chev"/></svg></div>' +
     '<div><div class="map-head">Mapping your skills</div><p class="map-sub">Reading ' + first + '&rsquo;s verified work history against roles in growing fields.</p></div>' +
-    '<div class="map-match-btn" id="map-match-btn"><svg><use href="#i-target"/></svg>Match</div>' +
-    '<div class="map-scroll"><div class="map-stage" id="map-stage" style="height:' + (Math.max(story.map.skills.length, story.map.roles.length) * 3.55 + 0.9) + 'rem">' +
+    '<div class="map-match-btn" id="map-match-btn"><svg><use href="#i-match"/></svg>Click to match</div>' +
+    '<div class="map-scroll"><div class="map-stage" id="map-stage">' +
+      '<div class="map-cols" id="map-cols"><div class="map-col" id="map-col-l">' + skillChips + '</div><div class="map-col right" id="map-col-r">' + roleChips + '</div></div>' +
       '<svg class="map-svg" id="map-svg"></svg>' +
-      '<div class="map-cols"><div class="map-col" id="map-col-l">' + skillChips + '</div><div class="map-col right" id="map-col-r">' + roleChips + '</div></div>' +
     '</div>' +
     '<p class="map-foot">Tap Match to connect your skills to matching roles.</p></div>';
 
   var matchBtn = document.getElementById('map-match-btn');
   if (matchBtn) {
     matchBtn.addEventListener('click', function () {
-      if (matchBtn.classList.contains('done')) {
+      if (mapMatched) {
         if (onMatched) onMatched();
         return;
       }
+      mapMatched = true;
       matchBtn.classList.add('done');
       matchBtn.innerHTML = '<svg><use href="#i-arrow"/></svg>Next';
       drawMapLines();
@@ -388,8 +457,34 @@ function renderMap(p, story, onMatched) {
       if (foot) foot.textContent = 'Same evidence, mapped to adjacent-fit roles.';
     });
   }
+
+  // The stage's height now comes from real in-flow content (the chip
+  // columns), so there's nothing to guess. It can still shift slightly after
+  // the async Fraunces swap changes chip metrics, or on a real window
+  // resize — reposition (not rebuild) for those two specific, well-understood
+  // triggers. An earlier version of this used a ResizeObserver to reposition
+  // on *any* layout change, which could fire mid-entrance-animation and left
+  // some lines never drawn — narrowing back to these two known triggers.
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () { if (mapMatched) drawMapLines(); });
+  }
+  window.addEventListener('resize', function () {
+    if (mapMatched && document.getElementById('map-stage')) drawMapLines();
+  });
 }
 
+function mapPathD(a, b) {
+  var midX = (a.x + b.x) / 2;
+  return 'M' + a.x.toFixed(1) + ' ' + a.y.toFixed(1) + ' C ' + midX.toFixed(1) + ' ' + a.y.toFixed(1) + ', ' + midX.toFixed(1) + ' ' + b.y.toFixed(1) + ', ' + b.x.toFixed(1) + ' ' + b.y.toFixed(1);
+}
+
+// Draws the skill<->role connections the first time (with the full
+// entrance animation), then only *repositions* the same elements on any
+// later call (font swap, resize, orientation change) by updating their
+// geometry attributes in place. Rebuilding the whole SVG on every reposition
+// was the cause of lines visibly flickering away and redrawing — updating
+// attributes on existing nodes doesn't retrigger their CSS animations, so a
+// layout-driven correction is invisible instead of a visible re-animate.
 function drawMapLines() {
   var stage = document.getElementById('map-stage');
   var svg = document.getElementById('map-svg');
@@ -413,75 +508,181 @@ function drawMapLines() {
     while (chipPoint(side, i)) i++;
     return i;
   }
+
+  if (mapDrawn && mapConnectionsCache) {
+    // Reposition pass: same connections, same elements, just move them.
+    mapConnectionsCache.forEach(function (roleList, si) {
+      var a = chipPoint('l', si);
+      if (!a) return;
+      roleList.forEach(function (ri) {
+        var b = chipPoint('r', ri);
+        if (!b) return;
+        var d = mapPathD(a, b);
+        var key = si + '-' + ri;
+        svg.querySelectorAll('[data-conn="' + key + '"]').forEach(function (elm) { elm.setAttribute('d', d); });
+      });
+    });
+    ['l', 'r'].forEach(function (side) {
+      var i = 0, pt;
+      while ((pt = chipPoint(side, i))) {
+        var node = svg.querySelector('.map-node[data-node="' + side + '-' + i + '"]');
+        if (node) { node.setAttribute('cx', pt.x.toFixed(1)); node.setAttribute('cy', pt.y.toFixed(1)); }
+        i++;
+      }
+    });
+    return;
+  }
+
+  // First draw: build everything fresh (all invisible, opacity:0 via CSS),
+  // then reveal it on a plain JS timer — see below.
   var nSkills = countChips('l');
   var nRoles = countChips('r');
   var connections = computeMapConnections(nSkills, nRoles);
+  mapConnectionsCache = connections;
 
   var parts = [];
-  var delay = 0.35;
+  var revealMs = 300; // when this connection's line should fade in
+  var stepMs = reduceMotion ? 0 : 90;
+  var revealSchedule = []; // [{ time, key }]
+  // Earliest time that touches each chip, so a node's dot lights up in sync
+  // with its own line arriving — not on an unrelated independent clock,
+  // which read as dots scattering in ahead of the lines connecting.
+  var nodeReveal = {};
+  function touch(side, i, t) {
+    var key = side + '-' + i;
+    if (nodeReveal[key] === undefined || t < nodeReveal[key]) nodeReveal[key] = t;
+  }
+
   connections.forEach(function (roleList, si) {
     var a = chipPoint('l', si);
     if (!a) return;
     roleList.forEach(function (ri) {
       var b = chipPoint('r', ri);
       if (!b) return;
-      var midX = (a.x + b.x) / 2;
-      var d = 'M' + a.x.toFixed(1) + ' ' + a.y.toFixed(1) + ' C ' + midX.toFixed(1) + ' ' + a.y.toFixed(1) + ', ' + midX.toFixed(1) + ' ' + b.y.toFixed(1) + ', ' + b.x.toFixed(1) + ' ' + b.y.toFixed(1);
+      var d = mapPathD(a, b);
       var color = MAP_COLORS[si % MAP_COLORS.length];
-      var dl = delay.toFixed(2) + 's';
-      parts.push('<path pathLength="1" class="map-path-glow" style="stroke:' + color + ';animation-delay:' + dl + '" d="' + d + '"/>');
-      parts.push('<path pathLength="1" class="map-path" style="stroke:' + color + ';animation-delay:' + dl + '" d="' + d + '"/>');
-      if (!reduceMotion) {
-        var sparkBegin = (delay + 0.75).toFixed(2) + 's';
-        parts.push(
-          '<circle class="map-spark" r="2.6" fill="' + color + '">' +
-            '<animateMotion dur="1s" begin="' + sparkBegin + '" fill="freeze" path="' + d + '"/>' +
-            '<animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.06;0.85;1" dur="1s" begin="' + sparkBegin + '" fill="freeze"/>' +
-          '</circle>'
-        );
-      }
-      delay += 0.11;
+      var key = si + '-' + ri;
+      parts.push('<path pathLength="1" data-conn="' + key + '" class="map-path-halo" d="' + d + '"/>');
+      parts.push('<path pathLength="1" data-conn="' + key + '" class="map-path-glow" style="stroke:' + color + '" d="' + d + '"/>');
+      parts.push('<path pathLength="1" data-conn="' + key + '" class="map-path" style="stroke:' + color + '" d="' + d + '"/>');
+      revealSchedule.push({ time: revealMs, key: key });
+      touch('l', si, revealMs);
+      touch('r', ri, revealMs);
+      revealMs += stepMs;
     });
   });
-  story_map_nodes(parts, 'l', chipPoint);
-  story_map_nodes(parts, 'r', chipPoint);
+
+  drawMapNodes(parts, 'l', chipPoint, nodeReveal, revealMs);
+  drawMapNodes(parts, 'r', chipPoint, nodeReveal, revealMs);
   svg.innerHTML = parts.join('');
+  mapDrawn = true;
+
+  if (reduceMotion) {
+    svg.querySelectorAll('.map-path, .map-path-glow, .map-path-halo, .map-node').forEach(function (elm) {
+      elm.classList.add('in');
+    });
+    return;
+  }
+  revealSchedule.forEach(function (item) {
+    setTimeout(function () {
+      svg.querySelectorAll('[data-conn="' + item.key + '"]').forEach(function (elm) { elm.classList.add('in'); });
+    }, item.time);
+  });
+  Object.keys(nodeReveal).forEach(function (key) {
+    setTimeout(function () {
+      var node = svg.querySelector('.map-node[data-node="' + key + '"]');
+      if (node) node.classList.add('in');
+    }, nodeReveal[key]);
+  });
 }
 
-function story_map_nodes(parts, side, chipPoint) {
+function drawMapNodes(parts, side, chipPoint, nodeReveal, fallback) {
   var i = 0, pt;
   while ((pt = chipPoint(side, i))) {
-    parts.push('<circle class="map-node" cx="' + pt.x.toFixed(1) + '" cy="' + pt.y.toFixed(1) + '" r="2.8" style="animation-delay:' + (0.15 + i * 0.08).toFixed(2) + 's"/>');
+    var key = side + '-' + i;
+    parts.push('<circle class="map-node" data-node="' + key + '" cx="' + pt.x.toFixed(1) + '" cy="' + pt.y.toFixed(1) + '" r="2.8"/>');
     i++;
   }
 }
-
-window.addEventListener('resize', function () {
-  if (document.getElementById('map-stage')) drawMapLines();
-});
 
 function renderHome(p, story) {
   renderIdentity('home-identity', p);
   var el = document.getElementById('home-content');
   if (!el) return;
-  var skillRows = story.skills.map(function (s) {
-    return '<div class="skill-row"><div class="skill-icon ' + s.icon + '"><svg><use href="#' + s.svg + '"/></svg></div>' +
+  var revealCls = reduceMotion ? '' : ' reveal-row';
+  var skillRows = story.skills.map(function (s, i) {
+    var delay = reduceMotion ? '' : ' style="animation-delay:' + (0.05 + i * 0.07).toFixed(2) + 's"';
+    return '<div class="skill-row' + revealCls + '"' + delay + '><div class="skill-icon ' + s.icon + '"><svg><use href="#' + s.svg + '"/></svg></div>' +
       '<div><div class="skill-name">' + s.name + '</div><div class="skill-evidence">' + s.evidence + '</div></div>' +
-      '<span class="tier ' + s.tier + '">' + tierLabel[s.tier] + '</span></div>';
+      '<span class="tier ' + s.tier + '">' + tierLabel[s.tier] + '</span>' +
+      '<svg class="skill-row-arrow"><use href="#i-chev"/></svg></div>';
   }).join('');
-  var readyRows = story.ready.map(function (r) {
-    return '<div class="ready-row"><div class="ready-icon"><svg><use href="#' + r.svg + '"/></svg></div>' +
-      '<div><div class="ready-title">' + r.title + '</div><div class="ready-fit">' + r.fit + '% fit</div></div></div>';
+  var matchesDelay = 0.15 + story.skills.length * 0.07;
+  var matchRows = story.matches.map(function (m, i) {
+    var delay = matchesDelay + 0.15 + i * 0.09;
+    var cardStyle = '--fit:0' + (reduceMotion ? '' : ';animation-delay:' + delay.toFixed(2) + 's');
+    var topCls = i === 0 ? ' match-card-top' : '';
+    return '<div class="card match-card' + topCls + revealCls + '" data-match-idx="' + i + '" data-fit="' + m.fit + '" style="' + cardStyle + '"><div class="fit-ring"><span>' + m.fit + '%</span></div>' +
+      '<div class="match-body"><div class="match-title">' + m.title + '</div>' +
+      '<div class="match-meta' + (m.good ? ' good' : '') + '">' + m.meta + '</div>' +
+      (m.wage ? '<div class="match-wage">' + m.wage + '</div>' : '') +
+      (m.positions && m.positions.length ? '<div class="match-positions-link" data-open-positions="' + i + '">See open positions <svg><use href="#i-chev"/></svg></div>' : '') +
+      '</div><svg class="match-card-arrow"><use href="#i-chev"/></svg>' +
+      '</div>';
   }).join('');
+  var bannerDelay = matchesDelay + 0.3 + story.matches.length * 0.09;
   el.innerHTML =
     '<div class="card"><div class="card-title-row"><span class="card-title">Verified skills</span><span class="count-chip">' + story.skills.length + ' skills</span></div>' +
       skillRows +
       '<div class="link-row" id="home-view-all-skills"><span>View all skills and evidence</span><svg><use href="#i-chev"/></svg></div></div>' +
-    '<div class="record-banner"><div class="record-eyebrow">OVERALL RECORD</div><div class="record-title">' + story.recordLabel + '</div>' +
-      '<div class="record-sub">' + story.recordSub + '</div>' +
-      '<svg class="record-motif" viewBox="0 0 32 32"><rect x="2" y="20" width="7" height="10" rx="1.8" fill="rgba(255,255,255,0.16)"/><rect x="10.5" y="13" width="7" height="17" rx="1.8" fill="rgba(255,255,255,0.24)"/><rect x="19" y="6" width="7" height="24" rx="1.8" fill="rgba(255,255,255,0.34)"/><circle cx="22.5" cy="1.5" r="2.6" fill="rgba(255,255,255,0.5)"/></svg></div>' +
-    '<div class="card"><div class="card-title-row"><span class="card-title">Roles you&rsquo;re ready for</span></div>' + readyRows +
-      '<div class="cta" id="home-see-matches">See all matches <svg><use href="#i-arrow"/></svg></div></div>';
+    '<div class="card-title-row" style="margin:1.1rem 0 0.5rem;"><span class="card-title ready-card-title">Matches</span><span class="count-chip">' + story.matches.length + '</span></div>' +
+    matchRows +
+    '<div class="matches-empty-note">' +
+      '<img class="matches-empty-avatar" src="assets/img/rudy-note.png?v=2" alt="Rudy" />' +
+      '<div class="matches-empty-bubble"><p>More roles will show up here as you verify more skills.</p></div>' +
+    '</div>' +
+    '<div class="card strengthen-card" style="margin-top:0.7rem;"><div class="card-title-row"><span class="card-title">What&rsquo;s next</span></div>' +
+      '<p>Strengthen your evidence with a quick, untimed chart review, or check Training to close a skill gap.</p>' +
+      '<div class="strengthen-cta" id="home-next-review">Go to Review <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>' +
+    '</div>';
+  // Rings stay at --fit:0 here — animateMatchRingsIn() sweeps them once the
+  // screen is actually visible; bumping while display:none has no paint to
+  // transition from, so the fill would just snap in with no animation.
+}
+
+// Sweeps every ring on screen from 0 up to its real fit value (clockwise,
+// via the conic-gradient reading --fit). Driven by a manual rAF tween rather
+// than a CSS transition on the custom property — a transition would depend
+// on the browser supporting @property-registered animatable custom
+// properties, which isn't universal; setting the value directly every frame
+// works anywhere conic-gradient itself works.
+function animateMatchRingsIn(container) {
+  if (!container) return;
+  var cards = container.querySelectorAll('.match-card');
+  if (!cards.length) return;
+  if (reduceMotion) {
+    cards.forEach(function (c) { c.style.setProperty('--fit', c.dataset.fit); });
+    return;
+  }
+  cards.forEach(function (c) { c.style.setProperty('--fit', 0); });
+  var duration = 1400;
+  var start = null;
+  function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+  function tick(ts) {
+    if (start === null) start = ts;
+    var t = Math.min(1, (ts - start) / duration);
+    var eased = easeOutCubic(t);
+    cards.forEach(function (c) {
+      var target = parseFloat(c.dataset.fit) || 0;
+      c.style.setProperty('--fit', (target * eased).toFixed(1));
+    });
+    if (t < 1) requestAnimationFrame(tick);
+  }
+  // Let the 0% state actually get painted (and the screen transition settle)
+  // before the sweep starts — starting it in the same frame the screen
+  // becomes visible meant most of the sweep had already finished by the
+  // time it was actually on screen, so only the tail end was ever seen.
+  setTimeout(function () { requestAnimationFrame(tick); }, 300);
 }
 
 function renderSkillDetail(p, story, reviewDone) {
@@ -497,61 +698,49 @@ function renderSkillDetail(p, story, reviewDone) {
     ? '<div class="evidence-preview" style="margin-bottom:0.7rem;">' +
         '<span class="tag"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>AI-assisted review</span>' +
         '<div class="line">' + CHART_REVIEW_SUMMARY + '</div></div>'
-    : '<div class="card strengthen-card">' +
-        '<div class="card-title-row"><span class="card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg>Strengthen this evidence</span></div>' +
-        '<p>Rundle flagged ' + CHART_REVIEW_CHARTS.length + ' charts its AI coder wasn’t confident on. Take a look and tell us what you see — untimed, no score.</p>' +
-        '<div class="strengthen-cta" id="strengthen-evidence-btn">Review ' + CHART_REVIEW_CHARTS.length + ' flagged charts <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div></div>';
+    : '';
+  var topError = sd.errors.slice().sort(function (a, b) { return b.n - a.n; })[0];
+  var forwardBlock = sd.tier === 'expert' ? '' :
+    '<div class="card strengthen-card">' +
+      '<div class="card-title-row"><span class="card-title">What would move this forward</span></div>' +
+      '<p>Two things raise this: more verified reps, and fewer flagged errors on your most common issue &mdash; <strong style="color:var(--ink);">' + topError.t + '</strong> (' + topError.n + ' flagged so far).</p>' +
+      (reviewDone ? '' : '<div class="strengthen-cta" id="skilldetail-next-review">Strengthen with a quick review <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>') +
+    '</div>';
   el.innerHTML =
     '<div class="card"><div class="card-title-row"><span class="card-title">Rundle evidence</span><span class="tier ' + sd.tier + '">' + tierLabel[sd.tier] + '</span></div>' +
-      '<div class="bar-row"><div class="bar-label"><span>Accuracy</span><span class="mono">' + sd.accuracy + '%</span></div><div class="bar-track"><div class="bar-fill" style="width:' + sd.accuracy + '%"></div></div></div>' +
+      '<div class="bar-row"><div class="bar-label"><span>Accuracy</span><span class="mono">' + sd.accuracy + '%</span></div><div class="bar-track"><div class="bar-fill" style="width:' + (100 - sd.accuracy) + '%"></div></div></div>' +
       '<div class="bar-row"><div class="bar-label"><span>' + sd.metricLabel + '</span><span class="mono">' + sd.count + '</span></div></div>' +
       '<div class="divider-label">Common error types</div>' +
       '<div style="font-size:0.72rem;color:var(--ink-soft);line-height:1.9;">' + errRows + '</div></div>' +
     strengthenBlock +
+    forwardBlock +
     '<div class="card"><div class="card-title-row"><span class="card-title">Occupation benchmark</span></div>' +
       '<p style="font-size:0.72rem;color:var(--ink-soft);line-height:1.5;margin:0 0 0.5rem;">O&middot;NET: Medical Records Specialists (29-2072.00) ranks <strong style="color:var(--ink);">Attention to Detail</strong> as the single most important work style for this role &mdash; 100 of 100.</p>' +
-      '<div class="bar-track"><div class="bar-fill" style="width:100%"></div></div></div>' +
+      '<div class="bar-track"><div class="bar-fill" style="width:0%"></div></div></div>' +
     '<div class="card"><div class="card-title-row"><span class="card-title">Credential tie-in</span></div>' +
       '<div style="display:flex;align-items:center;gap:0.5rem;"><svg style="width:1.1rem;height:1.1rem;color:var(--sienna)"><use href="#i-shield"/></svg>' +
       '<div><div style="font-size:0.78rem;font-weight:600;">' + p.cred + ' &middot; AHIMA</div><div class="status-ok"><svg><use href="#i-check"/></svg>' +
-      (p.status === 'active' ? 'Active, verified' : 'In progress') + '</div></div></div></div>';
-}
-
-function renderMatches(p, story) {
-  var el = document.getElementById('matches-body');
-  if (!el) return;
-  el.innerHTML = story.matches.map(function (m, i) {
-    return '<div class="card match-card" data-match-idx="' + i + '"><div class="fit-ring" style="--fit:' + m.fit + '"><span>' + m.fit + '%</span></div>' +
-      '<div class="match-body"><div class="match-title">' + m.title + '</div>' +
-      '<div class="match-meta' + (m.good ? ' good' : '') + '">' + m.meta + '</div>' +
-      (m.wage ? '<div class="match-wage">' + m.wage + '</div>' : '') +
-      (m.hasPositions ? '<div class="match-positions-link" data-open-positions="1">See open positions <svg><use href="#i-chev"/></svg></div>' : '') +
-      '</div></div>';
-  }).join('');
-}
-
-// Called when the Matches screen becomes visible (not at render time) so the
-// reveal actually plays while the user is looking at it.
-function playMatchesFanfare() {
-  var fanfare = document.getElementById('matches-fanfare');
-  if (!fanfare || reduceMotion) return;
-  fanfare.classList.add('show');
-  setTimeout(function () { fanfare.classList.remove('show'); }, 3000);
+      (p.status === 'active' ? 'Active, verified' : 'In progress') + '</div></div></div></div>' +
+    '<div class="cta" id="skilldetail-back-home">Back to home <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>';
 }
 
 function renderGap(p, story) {
   var g = story.gap;
   var header = document.getElementById('gapdetail-header');
   if (header) {
-    header.innerHTML = '<div class="back-btn" data-back="matches" style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;"><svg style="width:1rem;height:1rem;transform:rotate(180deg);color:var(--ink-soft)"><use href="#i-chev"/></svg><div class="name">' + g.title + '</div></div>' +
+    header.innerHTML = '<div class="back-btn" data-back="home" style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;"><svg style="width:1rem;height:1rem;transform:rotate(180deg);color:var(--ink-soft)"><use href="#i-chev"/></svg><div class="name">' + g.title + '</div></div>' +
       '<div class="fit-ring" style="--fit:' + g.fit + ';width:2.1rem;height:2.1rem;font-size:0.6rem;"><span>' + g.fit + '%</span></div>';
   }
   var el = document.getElementById('gapdetail-body');
   if (!el) return;
+  // Carry the "Ready in ~X months" framing over from the Matches card that
+  // led here — otherwise this screen drops that context entirely.
+  var matchedMeta = story.matches.filter(function (m) { return m.title === g.title; })[0];
+  var metaLine = matchedMeta ? '<p class="sub-lead" style="padding:0 0.1rem 0.7rem;">' + matchedMeta.meta + '</p>' : '';
   var haveRows = g.have.map(function (h) {
     return '<div class="gap-item have"><svg><use href="#i-check"/></svg><div><div class="t">' + h.t + '</div><div class="d">' + h.d + '</div></div></div>';
   }).join('');
-  el.innerHTML =
+  el.innerHTML = metaLine +
     '<div class="card"><div class="card-title-row"><span class="card-title">Already proven</span></div>' + haveRows + '</div>' +
     '<div class="card"><div class="card-title-row"><span class="card-title">One gap remaining</span></div>' +
       '<div class="gap-item need"><svg><use href="#i-bolt"/></svg><div><div class="t">' + g.need.t + '</div><div class="d">' + g.need.d + '</div></div></div></div>' +
@@ -574,7 +763,8 @@ function rungBar(pct) {
   return '<div style="display:flex;align-items:flex-end;gap:0.26rem;height:23px;">' + bars + '</div>';
 }
 
-var AHIMA_BADGE = '<span class="org-badge"><span class="org-mark">AH</span>AHIMA <svg><use href="#i-arrow"/></svg></span>';
+var AHIMA_BADGE = '<span class="org-badge"><span class="org-mark">AH</span>AHIMA</span>';
+var AHIMA_BADGE_LINK = '<span class="org-badge"><span class="org-mark">AH</span>AHIMA <svg><use href="#i-arrow"/></svg></span>';
 
 function renderTraining(p, story) {
   var el = document.getElementById('training-body');
@@ -592,10 +782,16 @@ function renderTraining(p, story) {
   }
   el.innerHTML = topCard +
     '<div class="divider-label">Recommended</div>' +
-    '<div class="card"><div class="provider-card"><div><div class="provider-name">' + t.recommended.name + '</div>' + AHIMA_BADGE + '</div>' +
-    '<span class="badge-fund">' + t.recommended.badge + '</span></div></div>' +
+    '<a class="card" href="https://www.ahima.org/" target="_blank" rel="noopener" style="display:block;text-decoration:none;color:inherit;"><div class="provider-card"><div><div class="provider-name">' + t.recommended.name + '</div>' + AHIMA_BADGE_LINK + '</div>' +
+    '<span class="badge-fund">' + t.recommended.badge + '</span></div></a>' +
     '<div class="divider-label">Completed</div>' +
-    '<div class="card"><div class="gap-item have"><svg><use href="#i-check"/></svg><div><div class="t">' + t.completed.t + '</div><div class="d">' + t.completed.d + '</div></div></div></div>';
+    '<div class="card"><div class="gap-item have"><svg><use href="#i-check"/></svg><div><div class="t">' + t.completed.t + '</div><div class="d">' + t.completed.d + '</div></div></div></div>' +
+    '<div class="divider-label">Continue training elsewhere</div>' +
+    '<div class="card">' +
+      '<a class="link-row" href="https://www.aapc.com/" target="_blank" rel="noopener" style="align-items:center;">' +
+        '<span style="display:flex;align-items:center;gap:0.55rem;"><span style="width:1.7rem;height:1.7rem;border-radius:0.4rem;flex:none;background:linear-gradient(135deg,#3E7CA6,#2A5A80);color:#fff;font-family:\'Fraunces\';font-weight:700;font-size:0.5rem;display:flex;align-items:center;justify-content:center;letter-spacing:0.01em;">AAPC</span>AAPC certifications</span>' +
+        '<svg><use href="#i-chev"/></svg></a>' +
+    '</div>';
 }
 
 function renderProfile(p, story) {
@@ -615,23 +811,32 @@ function renderProfile(p, story) {
   var tl = story.employer.map(function (e) {
     return '<div class="tl-item"><div class="tl-date">' + e.from + ' &mdash; ' + e.to + '</div><div class="tl-title">' + e.title + '</div><div class="tl-sub">' + e.role + ' &middot; ' + e.note + '</div></div>';
   }).join('');
+  var sourceLogos = { cos: 'logo-cos.png', onet: 'logo-onet.png', bls: 'logo-bls.jpg', ahima: 'logo-ahima.png' };
+  var sourceLinks = { cos: 'https://www.careeronestop.org/', onet: 'https://www.onetonline.org/', bls: 'https://www.bls.gov/', ahima: 'https://www.ahima.org/' };
+  var sourceRows = sources.map(function (s) {
+    var wide = s.key === 'ahima' ? ' wide' : '';
+    return '<a class="check-row" href="' + sourceLinks[s.key] + '" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;"><div class="check-logo' + wide + '"><img src="assets/img/' + sourceLogos[s.key] + '" alt="" /></div>' +
+      '<div class="check-body" style="flex:1;min-width:0;"><div class="check-title">' + s.label + '</div><div class="check-sub">' + s.url + '</div></div>' +
+      '<div class="status-ok" style="margin-left:auto;flex:none;white-space:nowrap;"><svg><use href="#i-check"/></svg>Connected</div></a>';
+  }).join('');
   el.innerHTML =
     '<div class="card"><div class="card-title-row"><span class="card-title">Credential</span></div>' + credBody + '</div>' +
     '<div class="card"><div class="card-title-row"><span class="card-title">Employment history</span></div><div class="timeline">' + tl + '</div></div>' +
+    '<div class="card"><div class="card-title-row"><span class="card-title">Data sources</span><span class="count-chip">' + sources.length + ' connected</span></div>' + sourceRows + '</div>' +
     '<div class="card"><div class="card-title-row"><span class="card-title">Who can see this</span></div>' +
       '<div class="toggle-row"><div><div class="t">Visible to employers</div><div class="d">Skills, credential, tenure</div></div><div class="switch on"></div></div>' +
       '<div class="toggle-row"><div><div class="t">Visible to training partners</div><div class="d">For funded course matching</div></div><div class="switch on"></div></div>' +
       '<div class="toggle-row"><div><div class="t">Include simulation detail</div><div class="d">Full task-level results</div></div><div class="switch off"></div></div></div>';
 }
 
-function renderPositions(p, story) {
+function renderPositions(title, positions) {
   var titleEl = document.getElementById('positions-title');
-  if (titleEl) titleEl.textContent = story.gap.title;
+  if (titleEl) titleEl.textContent = title;
   var el = document.getElementById('positions-body');
   if (!el) return;
-  var cards = story.positions.map(function (job) {
+  var cards = positions.map(function (job) {
     return '<div class="card job-card">' +
-      '<div class="job-logo" style="background:' + job.logoBg + '">' + job.logo + '</div>' +
+      '<div class="job-logo img"><img src="' + job.logoImg + '" alt="" /></div>' +
       '<div class="job-info"><div class="job-role">' + job.role + '</div>' +
       '<div class="job-company">' + job.company + '</div>' +
       '<div class="job-meta">' + job.location + ' &middot; ' + job.wage + '</div>' +
@@ -648,9 +853,7 @@ function renderAll(persona) {
   if (!story) return;
   renderHome(persona, story);
   renderSkillDetail(persona, story);
-  renderMatches(persona, story);
   renderGap(persona, story);
   renderTraining(persona, story);
   renderProfile(persona, story);
-  renderPositions(persona, story);
 }

@@ -155,23 +155,61 @@ const STORY = {
         "fit": 94,
         "meta": "Ready now",
         "good": true,
-        "wage": "$68,020/yr median · +$16,880 vs. today"
+        "wage": "$68,020/yr median · +$16,880 vs. today",
+        "positions": [
+          {
+            "company": "Kaiser Permanente",
+            "logoImg": "assets/img/logo-kaiser.png",
+            "role": "Health Information Technologist",
+            "location": "Remote",
+            "wage": "$64,000–$71,000/yr",
+            "posted": "2 days ago"
+          },
+          {
+            "company": "Ascension",
+            "logoImg": "assets/img/logo-ascension.png",
+            "role": "HIM Technologist II",
+            "location": "St. Louis, MO",
+            "wage": "$62,500–$69,000/yr",
+            "posted": "5 days ago"
+          }
+        ]
       },
       {
         "title": "Clinical Documentation Improvement Specialist",
         "fit": 88,
         "meta": "Ready in ~3 months · 1 skill gap",
-        "hasPositions": true
+        "wage": "$83,000/yr median",
+        "positions": [
+          {
+            "company": "Cleveland Clinic",
+            "logoImg": "assets/img/logo-clevelandclinic.png",
+            "role": "CDI Specialist",
+            "location": "Remote",
+            "wage": "$82,000–$88,000/yr",
+            "posted": "3 days ago"
+          },
+          {
+            "company": "Mayo Clinic",
+            "logoImg": "assets/img/logo-mayoclinic.png",
+            "role": "Clinical Documentation Specialist",
+            "location": "Columbus, OH",
+            "wage": "$80,000–$86,000/yr",
+            "posted": "1 week ago"
+          }
+        ]
       },
       {
         "title": "Coding Quality Auditor",
         "fit": 82,
-        "meta": "Ready in ~6 months · audit methodology"
+        "meta": "Ready in ~6 months · audit methodology",
+        "wage": "$61,000/yr median"
       },
       {
         "title": "Health Services Manager",
         "fit": 61,
-        "meta": "Long-term pathway"
+        "meta": "Long-term pathway",
+        "wage": "$116,000/yr median"
       }
     ],
     "gap": {
@@ -201,26 +239,6 @@ const STORY = {
         "badge": "CEU-funded"
       }
     },
-    "positions": [
-      {
-        "company": "AGS Health",
-        "logo": "AGS",
-        "logoBg": "#1E5C6B",
-        "role": "CDI Specialist",
-        "location": "Remote",
-        "wage": "$82,000–$88,000/yr",
-        "posted": "3 days ago"
-      },
-      {
-        "company": "Savista",
-        "logo": "SV",
-        "logoBg": "#2A3B5E",
-        "role": "Clinical Documentation Specialist",
-        "location": "Columbus, OH",
-        "wage": "$80,000–$86,000/yr",
-        "posted": "1 week ago"
-      }
-    ],
     "training": {
       "mode": "renewal",
       "dueLabel": "Due Mar 2026",
@@ -313,7 +331,9 @@ const STORY = {
         "Reimbursement Specialist",
         "Utilization Review Coordinator",
         "Medical Coding Auditor",
-        "Practice Operations Coordinator"
+        "Practice Operations Coordinator",
+        "Insurance Verification Specialist",
+        "Patient Access Coordinator"
       ]
     }
   },
@@ -381,22 +401,43 @@ const STORY = {
         "title": "Coding Quality Auditor",
         "fit": 68,
         "meta": "Ready in ~6 months · audit methodology",
-        "hasPositions": true
+        "wage": "$61,000/yr median",
+        "positions": [
+          {
+            "company": "Kaiser Permanente",
+            "logoImg": "assets/img/logo-kaiser.png",
+            "role": "Coding Quality Auditor",
+            "location": "Remote",
+            "wage": "$58,000–$64,000/yr",
+            "posted": "5 days ago"
+          },
+          {
+            "company": "Cedars-Sinai",
+            "logoImg": "assets/img/logo-cedarssinai.png",
+            "role": "Inpatient Coding Auditor",
+            "location": "Austin, TX",
+            "wage": "$56,000–$62,000/yr",
+            "posted": "2 weeks ago"
+          }
+        ]
       },
       {
         "title": "Health Information Technologist",
         "fit": 61,
-        "meta": "Ready in ~9 months · 2 skill gaps"
+        "meta": "Ready in ~9 months · 2 skill gaps",
+        "wage": "$68,020/yr median"
       },
       {
         "title": "Clinical Documentation Improvement Specialist",
         "fit": 54,
-        "meta": "Long-term pathway"
+        "meta": "Long-term pathway",
+        "wage": "$83,000/yr median"
       },
       {
         "title": "Health Services Manager",
         "fit": 31,
-        "meta": "Long-term pathway"
+        "meta": "Long-term pathway",
+        "wage": "$116,000/yr median"
       }
     ],
     "gap": {
@@ -422,26 +463,6 @@ const STORY = {
         "badge": "CEU-funded"
       }
     },
-    "positions": [
-      {
-        "company": "Optum360",
-        "logo": "OP",
-        "logoBg": "#D9491F",
-        "role": "Coding Quality Auditor",
-        "location": "Remote",
-        "wage": "$58,000–$64,000/yr",
-        "posted": "5 days ago"
-      },
-      {
-        "company": "R1 RCM",
-        "logo": "R1",
-        "logoBg": "#1B3A6B",
-        "role": "Inpatient Coding Auditor",
-        "location": "Austin, TX",
-        "wage": "$56,000–$62,000/yr",
-        "posted": "2 weeks ago"
-      }
-    ],
     "training": {
       "mode": "examprep",
       "examLabel": "CCS exam target",
@@ -536,7 +557,9 @@ const STORY = {
         "Reimbursement Specialist",
         "Utilization Review Coordinator",
         "Medical Coding Auditor",
-        "Practice Operations Coordinator"
+        "Practice Operations Coordinator",
+        "Insurance Verification Specialist",
+        "Patient Access Coordinator"
       ]
     }
   },
@@ -592,12 +615,31 @@ const STORY = {
         "title": "HIM Coder II",
         "fit": 42,
         "meta": "Long-term pathway",
-        "hasPositions": true
+        "wage": "$43,000/yr median",
+        "positions": [
+          {
+            "company": "HCA Healthcare",
+            "logoImg": "assets/img/logo-hca.png",
+            "role": "HIM Coder II",
+            "location": "Atlanta, GA",
+            "wage": "$42,000–$46,000/yr",
+            "posted": "4 days ago"
+          },
+          {
+            "company": "CVS Health",
+            "logoImg": "assets/img/logo-cvs.png",
+            "role": "Coding Specialist I",
+            "location": "Remote",
+            "wage": "$40,000–$45,000/yr",
+            "posted": "1 week ago"
+          }
+        ]
       },
       {
         "title": "Coding Quality Auditor",
         "fit": 28,
-        "meta": "Long-term pathway"
+        "meta": "Long-term pathway",
+        "wage": "$61,000/yr median"
       }
     ],
     "gap": {
@@ -619,26 +661,6 @@ const STORY = {
         "badge": "CEU-funded"
       }
     },
-    "positions": [
-      {
-        "company": "HCA Healthcare",
-        "logo": "HCA",
-        "logoBg": "#1F4E8C",
-        "role": "HIM Coder II",
-        "location": "Atlanta, GA",
-        "wage": "$42,000–$46,000/yr",
-        "posted": "4 days ago"
-      },
-      {
-        "company": "TruBridge",
-        "logo": "TB",
-        "logoBg": "#2D5A54",
-        "role": "Coding Specialist I",
-        "location": "Remote",
-        "wage": "$40,000–$45,000/yr",
-        "posted": "1 week ago"
-      }
-    ],
     "training": {
       "mode": "examprep",
       "examLabel": "CCA exam scheduled",
@@ -729,7 +751,9 @@ const STORY = {
         "Reimbursement Specialist",
         "Utilization Review Coordinator",
         "Medical Coding Auditor",
-        "Practice Operations Coordinator"
+        "Practice Operations Coordinator",
+        "Insurance Verification Specialist",
+        "Patient Access Coordinator"
       ]
     }
   },
@@ -797,19 +821,57 @@ const STORY = {
         "title": "Coding Quality Auditor",
         "fit": 96,
         "meta": "Ready now",
-        "good": true
+        "good": true,
+        "wage": "$61,000/yr median",
+        "positions": [
+          {
+            "company": "Johns Hopkins Medicine",
+            "logoImg": "assets/img/logo-johnshopkins.png",
+            "role": "Coding Quality Auditor",
+            "location": "Baltimore, MD",
+            "wage": "$60,000–$67,000/yr",
+            "posted": "1 day ago"
+          },
+          {
+            "company": "HCA Healthcare",
+            "logoImg": "assets/img/logo-hca.png",
+            "role": "Inpatient Coding Auditor",
+            "location": "Remote",
+            "wage": "$58,000–$65,000/yr",
+            "posted": "4 days ago"
+          }
+        ]
       },
       {
         "title": "Clinical Documentation Improvement Specialist",
         "fit": 93,
         "meta": "Ready now",
-        "good": true
+        "good": true,
+        "wage": "$83,000/yr median"
       },
       {
         "title": "Health Services Manager",
         "fit": 84,
         "meta": "Ready in ~6 months · leadership credential",
-        "hasPositions": true
+        "wage": "$116,000/yr median",
+        "positions": [
+          {
+            "company": "Ascension",
+            "logoImg": "assets/img/logo-ascension.png",
+            "role": "HIM Department Manager",
+            "location": "Chicago, IL",
+            "wage": "$112,000–$124,000/yr",
+            "posted": "6 days ago"
+          },
+          {
+            "company": "Optum",
+            "logoImg": "assets/img/logo-optum.png",
+            "role": "Health Information Manager",
+            "location": "Remote",
+            "wage": "$108,000–$118,000/yr",
+            "posted": "2 weeks ago"
+          }
+        ]
       },
       {
         "title": "Health Information Technologist",
@@ -845,26 +907,6 @@ const STORY = {
         "badge": "CEU-funded"
       }
     },
-    "positions": [
-      {
-        "company": "Cleveland Clinic",
-        "logo": "CC",
-        "logoBg": "#173A5E",
-        "role": "HIM Department Manager",
-        "location": "Chicago, IL",
-        "wage": "$112,000–$124,000/yr",
-        "posted": "6 days ago"
-      },
-      {
-        "company": "Mayo Clinic",
-        "logo": "MC",
-        "logoBg": "#0F4C81",
-        "role": "Health Information Manager",
-        "location": "Remote",
-        "wage": "$108,000–$118,000/yr",
-        "posted": "2 weeks ago"
-      }
-    ],
     "training": {
       "mode": "renewal",
       "dueLabel": "Due Jun 2026",
@@ -957,7 +999,9 @@ const STORY = {
         "Reimbursement Specialist",
         "Utilization Review Coordinator",
         "Medical Coding Auditor",
-        "Practice Operations Coordinator"
+        "Practice Operations Coordinator",
+        "Insurance Verification Specialist",
+        "Patient Access Coordinator"
       ]
     }
   },
@@ -1033,23 +1077,61 @@ const STORY = {
         "fit": 85,
         "meta": "Ready now",
         "good": true,
-        "wage": "$68,020/yr median"
+        "wage": "$68,020/yr median",
+        "positions": [
+          {
+            "company": "Cedars-Sinai",
+            "logoImg": "assets/img/logo-cedarssinai.png",
+            "role": "Health Information Technologist",
+            "location": "Los Angeles, CA",
+            "wage": "$66,000–$72,500/yr",
+            "posted": "2 days ago"
+          },
+          {
+            "company": "CVS Health",
+            "logoImg": "assets/img/logo-cvs.png",
+            "role": "HIM Technologist",
+            "location": "Remote",
+            "wage": "$63,000–$70,000/yr",
+            "posted": "6 days ago"
+          }
+        ]
       },
       {
         "title": "Coding Quality Auditor",
         "fit": 79,
-        "meta": "Ready in ~4 months · audit methodology"
+        "meta": "Ready in ~4 months · audit methodology",
+        "wage": "$61,000/yr median"
       },
       {
         "title": "Clinical Documentation Improvement Specialist",
         "fit": 73,
         "meta": "Ready in ~6 months · 1 skill gap",
-        "hasPositions": true
+        "wage": "$83,000/yr median",
+        "positions": [
+          {
+            "company": "Johns Hopkins Medicine",
+            "logoImg": "assets/img/logo-johnshopkins.png",
+            "role": "CDI Specialist",
+            "location": "Tampa, FL",
+            "wage": "$80,000–$86,000/yr",
+            "posted": "3 days ago"
+          },
+          {
+            "company": "Kaiser Permanente",
+            "logoImg": "assets/img/logo-kaiser.png",
+            "role": "Clinical Documentation Improvement Specialist",
+            "location": "Remote",
+            "wage": "$78,000–$84,000/yr",
+            "posted": "1 week ago"
+          }
+        ]
       },
       {
         "title": "Health Services Manager",
         "fit": 55,
-        "meta": "Long-term pathway"
+        "meta": "Long-term pathway",
+        "wage": "$116,000/yr median"
       }
     ],
     "gap": {
@@ -1075,26 +1157,6 @@ const STORY = {
         "badge": "CEU-funded"
       }
     },
-    "positions": [
-      {
-        "company": "Savista",
-        "logo": "SV",
-        "logoBg": "#2A3B5E",
-        "role": "CDI Specialist",
-        "location": "Tampa, FL",
-        "wage": "$80,000–$86,000/yr",
-        "posted": "3 days ago"
-      },
-      {
-        "company": "AGS Health",
-        "logo": "AGS",
-        "logoBg": "#1E5C6B",
-        "role": "Clinical Documentation Improvement Specialist",
-        "location": "Remote",
-        "wage": "$78,000–$84,000/yr",
-        "posted": "1 week ago"
-      }
-    ],
     "training": {
       "mode": "renewal",
       "dueLabel": "Due Aug 2027",
@@ -1187,7 +1249,9 @@ const STORY = {
         "Reimbursement Specialist",
         "Utilization Review Coordinator",
         "Medical Coding Auditor",
-        "Practice Operations Coordinator"
+        "Practice Operations Coordinator",
+        "Insurance Verification Specialist",
+        "Patient Access Coordinator"
       ]
     }
   }

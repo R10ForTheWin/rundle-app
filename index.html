@@ -3,8 +3,14 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
 <title>Rundle</title>
-<link rel="stylesheet" href="css/app.css?v=22" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,600&display=swap" />
+<link rel="stylesheet" href="css/app.css?v=52" />
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute">
@@ -12,6 +18,7 @@
     <symbol id="i-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></symbol>
     <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1Z"/></symbol>
     <symbol id="i-target" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></symbol>
+    <symbol id="i-match" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6"/></symbol>
     <symbol id="i-cap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9 12 4l10 5-10 5-10-5Z"/><path d="M6 11.5V17c0 1.1 2.7 3 6 3s6-1.9 6-3v-5.5"/></symbol>
     <symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 5-6 8-6s6.5 2 8 6"/></symbol>
     <symbol id="i-bolt" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 3 14h7l-1 8 11-14h-7l0-6Z"/></symbol>
@@ -31,13 +38,13 @@
 <div id="app">
 <section class="screen" id="screen-cover" data-screen="cover">
     <div class="cover-screen">
-      <img class="cover-rudy" src="assets/img/rudy-cover.png" alt="Rudy, the Rundle mascot, carrying a ladder" />
       <div class="cover-brand-row">
         <svg class="cover-mark" viewBox="0 0 32 32"><rect x="4" y="22" width="7" height="6" rx="1.6" fill="#C6741E"/><rect x="12.3" y="16" width="7" height="12" rx="1.6" fill="#D8994A"/><rect x="20.6" y="10" width="7" height="18" rx="1.6" fill="#E4B877"/><circle cx="24.1" cy="5.5" r="2.6" fill="#A24E20"/></svg>
         <div class="cover-word">Rundle</div>
       </div>
-      <div class="cover-head">You lost your job to AI.<br><span style="color:#A24E20">AI will help you find a better one.</span></div>
-      <div class="cover-cta" id="cover-cta">Continue</div>
+      <div class="cover-head">You lost your job to AI.<br><span style="color:#F0C878">AI will help you find a better one.</span></div>
+      <video class="cover-rudy" src="assets/img/rudy-cover.mp4?v=3" autoplay loop muted playsinline aria-label="Rudy, the Rundle mascot, carrying a ladder and waving"></video>
+      <div class="cover-cta" id="cover-cta">Let's Begin!</div>
     </div>
     <div class="cover-foot">Prototype &middot; MGMT 241, Team 8</div>
 </section>
@@ -54,6 +61,9 @@
     </div>
     <div class="scroll section-pad" style="padding-top:0.1rem;" id="persona-list">
       <!-- populated by script at end of page -->
+    </div>
+    <div class="section-pad" style="padding-top:0;">
+      <div class="cta pending" id="picker-continue-btn">Continue</div>
     </div>
 </section>
 
@@ -76,7 +86,7 @@
     <div class="section-pad" style="padding-top:1rem;">
       <div class="back-btn" style="display:flex;align-items:center;gap:0.3rem;cursor:pointer;margin-bottom:0.4rem;"><svg style="width:1rem;height:1rem;transform:rotate(180deg);color:var(--ink-soft)"><use href="#i-chev"/></svg></div>
       <div class="h-lead" style="font-size:1.1rem;">Log in to AHIMA</div>
-      <p class="sub-lead">Rundle never sees or stores your password.</p>
+      <p class="sub-lead">AHIMA is the only source that needs your login — O&middot;NET, BLS, and CareerOneStop are public data, pulled automatically. Rundle never sees or stores your password.</p>
     </div>
     <div class="section-pad login-form">
       <label class="field-label">Login</label>
@@ -127,8 +137,8 @@
     </div>
     <div class="tabbar">
       <div class="tab active" data-target="home"><svg><use href="#i-home"/></svg>Home</div>
-      <div class="tab" data-target="matches"><svg><use href="#i-target"/></svg>Matches</div>
       <div class="tab" data-target="training"><svg><use href="#i-cap"/></svg>Training</div>
+      <div class="tab" data-target="review"><svg><use href="#i-doc"/></svg>Review</div>
       <div class="tab" data-target="profile"><svg><use href="#i-user"/></svg>Profile</div>
     </div>
 </section>
@@ -138,24 +148,23 @@
     <div class="scroll section-pad" style="padding-top:0.2rem;" id="skilldetail-body"></div>
 </section>
 
-<section class="screen" id="screen-chart-review" data-screen="chart-review">
-    <div class="app-header"><div class="back-btn" data-back="skill-detail" style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;"><svg style="width:1rem;height:1rem;transform:rotate(180deg);color:var(--ink-soft)"><use href="#i-chev"/></svg><div class="name">Chart review</div></div></div>
-    <div id="chart-review-body" style="flex:1;min-height:0;display:flex;flex-direction:column;"></div>
-</section>
-
-<section class="screen" id="screen-matches" data-screen="matches">
-    <div class="map-fanfare" id="matches-fanfare"><img src="assets/img/rudy-fanfare.webp" alt="" /></div>
+<section class="screen" id="screen-review" data-screen="review">
     <div class="section-pad" style="padding-bottom:0.4rem;">
-      <div class="h-lead" style="font-size:1.15rem;">Matches</div>
-      <p class="sub-lead">Ranked by fit to your verified skills.</p>
+      <div class="h-lead" style="font-size:1.15rem;">Review</div>
+      <p class="sub-lead">Optional, untimed evidence review.</p>
     </div>
-<div class="scroll section-pad" style="padding-top:0.2rem;" id="matches-body"></div>
+    <div class="scroll" id="review-body"></div>
     <div class="tabbar">
       <div class="tab" data-target="home"><svg><use href="#i-home"/></svg>Home</div>
-      <div class="tab active" data-target="matches"><svg><use href="#i-target"/></svg>Matches</div>
       <div class="tab" data-target="training"><svg><use href="#i-cap"/></svg>Training</div>
+      <div class="tab active" data-target="review"><svg><use href="#i-doc"/></svg>Review</div>
       <div class="tab" data-target="profile"><svg><use href="#i-user"/></svg>Profile</div>
     </div>
+</section>
+
+<section class="screen" id="screen-chart-review" data-screen="chart-review">
+    <div class="app-header"><div class="back-btn" data-back="review" style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;"><svg style="width:1rem;height:1rem;transform:rotate(180deg);color:var(--ink-soft)"><use href="#i-chev"/></svg><div class="name">Chart review</div></div></div>
+    <div id="chart-review-body" style="flex:1;min-height:0;display:flex;flex-direction:column;"></div>
 </section>
 
 <section class="screen" id="screen-match-detail" data-screen="match-detail">
@@ -165,14 +174,15 @@
 
 <section class="screen" id="screen-training" data-screen="training">
     <div class="section-pad" style="padding-bottom:0.4rem;">
+      <div class="back-btn" style="display:flex;align-items:center;gap:0.3rem;cursor:pointer;margin-bottom:0.4rem;"><svg style="width:1rem;height:1rem;transform:rotate(180deg);color:var(--ink-soft)"><use href="#i-chev"/></svg></div>
       <div class="h-lead" style="font-size:1.15rem;">Training</div>
       <p class="sub-lead">Credential renewal and skill-gap courses.</p>
     </div>
 <div class="scroll section-pad" style="padding-top:0.2rem;" id="training-body"></div>
     <div class="tabbar">
       <div class="tab" data-target="home"><svg><use href="#i-home"/></svg>Home</div>
-      <div class="tab" data-target="matches"><svg><use href="#i-target"/></svg>Matches</div>
       <div class="tab active" data-target="training"><svg><use href="#i-cap"/></svg>Training</div>
+      <div class="tab" data-target="review"><svg><use href="#i-doc"/></svg>Review</div>
       <div class="tab" data-target="profile"><svg><use href="#i-user"/></svg>Profile</div>
     </div>
 </section>
@@ -184,20 +194,20 @@
     <div class="scroll section-pad" style="padding-top:0.2rem;" id="profile-body"></div>
     <div class="tabbar">
       <div class="tab" data-target="home"><svg><use href="#i-home"/></svg>Home</div>
-      <div class="tab" data-target="matches"><svg><use href="#i-target"/></svg>Matches</div>
       <div class="tab" data-target="training"><svg><use href="#i-cap"/></svg>Training</div>
+      <div class="tab" data-target="review"><svg><use href="#i-doc"/></svg>Review</div>
       <div class="tab active" data-target="profile"><svg><use href="#i-user"/></svg>Profile</div>
     </div>
 </section>
 
 <section class="screen" id="screen-positions" data-screen="positions">
-    <div class="app-header"><div class="back-btn" data-back="matches" style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;"><svg style="width:1rem;height:1rem;transform:rotate(180deg);color:var(--ink-soft)"><use href="#i-chev"/></svg><div class="name" id="positions-title">Open Positions</div></div></div>
+    <div class="app-header"><div class="back-btn" data-back="home" style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;"><svg style="width:1rem;height:1rem;transform:rotate(180deg);color:var(--ink-soft)"><use href="#i-chev"/></svg><div class="name" id="positions-title">Open Positions</div></div></div>
     <div class="scroll section-pad" style="padding-top:0.3rem;" id="positions-body"></div>
 </section>
 </div>
 
-<script src="js/data.js?v=22"></script>
-<script src="js/render.js?v=22"></script>
-<script src="js/app.js?v=22"></script>
+<script src="js/data.js?v=34"></script>
+<script src="js/render.js?v=38"></script>
+<script src="js/app.js?v=37"></script>
 </body>
 </html>

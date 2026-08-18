@@ -4,10 +4,9 @@
 
 (function () {
   var SCREENS = ['cover', 'picker', 'connect', 'credentials', 'download', 'mapping',
-    'home', 'skill-detail', 'chart-review', 'matches', 'match-detail', 'training', 'profile', 'positions'];
+    'home', 'skill-detail', 'review', 'chart-review', 'match-detail', 'training', 'profile', 'positions'];
 
   var selectedPersona = PERSONAS[0];
-  var matchesFanfarePlayed = false;
   var chartReviewDone = false;
   var chartReviewStep = 0;
   var navStack = [];
@@ -43,14 +42,15 @@
         });
         if (nextBtn) nextBtn.style.display = '';
       });
-    } else if (id === 'matches' && !matchesFanfarePlayed) {
-      matchesFanfarePlayed = true;
-      playMatchesFanfare();
+    } else if (id === 'home') {
+      animateMatchRingsIn(document.getElementById('home-content'));
     } else if (id === 'skill-detail') {
       renderSkillDetail(selectedPersona, STORY[selectedPersona.id], chartReviewDone);
+    } else if (id === 'review') {
+      renderReviewTab(STORY[selectedPersona.id].skillDetail.name, chartReviewDone);
     } else if (id === 'chart-review') {
       chartReviewStep = 0;
-      renderChartReviewStep(chartReviewStep);
+      renderChartReviewIntro();
     }
   }
 
@@ -58,9 +58,11 @@
   function renderPicker() {
     var mount = document.getElementById('persona-list');
     if (!mount) return;
+    var revealCls = reduceMotion ? '' : ' reveal-row';
     mount.innerHTML = PERSONAS.map(function (p, i) {
+      var delay = reduceMotion ? '' : ' style="animation-delay:' + (i * 0.08).toFixed(2) + 's"';
       return '' +
-        '<div class="persona-card' + (i === 0 ? ' selected' : '') + '" data-pid="' + p.id + '">' +
+        '<div class="persona-card' + (i === 0 ? ' selected' : '') + revealCls + '" data-pid="' + p.id + '"' + delay + '>' +
           '<div class="avatar" style="background:' + p.avatarBg + '"><img src="' + p.avatar + '" alt="' + p.name + '" /></div>' +
           '<div><div class="persona-name">' + p.name + '</div>' +
             '<div class="persona-role">' + p.role + ' &middot; ' + p.tenure + '</div>' +
@@ -74,7 +76,6 @@
     var picked = PERSONAS.filter(function (p) { return p.id === pid; })[0];
     if (!picked) return;
     selectedPersona = picked;
-    matchesFanfarePlayed = false;
     chartReviewDone = false;
     chartReviewStep = 0;
     var mount = document.getElementById('persona-list');
@@ -100,7 +101,13 @@
     var card = e.target.closest('.persona-card');
     if (card) {
       selectPersona(card.dataset.pid);
-      setTimeout(function () { showScreen('connect'); }, 800);
+      var continueBtn = document.getElementById('picker-continue-btn');
+      if (continueBtn) continueBtn.classList.remove('pending');
+      return;
+    }
+
+    if (e.target.closest('#picker-continue-btn')) {
+      if (!e.target.closest('#picker-continue-btn').classList.contains('pending')) showScreen('connect');
       return;
     }
 
@@ -120,10 +127,19 @@
     if (checkRow) { checkRow.classList.toggle('checked'); return; }
 
     if (e.target.closest('#home-view-all-skills')) { showScreen('skill-detail'); return; }
-    if (e.target.closest('#home-see-matches')) { showScreen('matches'); return; }
+    if (e.target.closest('#home-next-review')) { showScreen('review'); return; }
     if (e.target.closest('.skill-row')) { showScreen('skill-detail'); return; }
+    if (e.target.closest('#skilldetail-next-review')) { showScreen('review'); return; }
+    if (e.target.closest('#skilldetail-back-home')) { showScreen('home', { skipHistory: true }); return; }
 
     if (e.target.closest('#strengthen-evidence-btn')) { showScreen('chart-review'); return; }
+    if (e.target.closest('#review-view-evidence-btn')) { showScreen('skill-detail'); return; }
+
+    if (e.target.closest('#chart-review-start-btn')) {
+      chartReviewStep = 0;
+      renderChartReviewStep(chartReviewStep);
+      return;
+    }
 
     var reviewChoice = e.target.closest('[data-review-choice]');
     if (reviewChoice) {
@@ -133,10 +149,16 @@
       return;
     }
 
-    if (e.target.closest('#chart-review-back-btn')) { showScreen('skill-detail', { skipHistory: true }); return; }
+    if (e.target.closest('#chart-review-back-btn')) { showScreen('review', { skipHistory: true }); return; }
 
     var openPositions = e.target.closest('[data-open-positions]');
-    if (openPositions) { showScreen('positions'); return; }
+    if (openPositions) {
+      var matchIdx = Number(openPositions.dataset.openPositions);
+      var match = STORY[selectedPersona.id].matches[matchIdx];
+      if (match && match.positions) renderPositions(match.title, match.positions);
+      showScreen('positions');
+      return;
+    }
 
     var matchCard = e.target.closest('.match-card');
     if (matchCard) { showScreen('match-detail'); return; }
