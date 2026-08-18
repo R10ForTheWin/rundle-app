@@ -135,7 +135,9 @@ function playLoginTypewriter() {
     typeInto(loginUser, 'Demo Login', 110, function () {
       if (caretUser) caretUser.style.display = 'none';
       setTimeout(function () {
-        typeInto(loginPass, '•••••••••••••', 110, function () {
+        var funPassword = 'PartylikeKramer!';
+        var maskedPassword = funPassword[0] + '•'.repeat(funPassword.length - 1);
+        typeInto(loginPass, maskedPassword, 110, function () {
           if (caretPass) caretPass.style.display = 'none';
           status.textContent = 'Tap Log in to connect to AHIMA.';
         });
