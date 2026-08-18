@@ -90,6 +90,14 @@
       radial-gradient(50rem 26rem at 100% 8%, color-mix(in srgb, var(--amber) 12%, transparent), transparent 65%),
       var(--page-bg);
   }
+  /* Desktop: the phone frame stays a fixed-width card, but the page around
+     it fills with a full-bleed render instead of empty margins. On an
+     actual phone the viewport is already narrower than #app's max-width, so
+     #app fills the screen edge-to-edge on its own — no separate mobile rule
+     needed. */
+  @media (min-width: 40rem) {
+    body { background: url('../assets/img/bg-desktop.png') center/cover no-repeat; }
+  }
   h1, h2, h3, .display {
     font-family: 'Fraunces', ui-sans-serif, system-ui, sans-serif;
     text-wrap: balance;
@@ -693,6 +701,13 @@
     box-shadow: 0 0.3rem 0.6rem rgba(0,0,0,.3); cursor: pointer;
     transition: transform 0.15s ease, opacity 0.2s ease;
   }
+  /* #map-dynamic holds everything renderMap() injects (header, button,
+     .map-scroll, footer). .map-scroll's flex:1/min-height:0 (which is what
+     actually lets it scroll instead of just growing to fit the full chip
+     list and getting clipped by .map-panel's overflow:hidden) only takes
+     effect if ITS direct parent is a flex container — #map-dynamic had no
+     rule at all, so it silently never scrolled. */
+  #map-dynamic { display: flex; flex-direction: column; flex: 1; min-height: 0; gap: 1.15rem; }
   .map-match-btn svg { width: 0.95rem; height: 0.95rem; }
   .map-match-btn.done { background: linear-gradient(135deg, var(--good), #1F4A3C); cursor: pointer; }
   .map-scroll { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; margin: 0 -0.3rem; padding: 0 0.3rem; }
