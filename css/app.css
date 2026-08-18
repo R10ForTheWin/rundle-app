@@ -97,6 +97,9 @@
      needed. */
   @media (min-width: 40rem) {
     body { background: url('../assets/img/bg-desktop.png') center/cover no-repeat; }
+    #app {
+      box-shadow: 0 0 7rem 3.5rem rgba(111,151,126,0.6), 0 2rem 5rem -1.5rem hsl(var(--shadow-color) / 0.35);
+    }
   }
   h1, h2, h3, .display {
     font-family: 'Fraunces', ui-sans-serif, system-ui, sans-serif;
@@ -118,7 +121,7 @@
     transform: translateX(-50%);
     width: 100%;
     max-width: 30rem;
-    background: url('../assets/img/bg-light.jpg?v=2') center/cover no-repeat, var(--bg);
+    background: url('../assets/img/bg-cover.png?v=2') center/cover no-repeat, var(--bg);
     color: var(--ink);
     display: flex;
     flex-direction: column;
