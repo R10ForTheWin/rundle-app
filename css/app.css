@@ -561,14 +561,14 @@
   }
   .src-head { padding: 0.4rem 0.55rem; color: #fff; display: flex; align-items: center; gap: 0.45rem; }
   .src-head .mark {
-    width: 2.5rem; height: 2.5rem; border-radius: 0.5rem; flex: none;
+    width: 3.6rem; height: 3.6rem; border-radius: 0.6rem; flex: none;
     background: rgba(255,255,255,0.18);
     display: flex; align-items: center; justify-content: center;
     font-family: 'Sora'; font-weight: 700; font-size: 0.55rem; letter-spacing: -0.01em;
   }
   .src-head .mark.img { background: #fff; border-radius: 999px; overflow: hidden; padding: 0.15rem; }
   .src-head .mark.img img { width: 100%; height: 100%; object-fit: contain; display: block; }
-  .src-head .mark.wide { width: 4.4rem; border-radius: 0.5rem; padding: 0.35rem 0.4rem; }
+  .src-head .mark.wide { width: 6.2rem; border-radius: 0.6rem; padding: 0.45rem 0.5rem; }
   .src-head .org { font-weight: 700; font-size: 0.66rem; letter-spacing: 0.01em; }
   .src-head .sub { font-size: 0.53rem; opacity: 0.88; margin-top: 0.05rem; line-height: 1.3; }
   .src-body { padding: 0.5rem 0.55rem; color: #1C1C1A; font-size: 0.6rem; line-height: 1.5; }

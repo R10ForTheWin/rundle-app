@@ -8,9 +8,9 @@ var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-moti
 // Source-document builders (Downloading screen)
 // ============================================================
 var sources = [
+  { key: 'cos', url: 'careeronestop.org/.../find-certifications.aspx', label: 'CareerOneStop' },
   { key: 'onet', url: 'onetonline.org/link/summary/29-2072.00', label: 'O·NET OnLine' },
   { key: 'bls', url: 'bls.gov/oes/current/oes292072.htm', label: 'U.S. Bureau of Labor Statistics' },
-  { key: 'cos', url: 'careeronestop.org/.../find-certifications.aspx', label: 'CareerOneStop' },
   { key: 'ahima', url: 'ahima.org/certification/verify', label: 'AHIMA' }
 ];
 
