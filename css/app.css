@@ -97,19 +97,16 @@
      needed. */
   @media (min-width: 40rem) {
     body { background: url('../assets/img/bg-desktop.png') center/cover no-repeat; }
-    #app { position: fixed; z-index: 1; }
-    /* Only the cover screen is actually dark-green like the desktop backdrop
-       — every other screen is deliberately light, so it shouldn't try to
-       blend the same way. app.js toggles this class only while the cover
-       screen is active. A blurred duplicate of the cover's own background,
-       sized past #app's edges, feathers the transition without touching
-       #app's own overflow:hidden content box. */
-    body.cover-active::before {
-      content: ''; position: fixed; top: -4rem; bottom: -4rem; left: 50%;
-      transform: translateX(-50%); width: calc(30rem + 8rem);
-      background: url('../assets/img/bg-cover.png?v=2') center/cover no-repeat;
-      filter: blur(3rem); z-index: 0;
-    }
+    /* Only the cover screen is meant to be one continuous 16:9 image behind
+       everything — every other screen is deliberately light and keeps its
+       own card look. app.js toggles body.cover-active only while the cover
+       screen is showing. Rather than layering a second (portrait) cover
+       image inside #app and trying to blend the seam between two different
+       crops, just make #app and .cover-screen transparent here so body's
+       single landscape image shows through uninterrupted underneath the
+       content — there's no seam because there's only one image. */
+    body.cover-active #app { background: transparent; box-shadow: none; }
+    body.cover-active .cover-screen { background: transparent; }
   }
   h1, h2, h3, .display {
     font-family: 'Fraunces', ui-sans-serif, system-ui, sans-serif;
