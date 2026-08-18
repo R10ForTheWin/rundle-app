@@ -106,6 +106,7 @@
        single landscape image shows through uninterrupted underneath the
        content — there's no seam because there's only one image. */
     body.cover-active #app { background: transparent; box-shadow: none; }
+    body.cover-active #screen-cover { background: transparent; }
     body.cover-active .cover-screen { background: transparent; }
   }
   h1, h2, h3, .display {
