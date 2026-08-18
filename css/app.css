@@ -96,17 +96,16 @@
      #app fills the screen edge-to-edge on its own — no separate mobile rule
      needed. */
   @media (min-width: 40rem) {
-    /* Every other screen is deliberately light. Every photographic/textured
-       image tried for these margins has shown a visible seam at its edges
-       (cover-scaled crops never quite tile invisibly) — a flat gradient
-       can't do that since it isn't an image being cropped, it just renders
-       live at whatever size, so there's nothing to seam. */
-    body {
-      background:
-        radial-gradient(70rem 40rem at 15% 0%, color-mix(in srgb, var(--ochre) 10%, transparent), transparent 70%),
-        radial-gradient(60rem 34rem at 100% 8%, color-mix(in srgb, var(--amber) 9%, transparent), transparent 65%),
-        var(--page-bg);
-    }
+    /* Every other screen is deliberately light. The earlier seam wasn't
+       about the image family being wrong — #app's own background
+       (bg-light.jpg) is already this same seafoam style, just a portrait
+       crop. #app and body share the same height but different widths;
+       cover-fitting a *portrait* image into a narrow-tall column vs. a
+       wide-short margin zooms it very differently between the two, which is
+       what actually read as a seam. A landscape crop scales far more
+       consistently across both, so use the same landscape image for both. */
+    body { background: url('../assets/img/bg-desktop-light.png') center/cover no-repeat; }
+    body:not(.cover-active) #app { background: url('../assets/img/bg-desktop-light.png') center/cover no-repeat; }
     /* Only the cover screen is meant to be one continuous dark-green 16:9
        image behind everything. app.js toggles body.cover-active only while
        the cover screen is showing. Rather than layering a second (portrait)
