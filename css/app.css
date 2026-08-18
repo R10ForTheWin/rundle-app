@@ -96,10 +96,17 @@
      #app fills the screen edge-to-edge on its own — no separate mobile rule
      needed. */
   @media (min-width: 40rem) {
-    /* Every other screen is deliberately light, so its desktop margins get
-       the light seafoam backdrop — a light card floating on a dark green
-       margin (the old default) read as mismatched. */
-    body { background: url('../assets/img/bg-desktop-light.png') center/cover no-repeat; }
+    /* Every other screen is deliberately light. Every photographic/textured
+       image tried for these margins has shown a visible seam at its edges
+       (cover-scaled crops never quite tile invisibly) — a flat gradient
+       can't do that since it isn't an image being cropped, it just renders
+       live at whatever size, so there's nothing to seam. */
+    body {
+      background:
+        radial-gradient(70rem 40rem at 15% 0%, color-mix(in srgb, var(--ochre) 10%, transparent), transparent 70%),
+        radial-gradient(60rem 34rem at 100% 8%, color-mix(in srgb, var(--amber) 9%, transparent), transparent 65%),
+        var(--page-bg);
+    }
     /* Only the cover screen is meant to be one continuous dark-green 16:9
        image behind everything. app.js toggles body.cover-active only while
        the cover screen is showing. Rather than layering a second (portrait)
