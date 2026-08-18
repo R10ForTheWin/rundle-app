@@ -297,7 +297,7 @@ function renderReviewTab(skillName, reviewDone) {
   }
   el.innerHTML =
     '<div class="matches-empty-note" style="padding:0 1.1rem 0.9rem;">' +
-      '<img class="matches-empty-avatar" src="assets/img/rudy-note.png?v=2" alt="Rudy" />' +
+      '<img class="matches-empty-avatar" src="assets/img/rudy-note.png?v=3" alt="Rudy" />' +
       '<div class="matches-empty-bubble"><p>A few charts, your read on them — that&rsquo;s it. No score, no clock.</p></div>' +
     '</div>' +
     '<div class="card strengthen-card" style="margin:0 1.1rem;">' +
@@ -638,7 +638,7 @@ function renderHome(p, story) {
     '<div class="card-title-row" style="margin:1.1rem 0 0.5rem;"><span class="card-title ready-card-title">Matches</span><span class="count-chip">' + story.matches.length + '</span></div>' +
     matchRows +
     '<div class="matches-empty-note">' +
-      '<img class="matches-empty-avatar" src="assets/img/rudy-note.png?v=2" alt="Rudy" />' +
+      '<img class="matches-empty-avatar" src="assets/img/rudy-note.png?v=3" alt="Rudy" />' +
       '<div class="matches-empty-bubble"><p>More roles will show up here as you verify more skills.</p></div>' +
     '</div>' +
     '<div class="card strengthen-card" style="margin-top:0.7rem;"><div class="card-title-row"><span class="card-title">What&rsquo;s next</span></div>' +
