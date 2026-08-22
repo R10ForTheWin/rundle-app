@@ -39,7 +39,7 @@
       playDownload(selectedPersona, function () {
         renderAll(selectedPersona);
         renderMap(selectedPersona, STORY[selectedPersona.id], function () {
-          showScreen('home', { skipHistory: true });
+          showScreen('module-demo', { skipHistory: true });
         });
         if (nextBtn) nextBtn.style.display = '';
       });
@@ -133,6 +133,7 @@
     if (e.target.closest('#home-next-review')) { showScreen('review'); return; }
     if (e.target.closest('#home-module-demo')) { showScreen('module-demo'); return; }
     if (e.target.closest('#module-demo-replay')) { renderModuleDemo(); return; }
+    if (e.target.closest('#module-demo-continue')) { showScreen('home', { skipHistory: true }); return; }
     if (e.target.closest('.skill-row')) { showScreen('skill-detail'); return; }
     if (e.target.closest('#skilldetail-next-review')) { showScreen('review'); return; }
     if (e.target.closest('#skilldetail-back-home')) { showScreen('home', { skipHistory: true }); return; }

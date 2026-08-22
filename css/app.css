@@ -978,35 +978,66 @@
   @keyframes demoReveal { from { opacity: 0; transform: translateY(0.6rem); } to { opacity: 1; transform: translateY(0); } }
   .demo-reveal { opacity: 0; animation: demoReveal 0.5s cubic-bezier(.22,.8,.32,1) forwards; }
 
+  /* code correction (old struck through, new revealed) — delay set per-instance inline */
   .demo-code-wrap { display: flex; flex-direction: column; gap: 0.15rem; margin-top: 0.15rem; }
-  .demo-code-old {
-    font-weight: 600; color: var(--ink-soft);
-    animation: demoStrike 0.3s ease 1.5s forwards;
-  }
+  .demo-code-old { font-weight: 600; color: var(--ink-soft); animation: demoStrike 0.3s ease forwards; }
   @keyframes demoStrike { to { text-decoration: line-through; opacity: 0.55; } }
-  .demo-code-new {
-    font-weight: 600; color: var(--good); opacity: 0;
-    animation: demoReveal 0.4s cubic-bezier(.22,.8,.32,1) 1.6s forwards;
+  .demo-code-new { font-weight: 600; color: var(--good); opacity: 0; animation: demoReveal 0.4s cubic-bezier(.22,.8,.32,1) forwards; }
+
+  /* a missing code being added — ghost placeholder crossfades into the real code, stacked so no layout jump */
+  .demo-code-stack { position: relative; min-height: 1.2rem; margin-top: 0.15rem; }
+  .demo-code-ghost {
+    position: absolute; left: 0; top: 0; display: inline-flex; align-items: center; gap: 0.3rem;
+    font-weight: 600; color: var(--ink-soft); border: 1.5px dashed var(--line); border-radius: 0.4rem;
+    padding: 0.15rem 0.5rem; font-size: 0.72rem;
+    animation: demoFadeOutAbs 0.3s ease forwards;
+  }
+  @keyframes demoFadeOutAbs { to { opacity: 0; } }
+  .demo-code-added {
+    position: absolute; left: 0; top: 0; font-weight: 600; color: var(--good); opacity: 0;
+    animation: demoReveal 0.4s cubic-bezier(.22,.8,.32,1) forwards;
   }
 
-  .demo-cursor {
-    width: 0.6rem; height: 0.6rem; border-radius: 999px; background: var(--ochre); flex: none; margin-top: 0.2rem;
-    opacity: 0; animation: demoCursor 1.3s ease forwards;
+  /* the moving cursor + click ripple — position/timing set per-instance inline via CSS custom properties */
+  .chart-card { position: relative; }
+  .demo-pointer {
+    position: absolute; width: 0; height: 0; z-index: 5; opacity: 0; pointer-events: none;
+    border-left: 0.55rem solid transparent; border-right: 0.12rem solid transparent; border-top: 0.75rem solid var(--ochre);
+    transform-origin: 8% 8%; filter: drop-shadow(0 0.1rem 0.12rem rgba(0,0,0,.35));
+    left: var(--dp-x0, 80%); top: var(--dp-y0, 10%);
+    animation: demoPointerMove 1s ease-in-out forwards;
   }
-  @keyframes demoCursor {
-    0% { opacity: 0; transform: scale(0.4); }
-    15% { opacity: 1; transform: scale(1.3); }
-    30% { transform: scale(1); }
-    45% { transform: scale(1.3); }
-    60% { transform: scale(1); }
-    85% { opacity: 1; }
-    100% { opacity: 0; }
+  @keyframes demoPointerMove {
+    0% { opacity: 0; left: var(--dp-x0, 80%); top: var(--dp-y0, 10%); transform: scale(0.8); }
+    18% { opacity: 1; transform: scale(1); }
+    50% { left: var(--dp-x1, 65%); top: var(--dp-y1, 45%); transform: scale(1); }
+    60% { transform: scale(0.72); }
+    70% { transform: scale(1); }
+    90% { opacity: 1; left: var(--dp-x1, 65%); top: var(--dp-y1, 45%); }
+    100% { opacity: 0; left: var(--dp-x1, 65%); top: var(--dp-y1, 45%); }
   }
+  .demo-pointer.two-stop { animation-name: demoPointerMove2; animation-duration: 1.3s; }
+  @keyframes demoPointerMove2 {
+    0% { opacity: 0; left: var(--dp-x0, 80%); top: var(--dp-y0, 10%); transform: scale(0.8); }
+    14% { opacity: 1; transform: scale(1); }
+    38% { left: var(--dp-x1, 65%); top: var(--dp-y1, 35%); transform: scale(0.72); }
+    46% { transform: scale(1); }
+    68% { left: var(--dp-x2, 65%); top: var(--dp-y2, 58%); transform: scale(1); }
+    78% { transform: scale(0.72); }
+    88% { transform: scale(1); }
+    100% { opacity: 0; left: var(--dp-x2, 65%); top: var(--dp-y2, 58%); }
+  }
+  .demo-click-ring {
+    position: absolute; width: 0.1rem; height: 0.1rem; border-radius: 999px;
+    border: 1.5px solid var(--ochre); left: var(--dp-x1, 65%); top: var(--dp-y1, 45%); opacity: 0; z-index: 4;
+    animation: demoClickRing 0.5s ease forwards;
+  }
+  @keyframes demoClickRing { 0% { opacity: 0.8; width: 0.1rem; height: 0.1rem; } 100% { opacity: 0; width: 1.6rem; height: 1.6rem; margin: -0.8rem; } }
 
   .demo-drg {
     display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; font-size: 0.72rem; font-weight: 600;
     padding: 0.6rem 0.85rem; border-top: 1px solid var(--line);
-    opacity: 0; animation: demoDrgIn 0.4s ease 1.75s forwards;
+    opacity: 0; animation: demoDrgIn 0.4s ease forwards;
   }
   @keyframes demoDrgIn { to { opacity: 1; } }
   .demo-drg-old { color: var(--ink-soft); text-decoration: line-through; }
@@ -1014,7 +1045,7 @@
   .demo-drg-new {
     color: var(--sienna); background: color-mix(in srgb, var(--ochre) 14%, transparent);
     padding: 0.15rem 0.45rem; border-radius: 0.4rem;
-    animation: demoFlash 0.6s ease 1.85s;
+    animation: demoFlash 0.6s ease;
   }
   @keyframes demoFlash { 0%, 100% { background: color-mix(in srgb, var(--ochre) 14%, transparent); } 40% { background: color-mix(in srgb, var(--ochre) 45%, transparent); } }
 
@@ -1032,12 +1063,19 @@
   }
 
   .demo-summary { opacity: 0; animation: demoReveal 0.5s cubic-bezier(.22,.8,.32,1) forwards; margin-bottom: 1rem; }
+  .demo-continue-cta {
+    display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+    background: linear-gradient(135deg, #5FA38C, var(--good)); color: #fff; font-weight: 600; font-size: 0.8rem;
+    padding: 0.65rem; border-radius: 0.75rem; cursor: pointer; margin-top: 0.6rem;
+  }
+  .demo-continue-cta svg { width: 0.85rem; height: 0.85rem; flex: none; }
 
   @media (prefers-reduced-motion: reduce) {
-    .demo-reveal, .demo-code-old, .demo-code-new, .demo-cursor, .demo-drg, .demo-drg-new,
-    .demo-explain, .demo-impact, .demo-confirm, .demo-summary, .demo-dot {
+    .demo-reveal, .demo-code-old, .demo-code-new, .demo-code-ghost, .demo-code-added, .demo-pointer,
+    .demo-click-ring, .demo-drg, .demo-drg-new, .demo-explain, .demo-impact, .demo-confirm, .demo-summary, .demo-dot {
       animation: none !important; opacity: 1 !important; transform: none !important;
     }
-    .demo-cursor { display: none; }
+    .demo-pointer, .demo-click-ring { display: none; }
     .demo-code-old { text-decoration: line-through; opacity: 0.55; }
+    .demo-code-ghost { display: none; }
   }

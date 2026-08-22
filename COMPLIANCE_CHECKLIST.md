@@ -155,17 +155,24 @@ this session; findings folded in below.
   period. Worth raising this specific nuance at the 8/22 call, not just noting the objection as handled.
   Module 2 also tracks a real rubric behind the scenes (over-flagging counts against the worker, visible
   flag/accept counts) even with no live score shown — good detail if/when this gets built.
-- [x] **Built a presentation-safe stand-in (2026-08-21):** new screen `module-demo`
-  (`js/render.js` `renderModuleDemo()`, entry point on Home's "What's next" card — "▶ See the
-  AI-assisted audit in action") — an auto-playing, ~5s animated walkthrough of Module 2, not an
-  interactive assessment. Two synthetic charts in plain English (no real ICD-10 judgment required to
-  follow): one where the AI's draft is wrong and gets corrected (DRG updates, dollar-impact badge), one
-  where the AI is already right and gets confirmed instead of "fixed" (demonstrates the false-positive/
-  over-correction dimension from Hailey's report). A persistent "⏩ DEMO — accelerated, not real
-  assessment speed" ribbon stays on screen throughout, and a Replay button resets it. **This does not
-  resolve the Module 1-2 hackability objection** — there's no real scoring or answer key here, so
-  nothing to game; it exists so DJ has something to click through live in front of classmates who can't
-  evaluate real coding judgment calls. Don't mistake this for the real module being built.
+- [x] **Built a presentation-safe stand-in, then repositioned + expanded (2026-08-21):** new screen
+  `module-demo` (`js/render.js` `renderModuleDemo()`) — an auto-playing, ~9s animated walkthrough of
+  Module 2, not an interactive assessment. Originally an optional link off Home's "What's next" card;
+  **moved into the onboarding sequence itself** (`js/app.js`, `download`→`mapping`→`module-demo`→`home`,
+  matching Hailey's real flow where an assessment step sits between skills being established and results
+  appearing on Main/Home) — it now auto-plays once right after Mapping, with a "See your matches" button
+  advancing to Home when done (the "What's next" card link still exists too, for an optional rewatch).
+  Expanded from 2 to **4 synthetic charts**, still plain English, now covering all four real audit moves
+  from Hailey's report (Exhibit 3): correcting a wrong code (DRG updates, dollar-impact badge),
+  confirming a right one (false-positive/over-correction dimension), **adding a missed secondary
+  diagnosis**, and **fixing a sequencing error**. Added a real moving cursor (CSS-animated position +
+  click-ripple per interaction, not just a pulsing dot) traveling to each chart's action point, including
+  a two-stop version for the sequencing chart. Persistent "⏩ DEMO — accelerated" ribbon and Replay
+  button retained. **Still does not resolve the Module 1-2 hackability objection** — no real scoring or
+  answer key, nothing to game. Don't mistake this for the real module being built.
+  **Follow-up noted, not yet done:** Home currently still shows Verified Skills and Matches combined on
+  one screen (per DJ, keep this for now) — Hailey's flow has them as genuinely separate screens
+  (assessment results land on a distinct Main/Dashboard). Revisit if a fuller split is wanted later.
 
 ## New concepts spotted in the real screens, not yet built (low priority, log only)
 

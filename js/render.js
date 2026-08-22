@@ -290,49 +290,94 @@ var CHART_REVIEW_SUMMARY = CHART_REVIEW_CHARTS.length + ' flagged charts reviewe
 function renderModuleDemo() {
   var el = document.getElementById('module-demo-body');
   if (!el) return;
+  function pointer(delay, x0, y0, x1, y1) {
+    return '<div class="demo-pointer" style="animation-delay:' + delay + 's;--dp-x0:' + x0 + '%;--dp-y0:' + y0 + '%;--dp-x1:' + x1 + '%;--dp-y1:' + y1 + '%;"></div>' +
+           '<div class="demo-click-ring" style="animation-delay:' + (delay + 0.5) + 's;--dp-x1:' + x1 + '%;--dp-y1:' + y1 + '%;"></div>';
+  }
+  function pointer2(delay, x0, y0, x1, y1, x2, y2) {
+    return '<div class="demo-pointer two-stop" style="animation-delay:' + delay + 's;--dp-x0:' + x0 + '%;--dp-y0:' + y0 + '%;--dp-x1:' + x1 + '%;--dp-y1:' + y1 + '%;--dp-x2:' + x2 + '%;--dp-y2:' + y2 + '%;"></div>' +
+           '<div class="demo-click-ring" style="animation-delay:' + (delay + 0.49) + 's;--dp-x1:' + x1 + '%;--dp-y1:' + y1 + '%;"></div>' +
+           '<div class="demo-click-ring" style="animation-delay:' + (delay + 0.89) + 's;--dp-x1:' + x2 + '%;--dp-y1:' + y2 + '%;"></div>';
+  }
   el.innerHTML =
     '<div class="chart-review-scroll" style="padding-top:0.9rem;">' +
       '<div class="demo-ribbon">⏩ DEMO &mdash; accelerated for presentation, not real assessment speed</div>' +
       '<div class="progress-row">' +
-        '<div class="progress-dot demo-dot" style="animation-delay:1.6s"></div>' +
-        '<div class="progress-dot demo-dot" style="animation-delay:3.7s"></div>' +
+        '<div class="progress-dot demo-dot" style="animation-delay:1.9s"></div>' +
+        '<div class="progress-dot demo-dot" style="animation-delay:3.8s"></div>' +
+        '<div class="progress-dot demo-dot" style="animation-delay:5.8s"></div>' +
+        '<div class="progress-dot demo-dot" style="animation-delay:8.0s"></div>' +
         '<span class="progress-label">Module 2 &middot; AI-assisted audit</span>' +
       '</div>' +
 
+      // Chart 1 — AI drafted the wrong code; worker corrects it, DRG updates.
       '<div class="chart-card demo-reveal" style="animation-delay:0.1s">' +
         '<div class="chart-head"><div><div class="id">Synthetic chart &middot; Pneumonia</div><div class="type">Inpatient &middot; 4-day stay</div></div><span class="flag-chip">AI draft</span></div>' +
         '<div class="code-row flagged">' +
           '<div><div class="label">Principal diagnosis</div>' +
             '<div class="code demo-code-wrap">' +
-              '<span class="demo-code-old mono">J18.9 &middot; Pneumonia, unspecified organism</span>' +
-              '<span class="demo-code-new mono">J15.1 &middot; Pneumonia due to Pseudomonas</span>' +
+              '<span class="demo-code-old mono" style="animation-delay:1.1s">J18.9 &middot; Pneumonia, unspecified organism</span>' +
+              '<span class="demo-code-new mono" style="animation-delay:1.2s">J15.1 &middot; Pneumonia due to Pseudomonas</span>' +
             '</div>' +
           '</div>' +
-          '<div class="demo-cursor" style="animation-delay:0.9s"></div>' +
+          pointer(0.5, 85, 6, 68, 42) +
         '</div>' +
-        '<div class="demo-drg">' +
+        '<div class="demo-drg" style="animation-delay:1.35s">' +
           '<span class="demo-drg-old">DRG 179 &middot; Simple pneumonia</span>' +
           '<span class="demo-drg-arrow">&rarr;</span>' +
-          '<span class="demo-drg-new">DRG 177 &middot; Pneumonia w/ major complication</span>' +
+          '<span class="demo-drg-new" style="animation-delay:1.45s">DRG 177 &middot; Pneumonia w/ major complication</span>' +
         '</div>' +
-        '<div class="prompt-box demo-explain" style="animation-delay:1.9s">Physician&rsquo;s note names the organism &mdash; the AI&rsquo;s draft missed it. That one detail changes the DRG. <span class="demo-impact" style="animation-delay:2.1s">+$1,850 case value</span></div>' +
+        '<div class="prompt-box demo-explain" style="animation-delay:1.55s">Physician&rsquo;s note names the organism &mdash; the AI&rsquo;s draft missed it. That one detail changes the DRG. <span class="demo-impact" style="animation-delay:1.75s">+$1,850 case value</span></div>' +
       '</div>' +
 
-      '<div class="chart-card demo-reveal" style="animation-delay:2.6s">' +
+      // Chart 2 — AI's code was already right; worker confirms instead of "fixing" it.
+      '<div class="chart-card demo-reveal" style="animation-delay:2.3s">' +
         '<div class="chart-head"><div><div class="id">Synthetic chart &middot; Post-op infection</div><div class="type">Inpatient &middot; 2-day stay</div></div><span class="flag-chip">AI draft</span></div>' +
         '<div class="code-row flagged">' +
           '<div><div class="label">Principal diagnosis</div><div class="code mono">T81.4XXA &middot; Infection following a procedure</div></div>' +
-          '<div class="demo-confirm" style="animation-delay:3.4s">&#10003; Confirmed</div>' +
+          pointer(2.7, 85, 6, 70, 40) +
+          '<div class="demo-confirm" style="animation-delay:3.3s">&#10003; Confirmed</div>' +
         '</div>' +
-        '<div class="prompt-box demo-explain" style="animation-delay:3.8s">AI got this one right. Confirming instead of &ldquo;fixing&rdquo; it keeps the false-positive rate down &mdash; over-correcting counts against a worker too.</div>' +
+        '<div class="prompt-box demo-explain" style="animation-delay:3.5s">AI got this one right. Confirming instead of &ldquo;fixing&rdquo; it keeps the false-positive rate down &mdash; over-correcting counts against a worker too.</div>' +
       '</div>' +
 
-      '<div class="demo-summary demo-reveal" style="animation-delay:4.6s">' +
+      // Chart 3 — AI missed a secondary diagnosis entirely; worker adds it.
+      '<div class="chart-card demo-reveal" style="animation-delay:4.1s">' +
+        '<div class="chart-head"><div><div class="id">Synthetic chart &middot; Hip fracture</div><div class="type">Inpatient &middot; 5-day stay</div></div><span class="flag-chip">AI draft</span></div>' +
+        '<div class="code-row flagged">' +
+          '<div><div class="label">Secondary diagnosis</div>' +
+            '<div class="demo-code-stack">' +
+              '<span class="demo-code-ghost" style="animation-delay:5.1s">+ Add missing diagnosis?</span>' +
+              '<span class="demo-code-added mono" style="animation-delay:5.2s">N17.9 &middot; Acute kidney injury</span>' +
+            '</div>' +
+          '</div>' +
+          pointer(4.5, 85, 6, 65, 48) +
+        '</div>' +
+        '<div class="prompt-box demo-explain" style="animation-delay:5.4s">Labs showed reduced kidney function the AI didn&rsquo;t code for. A missed secondary diagnosis undercounts how complex the case really was. <span class="demo-impact" style="animation-delay:5.6s">+$980 case value</span></div>' +
+      '</div>' +
+
+      // Chart 4 — AI had the right codes but the wrong sequence; worker reorders.
+      '<div class="chart-card demo-reveal" style="animation-delay:6.1s">' +
+        '<div class="chart-head"><div><div class="id">Synthetic chart &middot; Sepsis</div><div class="type">Inpatient &middot; 3-day stay</div></div><span class="flag-chip">AI draft</span></div>' +
+        '<div class="code-row flagged">' +
+          '<div><div class="label">Diagnosis sequence</div>' +
+            '<div class="code demo-code-wrap">' +
+              '<span class="demo-code-old mono" style="animation-delay:7.5s">1&#41; T81.4XXA infection &middot; 2&#41; A41.9 sepsis</span>' +
+              '<span class="demo-code-new mono" style="animation-delay:7.6s">1&#41; A41.9 sepsis &middot; 2&#41; T81.4XXA infection</span>' +
+            '</div>' +
+          '</div>' +
+          pointer2(6.5, 85, 6, 30, 38, 30, 52) +
+        '</div>' +
+        '<div class="prompt-box demo-explain" style="animation-delay:7.8s">AI had the right two codes but listed them in the wrong order. Sequencing decides which condition drives the DRG &mdash; order matters as much as the code itself.</div>' +
+      '</div>' +
+
+      '<div class="demo-summary demo-reveal" style="animation-delay:8.6s">' +
         '<div class="evidence-preview">' +
           '<span class="tag"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>Session complete</span>' +
-          '<div class="line">2 charts reviewed &middot; 1 correction caught &middot; 1 confirmed &middot; nothing counts until this session is flipped to scored</div>' +
+          '<div class="line">4 charts reviewed &middot; 3 corrections caught &middot; 1 confirmed &middot; nothing counts until this session is flipped to scored</div>' +
         '</div>' +
-        '<div class="back-cta" id="module-demo-replay" style="margin-top:0.7rem;">&#8635; Replay demo</div>' +
+        '<div class="demo-continue-cta" id="module-demo-continue">See your matches <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>' +
+        '<div class="back-cta" id="module-demo-replay">&#8635; Replay demo</div>' +
       '</div>' +
     '</div>';
 }
