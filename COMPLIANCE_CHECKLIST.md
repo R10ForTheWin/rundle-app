@@ -155,6 +155,17 @@ this session; findings folded in below.
   period. Worth raising this specific nuance at the 8/22 call, not just noting the objection as handled.
   Module 2 also tracks a real rubric behind the scenes (over-flagging counts against the worker, visible
   flag/accept counts) even with no live score shown — good detail if/when this gets built.
+- [x] **Built a presentation-safe stand-in (2026-08-21):** new screen `module-demo`
+  (`js/render.js` `renderModuleDemo()`, entry point on Home's "What's next" card — "▶ See the
+  AI-assisted audit in action") — an auto-playing, ~5s animated walkthrough of Module 2, not an
+  interactive assessment. Two synthetic charts in plain English (no real ICD-10 judgment required to
+  follow): one where the AI's draft is wrong and gets corrected (DRG updates, dollar-impact badge), one
+  where the AI is already right and gets confirmed instead of "fixed" (demonstrates the false-positive/
+  over-correction dimension from Hailey's report). A persistent "⏩ DEMO — accelerated, not real
+  assessment speed" ribbon stays on screen throughout, and a Replay button resets it. **This does not
+  resolve the Module 1-2 hackability objection** — there's no real scoring or answer key here, so
+  nothing to game; it exists so DJ has something to click through live in front of classmates who can't
+  evaluate real coding judgment calls. Don't mistake this for the real module being built.
 
 ## New concepts spotted in the real screens, not yet built (low priority, log only)
 

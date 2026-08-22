@@ -280,6 +280,63 @@ var CHART_REVIEW_CHARTS = [
 ];
 var CHART_REVIEW_SUMMARY = CHART_REVIEW_CHARTS.length + ' flagged charts reviewed · 1 real gap caught · Aug 2026';
 
+// ============================================================
+// Module 2 demo (AI-assisted audit) — an accelerated, auto-playing
+// walkthrough for presentation audiences, not the real graded module.
+// Pure CSS keyframes with baked-in animation-delay do the "auto-play";
+// renderModuleDemo() just rebuilds the markup fresh, which is how Replay
+// resets the sequence (a re-used element wouldn't restart its animation).
+// ============================================================
+function renderModuleDemo() {
+  var el = document.getElementById('module-demo-body');
+  if (!el) return;
+  el.innerHTML =
+    '<div class="chart-review-scroll" style="padding-top:0.9rem;">' +
+      '<div class="demo-ribbon">⏩ DEMO &mdash; accelerated for presentation, not real assessment speed</div>' +
+      '<div class="progress-row">' +
+        '<div class="progress-dot demo-dot" style="animation-delay:1.6s"></div>' +
+        '<div class="progress-dot demo-dot" style="animation-delay:3.7s"></div>' +
+        '<span class="progress-label">Module 2 &middot; AI-assisted audit</span>' +
+      '</div>' +
+
+      '<div class="chart-card demo-reveal" style="animation-delay:0.1s">' +
+        '<div class="chart-head"><div><div class="id">Synthetic chart &middot; Pneumonia</div><div class="type">Inpatient &middot; 4-day stay</div></div><span class="flag-chip">AI draft</span></div>' +
+        '<div class="code-row flagged">' +
+          '<div><div class="label">Principal diagnosis</div>' +
+            '<div class="code demo-code-wrap">' +
+              '<span class="demo-code-old mono">J18.9 &middot; Pneumonia, unspecified organism</span>' +
+              '<span class="demo-code-new mono">J15.1 &middot; Pneumonia due to Pseudomonas</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="demo-cursor" style="animation-delay:0.9s"></div>' +
+        '</div>' +
+        '<div class="demo-drg">' +
+          '<span class="demo-drg-old">DRG 179 &middot; Simple pneumonia</span>' +
+          '<span class="demo-drg-arrow">&rarr;</span>' +
+          '<span class="demo-drg-new">DRG 177 &middot; Pneumonia w/ major complication</span>' +
+        '</div>' +
+        '<div class="prompt-box demo-explain" style="animation-delay:1.9s">Physician&rsquo;s note names the organism &mdash; the AI&rsquo;s draft missed it. That one detail changes the DRG. <span class="demo-impact" style="animation-delay:2.1s">+$1,850 case value</span></div>' +
+      '</div>' +
+
+      '<div class="chart-card demo-reveal" style="animation-delay:2.6s">' +
+        '<div class="chart-head"><div><div class="id">Synthetic chart &middot; Post-op infection</div><div class="type">Inpatient &middot; 2-day stay</div></div><span class="flag-chip">AI draft</span></div>' +
+        '<div class="code-row flagged">' +
+          '<div><div class="label">Principal diagnosis</div><div class="code mono">T81.4XXA &middot; Infection following a procedure</div></div>' +
+          '<div class="demo-confirm" style="animation-delay:3.4s">&#10003; Confirmed</div>' +
+        '</div>' +
+        '<div class="prompt-box demo-explain" style="animation-delay:3.8s">AI got this one right. Confirming instead of &ldquo;fixing&rdquo; it keeps the false-positive rate down &mdash; over-correcting counts against a worker too.</div>' +
+      '</div>' +
+
+      '<div class="demo-summary demo-reveal" style="animation-delay:4.6s">' +
+        '<div class="evidence-preview">' +
+          '<span class="tag"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>Session complete</span>' +
+          '<div class="line">2 charts reviewed &middot; 1 correction caught &middot; 1 confirmed &middot; nothing counts until this session is flipped to scored</div>' +
+        '</div>' +
+        '<div class="back-cta" id="module-demo-replay" style="margin-top:0.7rem;">&#8635; Replay demo</div>' +
+      '</div>' +
+    '</div>';
+}
+
 function renderReviewTab(skillName, reviewDone) {
   var el = document.getElementById('review-body');
   if (!el) return;
@@ -651,6 +708,7 @@ function renderHome(p, story) {
     '<div class="card strengthen-card" style="margin-top:0.7rem;"><div class="card-title-row"><span class="card-title">What&rsquo;s next</span></div>' +
       '<p>Strengthen your evidence with a quick, untimed chart review, or check Training to close a skill gap.</p>' +
       '<div class="strengthen-cta" id="home-next-review">Go to Review <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>' +
+      '<div class="demo-cta" id="home-module-demo">▶ See the AI-assisted audit in action <span class="demo-cta-tag">demo</span></div>' +
     '</div>';
   // Rings stay at --fit:0 here — animateMatchRingsIn() sweeps them once the
   // screen is actually visible; bumping while display:none has no paint to

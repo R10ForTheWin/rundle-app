@@ -955,3 +955,89 @@
     color: var(--good); margin-bottom: 0.3rem;
   }
   .review-info-value { font-size: 0.78rem; color: var(--ink); line-height: 1.55; }
+
+  /* ---------- Module 2 demo (accelerated, auto-playing) ---------- */
+  .demo-cta {
+    display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+    margin-top: 0.5rem; background: var(--surface-raised); border: 1.5px dashed color-mix(in srgb, var(--ochre) 55%, var(--line));
+    color: var(--sienna); font-weight: 600; font-size: 0.76rem; padding: 0.55rem; border-radius: 0.7rem; cursor: pointer;
+  }
+  .demo-cta-tag {
+    font-size: 0.58rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em;
+    background: color-mix(in srgb, var(--ochre) 18%, transparent); color: var(--sienna);
+    padding: 0.1rem 0.4rem; border-radius: 999px;
+  }
+  .demo-ribbon {
+    font-size: 0.68rem; font-weight: 700; color: var(--sienna); text-align: center;
+    background: color-mix(in srgb, var(--ochre) 12%, var(--surface-raised));
+    border: 1px dashed color-mix(in srgb, var(--ochre) 45%, transparent);
+    border-radius: 0.7rem; padding: 0.5rem 0.7rem; margin-bottom: 0.8rem;
+  }
+  @keyframes demoDotOn { to { background: var(--good); } }
+  .demo-dot { animation: demoDotOn 0.3s ease forwards; }
+  @keyframes demoReveal { from { opacity: 0; transform: translateY(0.6rem); } to { opacity: 1; transform: translateY(0); } }
+  .demo-reveal { opacity: 0; animation: demoReveal 0.5s cubic-bezier(.22,.8,.32,1) forwards; }
+
+  .demo-code-wrap { display: flex; flex-direction: column; gap: 0.15rem; margin-top: 0.15rem; }
+  .demo-code-old {
+    font-weight: 600; color: var(--ink-soft);
+    animation: demoStrike 0.3s ease 1.5s forwards;
+  }
+  @keyframes demoStrike { to { text-decoration: line-through; opacity: 0.55; } }
+  .demo-code-new {
+    font-weight: 600; color: var(--good); opacity: 0;
+    animation: demoReveal 0.4s cubic-bezier(.22,.8,.32,1) 1.6s forwards;
+  }
+
+  .demo-cursor {
+    width: 0.6rem; height: 0.6rem; border-radius: 999px; background: var(--ochre); flex: none; margin-top: 0.2rem;
+    opacity: 0; animation: demoCursor 1.3s ease forwards;
+  }
+  @keyframes demoCursor {
+    0% { opacity: 0; transform: scale(0.4); }
+    15% { opacity: 1; transform: scale(1.3); }
+    30% { transform: scale(1); }
+    45% { transform: scale(1.3); }
+    60% { transform: scale(1); }
+    85% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  .demo-drg {
+    display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; font-size: 0.72rem; font-weight: 600;
+    padding: 0.6rem 0.85rem; border-top: 1px solid var(--line);
+    opacity: 0; animation: demoDrgIn 0.4s ease 1.75s forwards;
+  }
+  @keyframes demoDrgIn { to { opacity: 1; } }
+  .demo-drg-old { color: var(--ink-soft); text-decoration: line-through; }
+  .demo-drg-arrow { color: var(--ink-soft); }
+  .demo-drg-new {
+    color: var(--sienna); background: color-mix(in srgb, var(--ochre) 14%, transparent);
+    padding: 0.15rem 0.45rem; border-radius: 0.4rem;
+    animation: demoFlash 0.6s ease 1.85s;
+  }
+  @keyframes demoFlash { 0%, 100% { background: color-mix(in srgb, var(--ochre) 14%, transparent); } 40% { background: color-mix(in srgb, var(--ochre) 45%, transparent); } }
+
+  .demo-explain { opacity: 0; animation: demoReveal 0.45s cubic-bezier(.22,.8,.32,1) forwards; }
+  .demo-impact {
+    display: inline-block; margin-top: 0.4rem; font-size: 0.64rem; font-weight: 700; color: var(--good);
+    background: var(--good-bg); padding: 0.18rem 0.5rem; border-radius: 999px;
+    opacity: 0; animation: demoPop 0.35s cubic-bezier(.3,1.4,.5,1) forwards;
+  }
+  @keyframes demoPop { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: scale(1); } }
+
+  .demo-confirm {
+    display: flex; align-items: center; gap: 0.25rem; font-size: 0.68rem; font-weight: 700; color: var(--good);
+    flex: none; margin-top: 0.2rem; opacity: 0; animation: demoPop 0.4s cubic-bezier(.3,1.4,.5,1) forwards;
+  }
+
+  .demo-summary { opacity: 0; animation: demoReveal 0.5s cubic-bezier(.22,.8,.32,1) forwards; margin-bottom: 1rem; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .demo-reveal, .demo-code-old, .demo-code-new, .demo-cursor, .demo-drg, .demo-drg-new,
+    .demo-explain, .demo-impact, .demo-confirm, .demo-summary, .demo-dot {
+      animation: none !important; opacity: 1 !important; transform: none !important;
+    }
+    .demo-cursor { display: none; }
+    .demo-code-old { text-decoration: line-through; opacity: 0.55; }
+  }

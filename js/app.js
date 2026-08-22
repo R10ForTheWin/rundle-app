@@ -4,7 +4,7 @@
 
 (function () {
   var SCREENS = ['cover', 'picker', 'connect', 'credentials', 'download', 'mapping',
-    'home', 'skill-detail', 'review', 'chart-review', 'match-detail', 'training', 'profile', 'positions'];
+    'home', 'skill-detail', 'review', 'chart-review', 'module-demo', 'match-detail', 'training', 'profile', 'positions'];
 
   var selectedPersona = PERSONAS[0];
   var chartReviewDone = false;
@@ -52,6 +52,8 @@
     } else if (id === 'chart-review') {
       chartReviewStep = 0;
       renderChartReviewIntro();
+    } else if (id === 'module-demo') {
+      renderModuleDemo();
     }
   }
 
@@ -129,6 +131,8 @@
 
     if (e.target.closest('#home-view-all-skills')) { showScreen('skill-detail'); return; }
     if (e.target.closest('#home-next-review')) { showScreen('review'); return; }
+    if (e.target.closest('#home-module-demo')) { showScreen('module-demo'); return; }
+    if (e.target.closest('#module-demo-replay')) { renderModuleDemo(); return; }
     if (e.target.closest('.skill-row')) { showScreen('skill-detail'); return; }
     if (e.target.closest('#skilldetail-next-review')) { showScreen('review'); return; }
     if (e.target.closest('#skilldetail-back-home')) { showScreen('home', { skipHistory: true }); return; }
