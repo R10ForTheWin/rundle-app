@@ -160,7 +160,7 @@ const STORY = {
         "transfer": 72.1,
         "meta": "Ready now",
         "good": true,
-        "wage": "$67,310/yr median · +$12,510 vs. today",
+        "wage": "$67,310/yr median",
         "credential": "RHIT",
         "positions": [
           {
@@ -213,7 +213,7 @@ const STORY = {
         "fit": 82,
         "transfer": 68.1,
         "meta": "Ready now",
-        "wage": "$44,200/yr median · about the same as today"
+        "wage": "$44,200/yr median"
       },
       {
         "title": "Health Services Manager",
@@ -449,7 +449,7 @@ const STORY = {
         "fit": 58,
         "transfer": 71.5,
         "meta": "Ready now",
-        "wage": "$44,090/yr median · about the same as today"
+        "wage": "$44,090/yr median"
       },
       {
         "title": "Health Services Manager",
@@ -852,7 +852,7 @@ const STORY = {
         "transfer": 71.5,
         "meta": "Ready now",
         "good": true,
-        "wage": "$44,090/yr median · –$19,810 vs. today",
+        "wage": "$44,090/yr median",
         "positions": [
           {
             "company": "Johns Hopkins Medicine",
@@ -1140,7 +1140,7 @@ const STORY = {
         "fit": 79,
         "transfer": 59.1,
         "meta": "Ready now",
-        "wage": "$47,170/yr median · about the same as today"
+        "wage": "$47,170/yr median"
       },
       {
         "title": "Clinical Documentation Improvement Specialist",

@@ -224,38 +224,68 @@ function renderEmployment(persona, story) {
   var el = document.getElementById('employment-body');
   if (!el) return;
   var providerRows = EMPLOYMENT_PROVIDERS.map(function (name, i) {
-    return '<div class="employment-provider" data-provider="' + name + '">' +
-      (i === 0 ? '<span class="ep-badge">Recommended</span>' : '') +
+    var delay = ' style="animation-delay:' + (0.06 + i * 0.05).toFixed(2) + 's"';
+    return '<div class="employment-provider reveal-row" data-provider="' + name + '"' + delay + '>' +
       '<div class="ep-name">' + name + '</div>' +
-      '<div class="ep-status"><span class="ep-spin"></span><span class="ep-check">&#10003; Connected</span></div>' +
+      '<div class="ep-radio"><span class="ep-radio-spin"></span><svg class="ep-radio-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></div>' +
       '</div>';
   }).join('');
   el.innerHTML =
-    '<div class="card"><div class="card-title-row"><span class="card-title">Connect your payroll account</span></div>' +
-      '<div class="employment-providers">' + providerRows + '</div>' +
-      '<div class="employment-hint">Don&rsquo;t see yours? We support 200 more providers.</div>' +
+    '<div class="card reveal-row" style="animation-delay:0s"><div class="card-title-row"><span class="card-title">Connect your payroll account</span></div>' +
+      '<div class="employment-providers" id="employment-providers">' + providerRows + '</div>' +
+      '<div class="employment-hint">Your employer is never contacted. 200+ providers supported.</div>' +
+      '<div class="employment-connect-cta pending" id="employment-connect-btn">Select a provider to connect</div>' +
     '</div>' +
-    '<div class="employment-or">or</div>' +
-    '<div class="card employment-upload" id="employment-upload">' +
-      '<div class="employment-upload-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M12 4 7 9M12 4l5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg></div>' +
-      '<div><div class="employment-upload-title">Upload your resume</div><div class="employment-upload-sub">PDF or DOCX &mdash; we&rsquo;ll pull your work history from it</div></div>' +
-      '<div class="ep-status"><span class="ep-spin"></span><span class="ep-check">&#10003; Extracted</span></div>' +
-    '</div>' +
-    '<div id="employment-result"></div>' +
-    '<div class="card employment-manual">' +
-      '<div><div class="employment-manual-title">Enter it manually instead</div><div class="employment-manual-sub">Shows on your transcript as self-reported, which employers weigh less.</div></div>' +
+    '<div class="employment-or reveal-row" style="animation-delay:0.3s">or</div>' +
+    '<div class="card employment-manual reveal-row" style="animation-delay:0.35s">' +
+      '<div class="employment-manual-title">Enter it manually instead</div>' +
+      '<div class="employment-manual-sub">Shows on your transcript as self-reported, which employers weigh less.</div>' +
       '<div class="employment-manual-cta" id="employment-manual-btn">Enter manually</div>' +
-    '</div>';
+      '<div class="employment-manual-divider">or</div>' +
+      '<div class="employment-upload" id="employment-upload">' +
+        '<div class="employment-upload-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M12 4 7 9M12 4l5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg></div>' +
+        '<div><div class="employment-upload-title">Upload your resume</div><div class="employment-upload-sub">PDF or DOCX &mdash; we&rsquo;ll pull your work history from it</div></div>' +
+        '<div class="ep-status"><span class="ep-spin"></span><span class="ep-check">&#10003; Extracted</span></div>' +
+      '</div>' +
+    '</div>' +
+    '<div id="employment-result"></div>';
   var continueBtn = document.getElementById('employment-continue-btn');
   if (continueBtn) continueBtn.classList.add('pending');
 }
 
+function toggleProviderSelect(tile) {
+  var wasSelected = tile.classList.contains('selected');
+  var providersEl = document.getElementById('employment-providers');
+  if (providersEl) {
+    providersEl.querySelectorAll('.employment-provider.selected').forEach(function (t) { t.classList.remove('selected'); });
+  }
+  var btn = document.getElementById('employment-connect-btn');
+  if (wasSelected) {
+    if (btn) { btn.classList.add('pending'); btn.textContent = 'Select a provider to connect'; }
+    return;
+  }
+  tile.classList.add('selected');
+  if (btn) { btn.classList.remove('pending'); btn.textContent = 'Connect to ' + tile.dataset.provider; }
+}
+
 function connectEmployment(el, sourceLabel, kind) {
   if (el.classList.contains('connecting') || el.classList.contains('connected')) return;
+  el.classList.remove('selected');
   el.classList.add('connecting');
+  var connectBtn = document.getElementById('employment-connect-btn');
+  var providersEl = document.getElementById('employment-providers');
+  if (kind === 'payroll') {
+    if (providersEl) providersEl.classList.add('locked');
+    if (connectBtn) { connectBtn.classList.add('pending'); connectBtn.textContent = 'Connecting to ' + sourceLabel + '…'; }
+  }
   setTimeout(function () {
     el.classList.remove('connecting');
     el.classList.add('connected');
+    if (kind === 'payroll' && connectBtn) {
+      connectBtn.classList.remove('pending');
+      connectBtn.classList.add('done');
+      connectBtn.textContent = 'Connected to ' + sourceLabel;
+    }
     var result = document.getElementById('employment-result');
     if (result) {
       var empStory = STORY[employmentPersona.id];
@@ -350,114 +380,155 @@ var CHART_REVIEW_CHARTS = [
 var CHART_REVIEW_SUMMARY = CHART_REVIEW_CHARTS.length + ' flagged charts reviewed · 1 real gap caught · Aug 2026';
 
 // ============================================================
-// Module 2 demo (AI-assisted audit) — an accelerated, auto-playing
-// walkthrough for presentation audiences, not the real graded module.
-// Pure CSS keyframes with baked-in animation-delay do the "auto-play";
-// renderModuleDemo() just rebuilds the markup fresh, which is how Replay
-// resets the sequence (a re-used element wouldn't restart its animation).
+// Module 2 demo (AI-assisted audit) — a click-through quiz for
+// presentation audiences, not the real graded module. Each synthetic
+// chart poses a real yes/no judgment call; the presenter (or the
+// audience, out loud) picks an answer before the reveal, so watching
+// along means actually playing along, not just watching a cursor move.
 // ============================================================
+var MODULE_DEMO_CHARTS = [
+  {
+    title: 'Synthetic chart &middot; Pneumonia', type: 'Inpatient &middot; 4-day stay',
+    label: 'Principal diagnosis',
+    aiCode: 'J18.9 &middot; Pneumonia, unspecified organism',
+    question: 'The physician&rsquo;s note names the exact organism. Does the AI&rsquo;s code capture that?',
+    choices: [{ key: 'fix', label: 'Needs a more specific code' }, { key: 'right', label: 'Already specific enough' }],
+    correct: 'fix',
+    newCode: 'J15.1 &middot; Pneumonia due to Pseudomonas',
+    drgOld: 'DRG 179 &middot; Simple pneumonia',
+    drgNew: 'DRG 177 &middot; Pneumonia w/ major complication',
+    explain: 'Physician&rsquo;s note names the organism &mdash; the AI&rsquo;s draft missed it. That one detail changes the DRG.',
+    impact: '+$1,850 case value'
+  },
+  {
+    title: 'Synthetic chart &middot; Post-op infection', type: 'Inpatient &middot; 2-day stay',
+    label: 'Principal diagnosis',
+    aiCode: 'T81.4XXA &middot; Infection following a procedure',
+    question: 'Is this code already correct, or does it need a fix?',
+    choices: [{ key: 'right', label: 'Looks right' }, { key: 'fix', label: 'Needs a fix' }],
+    correct: 'right',
+    explain: 'AI got this one right. Confirming instead of &ldquo;fixing&rdquo; it keeps the false-positive rate down &mdash; over-correcting counts against a worker too.'
+  },
+  {
+    title: 'Synthetic chart &middot; Hip fracture', type: 'Inpatient &middot; 5-day stay',
+    label: 'Secondary diagnosis',
+    aiCode: 'No secondary diagnosis coded',
+    ghost: true,
+    question: 'Labs show reduced kidney function. Did the AI capture that as a secondary diagnosis?',
+    choices: [{ key: 'fix', label: 'Something&rsquo;s missing' }, { key: 'right', label: 'Nothing missing' }],
+    correct: 'fix',
+    newCode: 'N17.9 &middot; Acute kidney injury',
+    explain: 'Labs showed reduced kidney function the AI didn&rsquo;t code for. A missed secondary diagnosis undercounts how complex the case really was.',
+    impact: '+$980 case value'
+  },
+  {
+    title: 'Synthetic chart &middot; Sepsis', type: 'Inpatient &middot; 3-day stay',
+    label: 'Diagnosis sequence',
+    aiCode: '1&#41; T81.4XXA infection &middot; 2&#41; A41.9 sepsis',
+    question: 'Which condition should be sequenced first &mdash; the infection, or the sepsis?',
+    choices: [{ key: 'infection', label: 'The infection' }, { key: 'sepsis', label: 'The sepsis' }],
+    correct: 'sepsis',
+    newCode: '1&#41; A41.9 sepsis &middot; 2&#41; T81.4XXA infection',
+    explain: 'AI had the right two codes but listed them in the wrong order. Sequencing decides which condition drives the DRG &mdash; order matters as much as the code itself.'
+  }
+];
+var moduleDemoStep = 0;
+var moduleDemoAnswer = null;
+
 function renderModuleDemo() {
+  moduleDemoStep = 0;
+  moduleDemoAnswer = null;
+  renderModuleDemoStep();
+}
+
+function answerModuleDemo(key) {
+  if (moduleDemoAnswer) return;
+  moduleDemoAnswer = key;
+  renderModuleDemoStep();
+}
+
+function advanceModuleDemo() {
+  moduleDemoStep++;
+  moduleDemoAnswer = null;
+  renderModuleDemoStep();
+}
+
+function renderModuleDemoStep() {
   var el = document.getElementById('module-demo-body');
   if (!el) return;
-  function pointer(delay, x0, y0, x1, y1) {
-    return '<div class="demo-pointer" style="animation-delay:' + delay + 's;--dp-x0:' + x0 + '%;--dp-y0:' + y0 + '%;--dp-x1:' + x1 + '%;--dp-y1:' + y1 + '%;"></div>' +
-           '<div class="demo-click-ring" style="animation-delay:' + (delay + 0.5) + 's;--dp-x1:' + x1 + '%;--dp-y1:' + y1 + '%;"></div>';
+  if (moduleDemoStep >= MODULE_DEMO_CHARTS.length) {
+    el.innerHTML =
+      '<div class="chart-review-scroll" style="padding-top:0.9rem;">' +
+        '<div class="demo-summary demo-reveal">' +
+          '<div class="evidence-preview">' +
+            '<span class="tag"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>Session complete</span>' +
+            '<div class="line">4 charts reviewed &middot; 3 corrections caught &middot; 1 confirmed &middot; nothing counts until this session is flipped to scored</div>' +
+          '</div>' +
+          '<div class="demo-continue-cta" id="module-demo-continue">See your matches <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>' +
+          '<div class="back-cta" id="module-demo-replay">&#8635; Replay demo</div>' +
+        '</div>' +
+      '</div>';
+    return;
   }
-  function pointer2(delay, x0, y0, x1, y1, x2, y2) {
-    return '<div class="demo-pointer two-stop" style="animation-delay:' + delay + 's;--dp-x0:' + x0 + '%;--dp-y0:' + y0 + '%;--dp-x1:' + x1 + '%;--dp-y1:' + y1 + '%;--dp-x2:' + x2 + '%;--dp-y2:' + y2 + '%;"></div>' +
-           '<div class="demo-click-ring" style="animation-delay:' + (delay + 0.49) + 's;--dp-x1:' + x1 + '%;--dp-y1:' + y1 + '%;"></div>' +
-           '<div class="demo-click-ring" style="animation-delay:' + (delay + 0.89) + 's;--dp-x1:' + x2 + '%;--dp-y1:' + y2 + '%;"></div>';
+
+  var chart = MODULE_DEMO_CHARTS[moduleDemoStep];
+  var dots = MODULE_DEMO_CHARTS.map(function (c, i) {
+    return '<div class="progress-dot' + (i < moduleDemoStep ? ' done' : (i === moduleDemoStep ? ' active' : '')) + '"></div>';
+  }).join('');
+  var head = '<div class="progress-row">' + dots + '<span class="progress-label">Module 2 &middot; chart ' + (moduleDemoStep + 1) + ' of ' + MODULE_DEMO_CHARTS.length + '</span></div>';
+  var chartHead = '<div class="chart-head"><span class="demo-chart-num">' + (moduleDemoStep + 1) + '</span><div><div class="id">' + chart.title + '</div><div class="type">' + chart.type + '</div></div></div>';
+
+  if (!moduleDemoAnswer) {
+    var choiceBtns = chart.choices.map(function (c) {
+      return '<div class="choice-btn" data-demo-choice="' + c.key + '">' + c.label + '</div>';
+    }).join('');
+    el.innerHTML = head +
+      '<div class="chart-review-scroll">' +
+        '<div class="demo-ribbon">&#127919; Play along &mdash; call out your answer before clicking</div>' +
+        '<div class="chart-card demo-reveal">' +
+          chartHead +
+          '<div class="code-row flagged"><div><div class="label">' + chart.label + '</div><div class="code mono">' + chart.aiCode + '</div></div></div>' +
+        '</div>' +
+        '<div class="prompt-box">' + chart.question + '</div>' +
+      '</div>' +
+      '<div class="choice-row">' + choiceBtns + '</div>';
+    return;
   }
-  el.innerHTML =
-    '<div class="chart-review-scroll" style="padding-top:0.9rem;">' +
-      '<div class="demo-ribbon">⏩ DEMO &mdash; accelerated for presentation, not real assessment speed</div>' +
-      '<div class="progress-row">' +
-        '<div class="progress-dot demo-dot" style="animation-delay:1.9s"></div>' +
-        '<div class="progress-dot demo-dot" style="animation-delay:3.8s"></div>' +
-        '<div class="progress-dot demo-dot" style="animation-delay:5.8s"></div>' +
-        '<div class="progress-dot demo-dot" style="animation-delay:8.0s"></div>' +
-        '<span class="progress-label">Module 2 &middot; AI-assisted audit</span>' +
-      '</div>' +
 
-      // Chart 1 — AI drafted the wrong code; worker corrects it, DRG updates.
-      '<div class="chart-card demo-reveal" id="demo-chart-1" style="animation-delay:0.1s">' +
-        '<div class="chart-head"><span class="demo-chart-num">1</span><div><div class="id">Synthetic chart &middot; Pneumonia</div><div class="type">Inpatient &middot; 4-day stay</div></div></div>' +
-        '<div class="code-row flagged">' +
-          '<div><div class="label">Principal diagnosis</div>' +
-            '<div class="code demo-code-wrap">' +
-              '<span class="demo-code-old mono" style="animation-delay:1.1s">J18.9 &middot; Pneumonia, unspecified organism</span>' +
-              '<span class="demo-code-new mono" style="animation-delay:1.2s">J15.1 &middot; Pneumonia due to Pseudomonas</span>' +
-            '</div>' +
-          '</div>' +
-          pointer(0.5, 85, 6, 68, 42) +
-        '</div>' +
-        '<div class="demo-drg" style="animation-delay:1.35s">' +
-          '<span class="demo-drg-old">DRG 179 &middot; Simple pneumonia</span>' +
-          '<span class="demo-drg-arrow">&rarr;</span>' +
-          '<span class="demo-drg-new" style="animation-delay:1.45s">DRG 177 &middot; Pneumonia w/ major complication</span>' +
-        '</div>' +
-        '<div class="prompt-box demo-explain" style="animation-delay:1.55s">Physician&rsquo;s note names the organism &mdash; the AI&rsquo;s draft missed it. That one detail changes the DRG. <span class="demo-impact" style="animation-delay:1.75s">+$1,850 case value</span></div>' +
-      '</div>' +
+  var correct = moduleDemoAnswer === chart.correct;
+  var guessTag = '<div class="demo-guess-tag ' + (correct ? 'right' : 'wrong') + '">' +
+    (correct ? '&#10003; That&rsquo;s the finding' : 'Actual finding') + '</div>';
 
-      // Chart 2 — AI's code was already right; worker confirms instead of "fixing" it.
-      '<div class="chart-card demo-reveal" id="demo-chart-2" style="animation-delay:2.3s">' +
-        '<div class="chart-head"><span class="demo-chart-num">2</span><div><div class="id">Synthetic chart &middot; Post-op infection</div><div class="type">Inpatient &middot; 2-day stay</div></div></div>' +
-        '<div class="code-row flagged">' +
-          '<div><div class="label">Principal diagnosis</div><div class="code mono">T81.4XXA &middot; Infection following a procedure</div></div>' +
-          pointer(2.7, 85, 6, 70, 40) +
-          '<div class="demo-confirm" style="animation-delay:3.3s">&#10003; Confirmed</div>' +
-        '</div>' +
-        '<div class="prompt-box demo-explain" style="animation-delay:3.5s">AI got this one right. Confirming instead of &ldquo;fixing&rdquo; it keeps the false-positive rate down &mdash; over-correcting counts against a worker too.</div>' +
-      '</div>' +
+  var codeBlock;
+  if (chart.newCode && chart.ghost) {
+    codeBlock = '<div class="code-row flagged"><div style="flex:1;"><div class="label">' + chart.label + '</div>' +
+      '<div class="demo-code-stack">' +
+        '<span class="demo-code-ghost">' + chart.aiCode + '</span>' +
+        '<span class="demo-code-added mono" style="animation-delay:0.25s">' + chart.newCode + '</span>' +
+      '</div></div></div>';
+  } else if (chart.newCode) {
+    codeBlock = '<div class="code-row flagged"><div style="flex:1;"><div class="label">' + chart.label + '</div>' +
+      '<div class="demo-code-wrap">' +
+        '<span class="demo-code-old mono">' + chart.aiCode + '</span>' +
+        '<span class="demo-code-new mono" style="animation-delay:0.15s">' + chart.newCode + '</span>' +
+      '</div></div></div>';
+  } else {
+    codeBlock = '<div class="code-row flagged"><div><div class="label">' + chart.label + '</div><div class="code mono">' + chart.aiCode + '</div></div>' +
+      '<div class="demo-confirm">&#10003; Confirmed</div></div>';
+  }
+  var drgBlock = chart.drgOld ? '<div class="demo-drg"><span class="demo-drg-old">' + chart.drgOld + '</span><span class="demo-drg-arrow">&rarr;</span><span class="demo-drg-new" style="animation-delay:0.3s">' + chart.drgNew + '</span></div>' : '';
+  var impactTag = chart.impact ? ' <span class="demo-impact" style="animation-delay:0.4s">' + chart.impact + '</span>' : '';
+  var isLast = moduleDemoStep === MODULE_DEMO_CHARTS.length - 1;
 
-      // Chart 3 — AI missed a secondary diagnosis entirely; worker adds it.
-      '<div class="chart-card demo-reveal" id="demo-chart-3" style="animation-delay:4.1s">' +
-        '<div class="chart-head"><span class="demo-chart-num">3</span><div><div class="id">Synthetic chart &middot; Hip fracture</div><div class="type">Inpatient &middot; 5-day stay</div></div></div>' +
-        '<div class="code-row flagged">' +
-          '<div><div class="label">Secondary diagnosis</div>' +
-            '<div class="demo-code-stack">' +
-              '<span class="demo-code-ghost" style="animation-delay:5.1s">+ Add missing diagnosis?</span>' +
-              '<span class="demo-code-added mono" style="animation-delay:5.2s">N17.9 &middot; Acute kidney injury</span>' +
-            '</div>' +
-          '</div>' +
-          pointer(4.5, 85, 6, 65, 48) +
-        '</div>' +
-        '<div class="prompt-box demo-explain" style="animation-delay:5.4s">Labs showed reduced kidney function the AI didn&rsquo;t code for. A missed secondary diagnosis undercounts how complex the case really was. <span class="demo-impact" style="animation-delay:5.6s">+$980 case value</span></div>' +
-      '</div>' +
-
-      // Chart 4 — AI had the right codes but the wrong sequence; worker reorders.
-      '<div class="chart-card demo-reveal" id="demo-chart-4" style="animation-delay:6.1s">' +
-        '<div class="chart-head"><span class="demo-chart-num">4</span><div><div class="id">Synthetic chart &middot; Sepsis</div><div class="type">Inpatient &middot; 3-day stay</div></div></div>' +
-        '<div class="code-row flagged">' +
-          '<div><div class="label">Diagnosis sequence</div>' +
-            '<div class="code demo-code-wrap">' +
-              '<span class="demo-code-old mono" style="animation-delay:7.5s">1&#41; T81.4XXA infection &middot; 2&#41; A41.9 sepsis</span>' +
-              '<span class="demo-code-new mono" style="animation-delay:7.6s">1&#41; A41.9 sepsis &middot; 2&#41; T81.4XXA infection</span>' +
-            '</div>' +
-          '</div>' +
-          pointer2(6.5, 85, 6, 30, 38, 30, 52) +
-        '</div>' +
-        '<div class="prompt-box demo-explain" style="animation-delay:7.8s">AI had the right two codes but listed them in the wrong order. Sequencing decides which condition drives the DRG &mdash; order matters as much as the code itself.</div>' +
-      '</div>' +
-
-      '<div class="demo-summary demo-reveal" id="demo-summary" style="animation-delay:8.6s">' +
-        '<div class="evidence-preview">' +
-          '<span class="tag"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>Session complete</span>' +
-          '<div class="line">4 charts reviewed &middot; 3 corrections caught &middot; 1 confirmed &middot; nothing counts until this session is flipped to scored</div>' +
-        '</div>' +
-        '<div class="demo-continue-cta" id="module-demo-continue">See your matches <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>' +
-        '<div class="back-cta" id="module-demo-replay">&#8635; Replay demo</div>' +
-      '</div>' +
+  el.innerHTML = head +
+    '<div class="chart-review-scroll">' +
+      '<div class="chart-card demo-reveal">' + chartHead + codeBlock + drgBlock + '</div>' +
+      guessTag +
+      '<div class="prompt-box demo-explain">' + chart.explain + impactTag + '</div>' +
+    '</div>' +
+    '<div class="choice-row">' +
+      '<div class="strengthen-cta" id="module-demo-next" style="flex:1;">' + (isLast ? 'Finish' : 'Next chart') + ' <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>' +
     '</div>';
-
-  // Auto-scroll to keep pace with the animation, so a presenter never has
-  // to touch the trackpad mid-demo.
-  [['demo-chart-1', 0.15], ['demo-chart-2', 2.35], ['demo-chart-3', 4.15], ['demo-chart-4', 6.15], ['demo-summary', 8.65]].forEach(function (pair) {
-    setTimeout(function () {
-      var target = document.getElementById(pair[0]);
-      if (target) target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
-    }, pair[1] * 1000);
-  });
 }
 
 function renderReviewTab(skillName, reviewDone) {
@@ -550,7 +621,7 @@ function renderChartReviewStep(step) {
 function renderIdentity(mountId, p) {
   var el = document.getElementById(mountId);
   if (!el) return;
-  el.innerHTML = '<div class="avatar" style="background:' + p.avatarBg + '"><img src="' + p.avatar + '" alt="' + p.name + '" /></div><div><div class="name">' + p.name + '</div><div class="role">' + p.role + '</div></div>';
+  el.innerHTML = '<div class="avatar" style="background:' + p.avatarBg + '"><img src="' + p.avatar + '" alt="' + p.name + '" /></div><div><div class="name">' + p.name + '</div></div>';
 }
 
 var MAP_COLORS = ['#C6741E', '#2F6B57', '#A24E20', '#D8994A', '#6B4A2A', '#3E7CA6', '#8B5FA3', '#4F8C6B'];
@@ -817,7 +888,6 @@ function renderHome(p, story) {
     '</div>' +
     '<div class="card strengthen-card" style="margin-top:0.7rem;"><div class="card-title-row"><span class="card-title">What&rsquo;s next</span></div>' +
       '<p>Check Training to close a skill gap and open up more matches.</p>' +
-      '<div class="demo-cta" id="home-module-demo">▶ See the AI-assisted audit in action <span class="demo-cta-tag">demo</span></div>' +
     '</div>';
   // Rings stay at --fit:0 here — animateMatchRingsIn() sweeps them once the
   // screen is actually visible; bumping while display:none has no paint to
@@ -1038,7 +1108,6 @@ function rungBar(pct) {
 }
 
 var AHIMA_BADGE = '<span class="org-badge"><span class="org-mark">AH</span>AHIMA</span>';
-var AHIMA_BADGE_LINK = '<span class="org-badge"><span class="org-mark">AH</span>AHIMA <svg><use href="#i-arrow"/></svg></span>';
 
 function renderTraining(p, story) {
   var el = document.getElementById('training-body');
@@ -1054,18 +1123,36 @@ function renderTraining(p, story) {
       '<div class="bar-row" style="display:flex;align-items:center;justify-content:space-between;gap:0.6rem;"><div><div style="font-size:0.72rem;">' + t.progressLabel + '</div><span class="mono" style="font-size:0.72rem;font-weight:600;">' + t.progress + '</span></div>' + rungBar(t.progressPct) + '</div>' +
       '<p style="font-size:0.68rem;color:var(--ink-soft);margin:0.5rem 0 0;">Self-paced prep track, approved by ' + AHIMA_BADGE + '</p></div>';
   }
+  var institutions = [
+    { mark: 'img', src: 'assets/img/logo-ahima.png', name: 'AHIMA', full: 'American Health Information Management Association', desc: 'RHIT, CCS &amp; CDIP credentials, CEU courses', domain: 'ahima.org', href: 'https://www.ahima.org/' },
+    { mark: 'text', text: 'AAPC', bg: 'linear-gradient(135deg,#3E7CA6,#2A5A80)', name: 'AAPC', full: 'AAPC', desc: 'CPC certifications &amp; coding practice exams', domain: 'aapc.com', href: 'https://www.aapc.com/' },
+    { mark: 'text', text: 'ACDIS', bg: 'linear-gradient(135deg,#6B8E4E,#4A6B36)', name: 'ACDIS', full: 'Association of Clinical Documentation Integrity Specialists', desc: 'CDI query-writing training &amp; CCDS exam prep', domain: 'acdis.org', href: 'https://acdis.org/' },
+    { mark: 'text', text: 'HCCA', bg: 'linear-gradient(135deg,#A24E20,#7A3A17)', name: 'HCCA', full: 'Health Care Compliance Association', desc: 'Compliance training &amp; CHC certification', domain: 'hcca-info.org', href: 'https://www.hcca-info.org/' }
+  ];
+  var instRows = institutions.map(function (inst) {
+    var mark = inst.mark === 'img'
+      ? '<span class="inst-mark inst-mark-img"><img src="' + inst.src + '" alt="" /></span>'
+      : '<span class="inst-mark" style="background:' + inst.bg + ';">' + inst.text + '</span>';
+    return '<a class="inst-row" href="' + inst.href + '" target="_blank" rel="noopener">' +
+      mark +
+      '<div class="inst-body"><div class="inst-name">' + inst.full + '</div><div class="inst-desc">' + inst.desc + '</div>' +
+        '<div class="inst-ext"><svg><use href="#i-external"/></svg>External &middot; ' + inst.domain + '</div></div>' +
+    '</a>';
+  }).join('');
+  var recRow = '<a class="inst-row inst-row-featured" href="https://www.ahima.org/" target="_blank" rel="noopener">' +
+    '<span class="inst-mark inst-mark-img"><img src="assets/img/logo-ahima.png" alt="" /></span>' +
+    '<div class="inst-body">' +
+      '<div class="inst-name-row"><span class="inst-name">' + t.recommended.name + '</span><span class="inst-rec-tag">Recommended</span></div>' +
+      '<div class="inst-desc">' + t.recommended.org + '</div>' +
+      '<div class="inst-ext"><svg><use href="#i-external"/></svg>External &middot; ahima.org <span class="inst-fund">&middot; ' + t.recommended.badge + '</span></div>' +
+    '</div>' +
+  '</a>';
   el.innerHTML = topCard +
-    '<div class="divider-label">Recommended</div>' +
-    '<a class="card" href="https://www.ahima.org/" target="_blank" rel="noopener" style="display:block;text-decoration:none;color:inherit;"><div class="provider-card"><div><div class="provider-name">' + t.recommended.name + '</div>' + AHIMA_BADGE_LINK + '</div>' +
-    '<span class="badge-fund">' + t.recommended.badge + '</span></div></a>' +
     '<div class="divider-label">Completed</div>' +
     '<div class="card"><div class="gap-item have"><svg><use href="#i-check"/></svg><div><div class="t">' + t.completed.t + '</div><div class="d">' + t.completed.d + '</div></div></div></div>' +
     '<div class="divider-label">Continue training elsewhere</div>' +
-    '<div class="card">' +
-      '<a class="link-row" href="https://www.aapc.com/" target="_blank" rel="noopener" style="align-items:center;">' +
-        '<span style="display:flex;align-items:center;gap:0.55rem;"><span style="width:1.7rem;height:1.7rem;border-radius:0.4rem;flex:none;background:linear-gradient(135deg,#3E7CA6,#2A5A80);color:#fff;font-family:\'Fraunces\';font-weight:700;font-size:0.5rem;display:flex;align-items:center;justify-content:center;letter-spacing:0.01em;">AAPC</span>AAPC certifications</span>' +
-        '<svg><use href="#i-chev"/></svg></a>' +
-    '</div>';
+    '<p class="inst-intro">These are real outside organizations, not part of Rundle &mdash; each link opens their site in a new tab.</p>' +
+    '<div class="card" style="padding:0.3rem 0.9rem;">' + recRow + instRows + '</div>';
 }
 
 function renderProfile(p, story) {

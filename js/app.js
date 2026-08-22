@@ -133,8 +133,17 @@
       return;
     }
 
-    var provider = e.target.closest('.employment-provider:not(.connected)');
-    if (provider) { connectEmployment(provider, provider.dataset.provider, 'payroll'); return; }
+    var provider = e.target.closest('.employment-provider:not(.connected):not(.connecting)');
+    if (provider) { toggleProviderSelect(provider); return; }
+
+    var connectBtn = e.target.closest('#employment-connect-btn');
+    if (connectBtn) {
+      if (!connectBtn.classList.contains('pending') && !connectBtn.classList.contains('done')) {
+        var selectedProvider = document.querySelector('.employment-provider.selected');
+        if (selectedProvider) connectEmployment(selectedProvider, selectedProvider.dataset.provider, 'payroll');
+      }
+      return;
+    }
 
     var uploadCard = e.target.closest('#employment-upload:not(.connected)');
     if (uploadCard) { connectEmployment(uploadCard, 'your resume', 'resume'); return; }
@@ -165,7 +174,9 @@
     if (e.target.closest('#verified-skills-view-all')) { showScreen('skill-detail'); return; }
     if (e.target.closest('#gateway-start-module2')) { showScreen('module-demo'); return; }
     if (e.target.closest('#home-next-review')) { showScreen('review'); return; }
-    if (e.target.closest('#home-module-demo')) { showScreen('module-demo'); return; }
+    var demoChoice = e.target.closest('[data-demo-choice]');
+    if (demoChoice) { answerModuleDemo(demoChoice.dataset.demoChoice); return; }
+    if (e.target.closest('#module-demo-next')) { advanceModuleDemo(); return; }
     if (e.target.closest('#module-demo-replay')) { renderModuleDemo(); return; }
     if (e.target.closest('#module-demo-continue')) {
       assessmentDone = true;
