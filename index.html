@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,600&display=swap" />
-<link rel="stylesheet" href="css/app.css?v=67" />
+<link rel="stylesheet" href="css/app.css?v=70" />
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute">
@@ -60,7 +60,7 @@
     </div>
     <div class="demo-banner">
       <svg><use href="#i-info"/></svg>
-      <div><div class="t">In-class demo</div><div class="d">These 5 profiles are synthetic, built for this presentation &mdash; no real people or employers. All 5 have prior work history to verify. The production version also supports workers with no record at all, verified instead through a guided simulation practicum.</div></div>
+      <div><div class="t">In-class demo</div><div class="d">Synthetic profiles, no real people or employers. Production also supports workers with no prior record, via a simulation practicum.</div></div>
     </div>
     <div class="scroll section-pad" style="padding-top:0.1rem;" id="persona-list">
       <!-- populated by script at end of page -->
@@ -101,6 +101,18 @@
     </div>
 </section>
 
+<section class="screen" id="screen-employment" data-screen="employment">
+    <div class="section-pad" style="padding-top:0.8rem;padding-bottom:0.3rem;">
+      <div class="back-btn" style="display:flex;align-items:center;gap:0.3rem;cursor:pointer;margin-bottom:0.4rem;"><svg style="width:1rem;height:1rem;transform:rotate(180deg);color:var(--ink-soft)"><use href="#i-chev"/></svg></div>
+      <div class="h-lead" style="font-size:1.1rem;">Confirm where you&rsquo;ve worked</div>
+      <p class="sub-lead">Connect your payroll, upload a resume, or enter it yourself &mdash; your employer is never contacted or notified.</p>
+    </div>
+    <div class="chart-review-scroll" id="employment-body" style="padding-top:0.5rem;"></div>
+    <div class="choice-row" style="padding-top:0.3rem;">
+      <div class="cta pending" id="employment-continue-btn">Continue</div>
+    </div>
+</section>
+
 <section class="screen" id="screen-download" data-screen="download">
     <div class="section-pad" style="padding-top:0.8rem;">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:0.6rem;">
@@ -133,15 +145,15 @@
     </div>
     <div class="scroll">
       <div class="section-pad" style="padding-top:0.2rem;">
-        <div class="h-lead">Your proven skills</div>
-        <p class="sub-lead">Verified by real work. Backed by evidence.</p>
+        <div class="h-lead">Your job matches</div>
+        <p class="sub-lead">Ranked by verified evidence, not keywords.</p>
       </div>
       <div class="section-pad" style="padding-top:0;" id="home-content"></div>
     </div>
     <div class="tabbar">
       <div class="tab active" data-target="home"><svg><use href="#i-home"/></svg>Home</div>
       <div class="tab" data-target="training"><svg><use href="#i-cap"/></svg>Training</div>
-      <div class="tab" data-target="review"><svg><use href="#i-doc"/></svg>Review</div>
+      <div class="tab" data-target="assessment-gateway"><svg><use href="#i-doc"/></svg>Assessment</div>
       <div class="tab" data-target="profile"><svg><use href="#i-user"/></svg>Profile</div>
     </div>
 </section>
@@ -160,7 +172,7 @@
     <div class="tabbar">
       <div class="tab" data-target="home"><svg><use href="#i-home"/></svg>Home</div>
       <div class="tab" data-target="training"><svg><use href="#i-cap"/></svg>Training</div>
-      <div class="tab active" data-target="review"><svg><use href="#i-doc"/></svg>Review</div>
+      <div class="tab" data-target="assessment-gateway"><svg><use href="#i-doc"/></svg>Assessment</div>
       <div class="tab" data-target="profile"><svg><use href="#i-user"/></svg>Profile</div>
     </div>
 </section>
@@ -170,9 +182,39 @@
     <div id="chart-review-body" style="flex:1;min-height:0;display:flex;flex-direction:column;"></div>
 </section>
 
+<section class="screen" id="screen-verified-skills" data-screen="verified-skills">
+    <div class="app-header">
+      <div class="identity" id="verified-skills-identity"></div>
+      <div class="bell"><svg><use href="#i-bell"/></svg><span class="dot"></span></div>
+    </div>
+    <div class="scroll">
+      <div class="section-pad" style="padding-top:0.2rem;">
+        <div class="h-lead">Your proven skills</div>
+        <p class="sub-lead" id="verified-skills-sub">Verified by real work. Backed by evidence.</p>
+      </div>
+      <div class="section-pad" style="padding-top:0;" id="verified-skills-content"></div>
+    </div>
+    <div class="section-pad" style="padding-top:0;">
+      <div class="cta" id="verified-skills-continue-btn">Continue</div>
+    </div>
+</section>
+
+<section class="screen" id="screen-assessment-gateway" data-screen="assessment-gateway">
+    <div class="section-pad" style="padding-top:0.8rem;">
+      <div class="back-btn" style="display:flex;align-items:center;gap:0.3rem;cursor:pointer;margin-bottom:0.4rem;"><svg style="width:1rem;height:1rem;transform:rotate(180deg);color:var(--ink-soft)"><use href="#i-chev"/></svg></div>
+      <div class="h-lead" style="font-size:1.1rem;">Five modules, about 2.5 hours</div>
+      <p class="sub-lead">Take them in any order and stop whenever you like. Nothing counts until you switch a session to scored, and you can retake any module as many times as you want.</p>
+    </div>
+    <div class="chart-review-scroll" id="assessment-gateway-body" style="padding-top:0.3rem;"></div>
+</section>
+
 <section class="screen" id="screen-module-demo" data-screen="module-demo">
     <div class="app-header"><div class="back-btn" data-back="home" style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;"><svg style="width:1rem;height:1rem;transform:rotate(180deg);color:var(--ink-soft)"><use href="#i-chev"/></svg><div class="name">AI-assisted audit</div></div></div>
     <div id="module-demo-body" style="flex:1;min-height:0;display:flex;flex-direction:column;"></div>
+</section>
+
+<section class="screen" id="screen-results-summary" data-screen="results-summary">
+    <div class="chart-review-scroll" id="results-summary-body" style="padding-top:1.4rem;"></div>
 </section>
 
 <section class="screen" id="screen-match-detail" data-screen="match-detail">
@@ -190,7 +232,7 @@
     <div class="tabbar">
       <div class="tab" data-target="home"><svg><use href="#i-home"/></svg>Home</div>
       <div class="tab active" data-target="training"><svg><use href="#i-cap"/></svg>Training</div>
-      <div class="tab" data-target="review"><svg><use href="#i-doc"/></svg>Review</div>
+      <div class="tab" data-target="assessment-gateway"><svg><use href="#i-doc"/></svg>Assessment</div>
       <div class="tab" data-target="profile"><svg><use href="#i-user"/></svg>Profile</div>
     </div>
 </section>
@@ -203,7 +245,7 @@
     <div class="tabbar">
       <div class="tab" data-target="home"><svg><use href="#i-home"/></svg>Home</div>
       <div class="tab" data-target="training"><svg><use href="#i-cap"/></svg>Training</div>
-      <div class="tab" data-target="review"><svg><use href="#i-doc"/></svg>Review</div>
+      <div class="tab" data-target="assessment-gateway"><svg><use href="#i-doc"/></svg>Assessment</div>
       <div class="tab active" data-target="profile"><svg><use href="#i-user"/></svg>Profile</div>
     </div>
 </section>
@@ -215,7 +257,7 @@
 </div>
 
 <script src="js/data.js?v=38"></script>
-<script src="js/render.js?v=42"></script>
-<script src="js/app.js?v=40"></script>
+<script src="js/render.js?v=45"></script>
+<script src="js/app.js?v=42"></script>
 </body>
 </html>

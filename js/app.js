@@ -3,12 +3,14 @@
 // this file decides which screen is visible and what triggers what.
 
 (function () {
-  var SCREENS = ['cover', 'picker', 'connect', 'credentials', 'download', 'mapping',
-    'home', 'skill-detail', 'review', 'chart-review', 'module-demo', 'match-detail', 'training', 'profile', 'positions'];
+  var SCREENS = ['cover', 'picker', 'connect', 'credentials', 'download', 'employment', 'verified-skills',
+    'assessment-gateway', 'module-demo', 'results-summary', 'mapping',
+    'home', 'skill-detail', 'review', 'chart-review', 'match-detail', 'training', 'profile', 'positions'];
 
   var selectedPersona = PERSONAS[0];
   var chartReviewDone = false;
   var chartReviewStep = 0;
+  var assessmentDone = false;
   var navStack = [];
 
   function showScreen(id, opts) {
@@ -38,10 +40,21 @@
       if (nextBtn) nextBtn.style.display = 'none';
       playDownload(selectedPersona, function () {
         renderAll(selectedPersona);
-        renderMap(selectedPersona, STORY[selectedPersona.id], function () {
-          showScreen('module-demo', { skipHistory: true });
-        });
         if (nextBtn) nextBtn.style.display = '';
+      });
+    } else if (id === 'employment') {
+      renderEmployment(selectedPersona, STORY[selectedPersona.id]);
+    } else if (id === 'verified-skills') {
+      renderVerifiedSkills(selectedPersona, STORY[selectedPersona.id], assessmentDone);
+    } else if (id === 'assessment-gateway') {
+      renderAssessmentGateway();
+    } else if (id === 'module-demo') {
+      renderModuleDemo();
+    } else if (id === 'results-summary') {
+      renderResultsSummary(selectedPersona, STORY[selectedPersona.id]);
+    } else if (id === 'mapping') {
+      renderMap(selectedPersona, STORY[selectedPersona.id], function () {
+        showScreen('home', { skipHistory: true });
       });
     } else if (id === 'home') {
       animateMatchRingsIn(document.getElementById('home-content'));
@@ -52,8 +65,6 @@
     } else if (id === 'chart-review') {
       chartReviewStep = 0;
       renderChartReviewIntro();
-    } else if (id === 'module-demo') {
-      renderModuleDemo();
     }
   }
 
@@ -81,6 +92,7 @@
     selectedPersona = picked;
     chartReviewDone = false;
     chartReviewStep = 0;
+    assessmentDone = false;
     var mount = document.getElementById('persona-list');
     if (mount) {
       mount.querySelectorAll('.persona-card').forEach(function (c) {
@@ -121,22 +133,49 @@
       return;
     }
 
+    var provider = e.target.closest('.employment-provider:not(.connected)');
+    if (provider) { connectEmployment(provider, provider.dataset.provider, 'payroll'); return; }
+
+    var uploadCard = e.target.closest('#employment-upload:not(.connected)');
+    if (uploadCard) { connectEmployment(uploadCard, 'your resume', 'resume'); return; }
+
+    if (e.target.closest('#employment-manual-btn')) {
+      var manualBtn = document.getElementById('employment-manual-btn');
+      if (manualBtn) unlockEmploymentContinue();
+      return;
+    }
+
+    if (e.target.closest('#employment-continue-btn')) {
+      if (!e.target.closest('#employment-continue-btn').classList.contains('pending')) showScreen('verified-skills');
+      return;
+    }
+
     if (e.target.closest('#download-next-btn')) {
-      showScreen('mapping', { skipHistory: true });
+      showScreen('employment', { skipHistory: true });
       return;
     }
 
     var checkRow = e.target.closest('.check-row');
     if (checkRow) { checkRow.classList.toggle('checked'); return; }
 
-    if (e.target.closest('#home-view-all-skills')) { showScreen('skill-detail'); return; }
+    if (e.target.closest('#verified-skills-continue-btn')) {
+      showScreen(assessmentDone ? 'mapping' : 'assessment-gateway');
+      return;
+    }
+    if (e.target.closest('#verified-skills-view-all')) { showScreen('skill-detail'); return; }
+    if (e.target.closest('#gateway-start-module2')) { showScreen('module-demo'); return; }
     if (e.target.closest('#home-next-review')) { showScreen('review'); return; }
     if (e.target.closest('#home-module-demo')) { showScreen('module-demo'); return; }
     if (e.target.closest('#module-demo-replay')) { renderModuleDemo(); return; }
-    if (e.target.closest('#module-demo-continue')) { showScreen('home', { skipHistory: true }); return; }
+    if (e.target.closest('#module-demo-continue')) {
+      assessmentDone = true;
+      showScreen('results-summary', { skipHistory: true });
+      return;
+    }
+    if (e.target.closest('#results-summary-continue')) { showScreen('verified-skills', { skipHistory: true }); return; }
     if (e.target.closest('.skill-row')) { showScreen('skill-detail'); return; }
     if (e.target.closest('#skilldetail-next-review')) { showScreen('review'); return; }
-    if (e.target.closest('#skilldetail-back-home')) { showScreen('home', { skipHistory: true }); return; }
+    if (e.target.closest('#skilldetail-back-home')) { showScreen('verified-skills', { skipHistory: true }); return; }
 
     if (e.target.closest('#strengthen-evidence-btn')) { showScreen('chart-review'); return; }
     if (e.target.closest('#review-view-evidence-btn')) { showScreen('skill-detail'); return; }

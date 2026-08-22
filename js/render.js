@@ -210,6 +210,75 @@ function flyToInbox(sourceEl) {
   }, 1650);
 }
 
+// ============================================================
+// Employment step — connect payroll, upload a resume, or enter it
+// manually. Every path is click-triggered (same interaction model as
+// the Connect-your-sources checkboxes): nothing auto-plays, the
+// worker's click is what starts the connecting -> connected animation.
+// ============================================================
+var EMPLOYMENT_PROVIDERS = ['Workday', 'ADP', 'UKG', 'Paycom'];
+var employmentPersona = null;
+
+function renderEmployment(persona, story) {
+  employmentPersona = persona;
+  var el = document.getElementById('employment-body');
+  if (!el) return;
+  var providerRows = EMPLOYMENT_PROVIDERS.map(function (name, i) {
+    return '<div class="employment-provider" data-provider="' + name + '">' +
+      (i === 0 ? '<span class="ep-badge">Recommended</span>' : '') +
+      '<div class="ep-name">' + name + '</div>' +
+      '<div class="ep-status"><span class="ep-spin"></span><span class="ep-check">&#10003; Connected</span></div>' +
+      '</div>';
+  }).join('');
+  el.innerHTML =
+    '<div class="card"><div class="card-title-row"><span class="card-title">Connect your payroll account</span></div>' +
+      '<div class="employment-providers">' + providerRows + '</div>' +
+      '<div class="employment-hint">Don&rsquo;t see yours? We support 200 more providers.</div>' +
+    '</div>' +
+    '<div class="employment-or">or</div>' +
+    '<div class="card employment-upload" id="employment-upload">' +
+      '<div class="employment-upload-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M12 4 7 9M12 4l5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg></div>' +
+      '<div><div class="employment-upload-title">Upload your resume</div><div class="employment-upload-sub">PDF or DOCX &mdash; we&rsquo;ll pull your work history from it</div></div>' +
+      '<div class="ep-status"><span class="ep-spin"></span><span class="ep-check">&#10003; Extracted</span></div>' +
+    '</div>' +
+    '<div id="employment-result"></div>' +
+    '<div class="card employment-manual">' +
+      '<div><div class="employment-manual-title">Enter it manually instead</div><div class="employment-manual-sub">Shows on your transcript as self-reported, which employers weigh less.</div></div>' +
+      '<div class="employment-manual-cta" id="employment-manual-btn">Enter manually</div>' +
+    '</div>';
+  var continueBtn = document.getElementById('employment-continue-btn');
+  if (continueBtn) continueBtn.classList.add('pending');
+}
+
+function connectEmployment(el, sourceLabel, kind) {
+  if (el.classList.contains('connecting') || el.classList.contains('connected')) return;
+  el.classList.add('connecting');
+  setTimeout(function () {
+    el.classList.remove('connecting');
+    el.classList.add('connected');
+    var result = document.getElementById('employment-result');
+    if (result) {
+      var empStory = STORY[employmentPersona.id];
+      var tl = empStory.employer.map(function (e) {
+        return '<div class="tl-item"><div class="tl-date">' + e.from + ' &mdash; ' + e.to + '</div><div class="tl-title">' + e.title + '</div><div class="tl-sub">' + e.role + '</div></div>';
+      }).join('');
+      var heading = kind === 'resume' ? 'Extracted from your resume' : 'Verified from ' + sourceLabel;
+      var trustTag = kind === 'resume' ? '<span class="trust documented">Documented</span>' : '<span class="trust employer">Employer-verified</span>';
+      result.innerHTML =
+        '<div class="card employment-result-card reveal-row">' +
+          '<div class="employment-result-head"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>' + heading + trustTag + '</div>' +
+          '<div class="timeline">' + tl + '</div>' +
+        '</div>';
+    }
+    unlockEmploymentContinue();
+  }, kind === 'resume' ? 1100 : 800);
+}
+
+function unlockEmploymentContinue() {
+  var continueBtn = document.getElementById('employment-continue-btn');
+  if (continueBtn) continueBtn.classList.remove('pending');
+}
+
 function playDownload(persona, onDone) {
   dlMount = document.getElementById('download-list');
   if (!dlMount) return;
@@ -311,8 +380,8 @@ function renderModuleDemo() {
       '</div>' +
 
       // Chart 1 — AI drafted the wrong code; worker corrects it, DRG updates.
-      '<div class="chart-card demo-reveal" style="animation-delay:0.1s">' +
-        '<div class="chart-head"><div><div class="id">Synthetic chart &middot; Pneumonia</div><div class="type">Inpatient &middot; 4-day stay</div></div><span class="flag-chip">AI draft</span></div>' +
+      '<div class="chart-card demo-reveal" id="demo-chart-1" style="animation-delay:0.1s">' +
+        '<div class="chart-head"><span class="demo-chart-num">1</span><div><div class="id">Synthetic chart &middot; Pneumonia</div><div class="type">Inpatient &middot; 4-day stay</div></div></div>' +
         '<div class="code-row flagged">' +
           '<div><div class="label">Principal diagnosis</div>' +
             '<div class="code demo-code-wrap">' +
@@ -331,8 +400,8 @@ function renderModuleDemo() {
       '</div>' +
 
       // Chart 2 — AI's code was already right; worker confirms instead of "fixing" it.
-      '<div class="chart-card demo-reveal" style="animation-delay:2.3s">' +
-        '<div class="chart-head"><div><div class="id">Synthetic chart &middot; Post-op infection</div><div class="type">Inpatient &middot; 2-day stay</div></div><span class="flag-chip">AI draft</span></div>' +
+      '<div class="chart-card demo-reveal" id="demo-chart-2" style="animation-delay:2.3s">' +
+        '<div class="chart-head"><span class="demo-chart-num">2</span><div><div class="id">Synthetic chart &middot; Post-op infection</div><div class="type">Inpatient &middot; 2-day stay</div></div></div>' +
         '<div class="code-row flagged">' +
           '<div><div class="label">Principal diagnosis</div><div class="code mono">T81.4XXA &middot; Infection following a procedure</div></div>' +
           pointer(2.7, 85, 6, 70, 40) +
@@ -342,8 +411,8 @@ function renderModuleDemo() {
       '</div>' +
 
       // Chart 3 — AI missed a secondary diagnosis entirely; worker adds it.
-      '<div class="chart-card demo-reveal" style="animation-delay:4.1s">' +
-        '<div class="chart-head"><div><div class="id">Synthetic chart &middot; Hip fracture</div><div class="type">Inpatient &middot; 5-day stay</div></div><span class="flag-chip">AI draft</span></div>' +
+      '<div class="chart-card demo-reveal" id="demo-chart-3" style="animation-delay:4.1s">' +
+        '<div class="chart-head"><span class="demo-chart-num">3</span><div><div class="id">Synthetic chart &middot; Hip fracture</div><div class="type">Inpatient &middot; 5-day stay</div></div></div>' +
         '<div class="code-row flagged">' +
           '<div><div class="label">Secondary diagnosis</div>' +
             '<div class="demo-code-stack">' +
@@ -357,8 +426,8 @@ function renderModuleDemo() {
       '</div>' +
 
       // Chart 4 — AI had the right codes but the wrong sequence; worker reorders.
-      '<div class="chart-card demo-reveal" style="animation-delay:6.1s">' +
-        '<div class="chart-head"><div><div class="id">Synthetic chart &middot; Sepsis</div><div class="type">Inpatient &middot; 3-day stay</div></div><span class="flag-chip">AI draft</span></div>' +
+      '<div class="chart-card demo-reveal" id="demo-chart-4" style="animation-delay:6.1s">' +
+        '<div class="chart-head"><span class="demo-chart-num">4</span><div><div class="id">Synthetic chart &middot; Sepsis</div><div class="type">Inpatient &middot; 3-day stay</div></div></div>' +
         '<div class="code-row flagged">' +
           '<div><div class="label">Diagnosis sequence</div>' +
             '<div class="code demo-code-wrap">' +
@@ -371,7 +440,7 @@ function renderModuleDemo() {
         '<div class="prompt-box demo-explain" style="animation-delay:7.8s">AI had the right two codes but listed them in the wrong order. Sequencing decides which condition drives the DRG &mdash; order matters as much as the code itself.</div>' +
       '</div>' +
 
-      '<div class="demo-summary demo-reveal" style="animation-delay:8.6s">' +
+      '<div class="demo-summary demo-reveal" id="demo-summary" style="animation-delay:8.6s">' +
         '<div class="evidence-preview">' +
           '<span class="tag"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>Session complete</span>' +
           '<div class="line">4 charts reviewed &middot; 3 corrections caught &middot; 1 confirmed &middot; nothing counts until this session is flipped to scored</div>' +
@@ -380,6 +449,15 @@ function renderModuleDemo() {
         '<div class="back-cta" id="module-demo-replay">&#8635; Replay demo</div>' +
       '</div>' +
     '</div>';
+
+  // Auto-scroll to keep pace with the animation, so a presenter never has
+  // to touch the trackpad mid-demo.
+  [['demo-chart-1', 0.15], ['demo-chart-2', 2.35], ['demo-chart-3', 4.15], ['demo-chart-4', 6.15], ['demo-summary', 8.65]].forEach(function (pair) {
+    setTimeout(function () {
+      var target = document.getElementById(pair[0]);
+      if (target) target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+    }, pair[1] * 1000);
+  });
 }
 
 function renderReviewTab(skillName, reviewDone) {
@@ -713,17 +791,8 @@ function renderHome(p, story) {
   var el = document.getElementById('home-content');
   if (!el) return;
   var revealCls = reduceMotion ? '' : ' reveal-row';
-  var skillRows = story.skills.map(function (s, i) {
-    var delay = reduceMotion ? '' : ' style="animation-delay:' + (0.05 + i * 0.07).toFixed(2) + 's"';
-    return '<div class="skill-row' + revealCls + '"' + delay + '><div class="skill-icon ' + s.icon + '"><svg><use href="#' + s.svg + '"/></svg></div>' +
-      '<div><div class="skill-name">' + s.name + '</div><div class="skill-evidence">' + s.evidence + '</div></div>' +
-      '<div class="skill-badges"><span class="tier ' + s.tier + '">' + tierLabel[s.tier] + '</span>' +
-      (s.trust ? '<span class="trust ' + s.trust + '">' + trustLabel[s.trust] + '</span>' : '') + '</div>' +
-      '<svg class="skill-row-arrow"><use href="#i-chev"/></svg></div>';
-  }).join('');
-  var matchesDelay = 0.15 + story.skills.length * 0.07;
   var matchRows = story.matches.map(function (m, i) {
-    var delay = matchesDelay + 0.15 + i * 0.09;
+    var delay = 0.15 + i * 0.09;
     var cardStyle = '--fit:0' + (reduceMotion ? '' : ';animation-delay:' + delay.toFixed(2) + 's');
     var topCls = i === 0 ? ' match-card-top' : '';
     return '<div class="card match-card' + topCls + revealCls + '" data-match-idx="' + i + '" data-fit="' + m.fit + '" style="' + cardStyle + '"><div class="match-scores">' +
@@ -739,25 +808,120 @@ function renderHome(p, story) {
       '</div><svg class="match-card-arrow"><use href="#i-chev"/></svg>' +
       '</div>';
   }).join('');
-  var bannerDelay = matchesDelay + 0.3 + story.matches.length * 0.09;
   el.innerHTML =
-    '<div class="card"><div class="card-title-row"><span class="card-title">Verified skills</span><span class="count-chip">' + story.skills.length + ' skills</span></div>' +
-      skillRows +
-      '<div class="link-row" id="home-view-all-skills"><span>View all skills and evidence</span><svg><use href="#i-chev"/></svg></div></div>' +
-    '<div class="card-title-row" style="margin:1.1rem 0 0.5rem;"><span class="card-title ready-card-title">Matches</span><span class="count-chip">' + story.matches.length + '</span></div>' +
+    '<div class="card-title-row"><span class="card-title ready-card-title">Matches</span><span class="count-chip">' + story.matches.length + '</span></div>' +
     matchRows +
     '<div class="matches-empty-note">' +
       '<img class="matches-empty-avatar" src="assets/img/rudy-note.png?v=3" alt="Rudy" />' +
       '<div class="matches-empty-bubble"><p>More roles will show up here as you verify more skills.</p></div>' +
     '</div>' +
     '<div class="card strengthen-card" style="margin-top:0.7rem;"><div class="card-title-row"><span class="card-title">What&rsquo;s next</span></div>' +
-      '<p>Strengthen your evidence with a quick, untimed chart review, or check Training to close a skill gap.</p>' +
-      '<div class="strengthen-cta" id="home-next-review">Go to Review <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>' +
+      '<p>Check Training to close a skill gap and open up more matches.</p>' +
       '<div class="demo-cta" id="home-module-demo">▶ See the AI-assisted audit in action <span class="demo-cta-tag">demo</span></div>' +
     '</div>';
   // Rings stay at --fit:0 here — animateMatchRingsIn() sweeps them once the
   // screen is actually visible; bumping while display:none has no paint to
   // transition from, so the fill would just snap in with no animation.
+}
+
+// ============================================================
+// Verified Skills — its own onboarding step now, shown twice: once
+// right after Download (pre-assessment), and again after the audit
+// demo (post-assessment), where it gains a new Simulation-verified
+// skill earned from that demo.
+// ============================================================
+var ASSESSMENT_SKILL_RESULT = {
+  name: 'AI-Assisted Chart Audit', icon: 'a', svg: 'i-target',
+  evidence: '4 charts reviewed &middot; 3 corrections caught &middot; 1 confirmed',
+  tier: 'advanced', trust: 'simulated'
+};
+
+function renderVerifiedSkills(p, story, assessmentDone) {
+  renderIdentity('verified-skills-identity', p);
+  var el = document.getElementById('verified-skills-content');
+  if (!el) return;
+  var sub = document.getElementById('verified-skills-sub');
+  if (sub) sub.textContent = assessmentDone ? 'Updated just now — your audit demo added a new verified skill.' : 'Verified by real work. Backed by evidence.';
+  var skills = story.skills.slice();
+  if (assessmentDone) skills.push(ASSESSMENT_SKILL_RESULT);
+  var revealCls = reduceMotion ? '' : ' reveal-row';
+  var skillRows = skills.map(function (s, i) {
+    var delay = reduceMotion ? '' : ' style="animation-delay:' + (0.05 + i * 0.07).toFixed(2) + 's"';
+    var isNew = assessmentDone && s === ASSESSMENT_SKILL_RESULT;
+    return '<div class="skill-row' + revealCls + '"' + delay + '><div class="skill-icon ' + s.icon + '"><svg><use href="#' + s.svg + '"/></svg></div>' +
+      '<div><div class="skill-name">' + s.name + (isNew ? ' <span class="skill-new-tag">New</span>' : '') + '</div><div class="skill-evidence">' + s.evidence + '</div></div>' +
+      '<div class="skill-badges"><span class="tier ' + s.tier + '">' + tierLabel[s.tier] + '</span>' +
+      (s.trust ? '<span class="trust ' + s.trust + '">' + trustLabel[s.trust] + '</span>' : '') + '</div>' +
+      '<svg class="skill-row-arrow"><use href="#i-chev"/></svg></div>';
+  }).join('');
+  el.innerHTML =
+    '<div class="card"><div class="card-title-row"><span class="card-title">Verified skills</span><span class="count-chip">' + skills.length + ' skills</span></div>' +
+      skillRows +
+      '<div class="link-row" id="verified-skills-view-all"><span>View all skills and evidence</span><svg><use href="#i-chev"/></svg></div></div>';
+  var continueBtn = document.getElementById('verified-skills-continue-btn');
+  if (continueBtn) continueBtn.textContent = assessmentDone ? 'Continue' : 'Continue to assessment';
+}
+
+// ============================================================
+// Assessment gateway — the "five modules" overview, gateway into the
+// audit demo. Only Module 2 is real (it's the built demo); the other
+// four are shown for context, not fabricated as interactive features.
+// ============================================================
+var ASSESSMENT_MODULES = [
+  { n: 1, name: 'Inpatient coding', desc: 'Code eight synthetic charts, sequence the principal diagnosis, derive the DRG.', time: '45 min', status: 'unavailable' },
+  { n: 2, name: 'AI-assisted audit', desc: 'Review charts an AI already coded. Catch what it got wrong, leave what it got right.', time: '40 min', status: 'demo', tag: 'Where you stand out' },
+  { n: 3, name: 'Physician query', desc: 'Draft a compliant, non-leading query for an ambiguous chart.', time: '25 min', status: 'unavailable' },
+  { n: 4, name: 'Compliance judgment', desc: 'Scenario items on guidelines, upcoding risk and when to escalate.', time: '20 min', status: 'unavailable' },
+  { n: 5, name: 'Working style', desc: 'A short inventory. Advisory only, reported separately, never a pass or fail.', time: '15 min', status: 'unavailable' }
+];
+
+function renderAssessmentGateway() {
+  var el = document.getElementById('assessment-gateway-body');
+  if (!el) return;
+  var rows = ASSESSMENT_MODULES.map(function (m) {
+    var isDemo = m.status === 'demo';
+    return '<div class="gw-module' + (isDemo ? ' gw-module-active' : '') + '">' +
+      '<div class="gw-num' + (isDemo ? ' gw-num-active' : '') + '">' + m.n + '</div>' +
+      '<div class="gw-body"><div class="gw-title-row"><span class="gw-name">' + m.name + '</span>' +
+        (m.tag ? '<span class="gw-tag">' + m.tag + '</span>' : '') + '</div>' +
+        '<div class="gw-desc">' + m.desc + '</div></div>' +
+      '<div class="gw-side"><div class="gw-time">' + m.time + '</div>' +
+      (isDemo ? '<div class="gw-start-btn" id="gateway-start-module2">Continue</div>' : '<div class="gw-unavailable">Not in this demo</div>') +
+      '</div></div>';
+  }).join('');
+  el.innerHTML = rows +
+    '<div class="demo-ribbon" style="margin-top:0.9rem;">&#10024; Practice mode is on &mdash; untimed, unlimited retries. Your published score is a rolling average across sessions, never one bad afternoon.</div>';
+}
+
+// ============================================================
+// Results summary — "You are verified," shown right after the audit
+// demo finishes, before returning to (an updated) Verified Skills.
+// ============================================================
+function renderResultsSummary(p, story) {
+  var el = document.getElementById('results-summary-body');
+  if (!el) return;
+  var topMatch = story.matches[0];
+  el.innerHTML =
+    '<div class="done-wrap" style="padding-top:0.5rem;">' +
+      '<div class="done-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>' +
+      '<h2>You are verified</h2>' +
+      '<p>Your transcript is live and it is yours. It stays private until you decide who can see it.</p>' +
+    '</div>' +
+    '<div class="card results-stats">' +
+      '<div class="results-stat"><div class="results-stat-label">Credentials</div><div class="results-stat-value">1 verified</div><div class="results-stat-sub">' + p.cred + ', ' + p.status + '</div></div>' +
+      '<div class="results-stat"><div class="results-stat-label">Employment</div><div class="results-stat-value">' + p.tenure + '</div><div class="results-stat-sub">Payroll confirmed</div></div>' +
+      '<div class="results-stat"><div class="results-stat-label">Records reviewed</div><div class="results-stat-value">' + story.skills.length + ' of ' + story.skills.length + '</div><div class="results-stat-sub">0 gaps disclosed</div></div>' +
+      '<div class="results-stat"><div class="results-stat-label">Assessment</div><div class="results-stat-value">' + story.sim.accuracy + '%</div><div class="results-stat-sub">Across 4 charts</div></div>' +
+      '<div class="results-cred-row"><span>Credential valid through <strong>' + p.renew + '</strong>. We will remind you when it is time to renew.</span><span class="trust employer">Simulation-verified</span></div>' +
+    '</div>' +
+    '<div class="results-teaser">' +
+      '<div><div class="results-teaser-title">You are ' + topMatch.fit + '% ready for ' + topMatch.title + '</div>' +
+      '<div class="results-teaser-sub">That role pays ' + topMatch.wage.split(' median')[0] + ', see the gap that&rsquo;s left.</div></div>' +
+      '<div class="results-teaser-pct">' + topMatch.fit + '%</div>' +
+    '</div>' +
+    '<div class="results-actions">' +
+      '<div class="cta" id="results-summary-continue" style="margin-top:0;">See my proven skills <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>' +
+    '</div>';
 }
 
 // Sweeps every ring on screen from 0 up to its real fit value (clockwise,

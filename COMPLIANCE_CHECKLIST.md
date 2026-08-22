@@ -28,6 +28,47 @@ this session; findings folded in below.
 
 ## ✅ Done
 
+- [x] **Full onboarding flow restructured to match Hailey's real sequence (2026-08-21)** — biggest
+  change of the session. Old flow was Credentials → Employment → Download → Mapping → Assessment demo →
+  Home (skills + matches combined on one screen). New flow, per DJ's explicit direction:
+  Credentials → **Download** → **Employment** (moved to after Download) → **Verified Skills** (new,
+  standalone, first showing) → **Assessment Gateway** (new — the "five modules" overview, only Module 2
+  clickable, modules 1/3/4/5 honestly labeled "Not in this demo" rather than faking scores) →
+  **Assessment demo** → **Results Summary** (new — "You are verified," matching Hailey's `09_Main`, real
+  stats pulled from persona data) → **Verified Skills again** (same screen, now includes a new
+  "AI-Assisted Chart Audit" skill tagged NEW, Simulation-verified, seeded from the demo's own results
+  text) → **Mapping** (moved to after the updated skills, not before the demo) → **Home/Job Match**
+  (now matches-only, skills card removed — title changed to "Your job matches" / "Ranked by verified
+  evidence, not keywords," reusing Hailey's own homepage copy). `renderHome` split into `renderHome`
+  (matches only) + new `renderVerifiedSkills`/`renderAssessmentGateway`/`renderResultsSummary`. Persistent
+  tab bar's "Review" tab renamed to **"Assessment"**, now pointing at the Assessment Gateway (all 4
+  tabbar copies updated); the old Review/Chart-Review screens still exist and are still reachable from
+  Skill Detail, just no longer have their own tab. Home's "What's next" card lost its now-redundant "Go
+  to Review" CTA (assessment already happens earlier in the flow) — copy simplified to point at Training
+  only, demo-replay link kept. Verified live end-to-end for Renee Castillo, zero broken transitions.
+  Investigated whether Training overlaps with the new Assessment tab — it doesn't: Training is real
+  external CEU/credential-renewal content (links out to ahima.org/aapc.com, grounded in Hailey's ACEP
+  credential-rail plan), Assessment is Rundle's own in-app mechanic. Left Training unchanged.
+
+- [x] **Employment step built for real (2026-08-21)** — new screen `employment` inserted into onboarding
+  (`Credentials` → `Employment` → `Download` → ... ). Three paths, matching Hailey's `05_Employment`
+  screen: connect a payroll provider (Workday/ADP/UKG/Paycom — click-triggered connecting → connected
+  animation, same interaction model as the Connect-your-sources checkboxes, not an auto-play), upload a
+  resume (DJ's addition — parses into work history, tagged "Documented" trust tier, distinct from
+  payroll's "Employer-verified" tier), or enter manually. Reveals the persona's real `story.employer`
+  data either way. Continue button starts `pending` (reusing the Picker screen's existing pattern) and
+  unlocks once any one path completes. Verified live: connecting Workday for Renee Castillo correctly
+  revealed her real Meridian Regional Medical Center record and advanced to Download.
+- [x] **Audit demo polish (2026-08-21)** — removed the repeated "AI DRAFT" flag-chip from all 4 charts;
+  replaced it with a numbered badge (1–4) per chart; added JS-driven auto-scroll (`scrollIntoView` timed
+  to each chart's reveal delay) so a presenter never has to touch the trackpad mid-demo. Verified live —
+  scrolled cleanly through all 4 charts to the summary with zero manual input.
+- [x] **Connect-your-sources checkbox contrast fixed (2026-08-21)** — unchecked box was a pale outline
+  (`var(--line)`) with no fill, nearly invisible against the equally pale page background. Now has a
+  `var(--surface)` background, darker `var(--ink-soft)` border, and a subtle shadow.
+- [x] **In-class-demo banner shortened (2026-08-21)** — 3-sentence banner cut to 2 short clauses, same
+  substance (synthetic profiles + production supports no-record workers via practicum).
+
 - [x] **Trust tiers + transferability/readiness split** (2026-08-21) — Reviewed as standalone mockups
   first (published artifact), approved, then wired into the live app across all 5 personas. `js/data.js`:
   added `trust` field to all 19 skill rows (documented / employer-verified / simulation-verified, mapped
