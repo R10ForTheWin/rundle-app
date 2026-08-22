@@ -9,7 +9,22 @@ check them off as they land, add new ones as they're found.
 Live data source: `js/data.js` (the only file `index.html` actually loads — `data/story.json` and
 `data/personas.json` are dead/unused, see Housekeeping below).
 
+**Also authoritative:** `/Users/DJ/Documents/Claude Bots/Rundle App/OneDrive_1_8-21-2026/` — 13 real
+screen mockups Hailey shared 2026-08-21 (`01_Homepage` through `13_PracticumLesson`). Reviewed in full
+this session; findings folded in below.
+
 ---
+
+## ⚠️ Needs a check with Hailey before acting
+
+- [ ] **"Coding Auditor" appears 4 times across her official screens** at an identical wage ($79,500) —
+  01_Homepage ("Coding Quality Auditor," 88% match), 10_Dashboard (readiness list + jobs panel),
+  11_JobMatch ("Coding Auditor, Inpatient" — Ardent Health, 88% match, +$29,250), 12_Practicum (same
+  $79,500 in the wage table). The identical wage every time means this is very likely a **real role in
+  her data model**, just not present (or differently named/coded) in the copy of `build_data.py` this
+  session worked from. **Don't silently re-add it based on a guess — ask Hailey directly whether it's a
+  real target role** before touching the app again. If confirmed real, it needs to go back in with
+  correct data, the same way the other 11 roles were added.
 
 ## ✅ Done
 
@@ -85,7 +100,11 @@ Live data source: `js/data.js` (the only file `index.html` actually loads — `d
 - [ ] **Evidence isn't time-boxed.** Per the 8/16 team call, real verification evidence is meant to be a
   time-windowed sample (e.g. last 24 months) specifically to prevent cherry-picking best-of examples —
   modeled on third-party company audits. The app's evidence strings ("3,140 charts coded · 96%
-  accuracy") don't reflect any time window or anti-cherry-pick framing.
+  accuracy") don't reflect any time window or anti-cherry-pick framing. **Now has a concrete, buildable
+  spec:** screen `06_AuditChecklist` shows a fixed audit period (e.g. Jul 2023–Jun 2025), Rundle (not the
+  worker) naming the exact quarters needed, an ISO-style completeness attestation checkbox, and missing
+  records showing as a disclosed gap rather than a silent hole — this is a real screen to build toward,
+  not just a described mechanic.
 
 ## Personas & Worker Types
 
@@ -98,10 +117,18 @@ Live data source: `js/data.js` (the only file `index.html` actually loads — `d
   "In-class demo" banner now explicitly discloses the scope gap — "All 5 have prior work history to
   verify. The production version also supports workers with no record at all, verified instead through
   a guided simulation practicum." DJ chose disclosure-in-copy over building the feature, given time
-  constraints. Revisit if there's time before the demo.
+  constraints. Revisit if there's time before the demo. **Now has a full, buildable spec:** screen
+  `03_GetStarted` is exactly this entry point — an explicit two-path picker ("I have worked in this
+  field" — 6 min setup, 2.5 hr assessment, certified in 3 days — vs. "I am new to this field / No
+  experience needed" — 3 min setup, practicum path, "certified at Level 4"), plus "Funding may be
+  available through your workforce board" (WIOA) messaging right on this screen.
 - [ ] **Priya naming collision** — app's Priya Kapoor (9 yrs, CCS, Chicago) vs. the real KB's example
   worker Priya (3 yrs, RHIT, associate's in HIM) are different people with the same name. Never
   reconciled.
+- [ ] **Same collision pattern, new instance:** screen `01_Homepage`'s sample record card is "Maya Reyes"
+  — CCS + RHIT, 7 yrs. The KB's own named example worker Maya is 5 yrs. Neither matches any of the app's
+  5 personas (each of whom holds exactly one credential, never both CCS and RHIT together). Low priority,
+  same fix pattern as Priya if it's ever addressed.
 
 ## Business Model / Funding Framing (low priority)
 
@@ -109,7 +136,10 @@ Live data source: `js/data.js` (the only file `index.html` actually loads — `d
   app. Per the 8/16 call, Hailey told the team **employers pay, full stop** — no WIOA was mentioned live,
   so this may be lower-priority than originally flagged; the WIOA framing shows up only in the v3 doc
   written the next day. Probably fine for a worker-facing demo either way — revisit only if the team
-  wants funding messaging in-app.
+  wants funding messaging in-app. **Update:** WIOA does appear twice in her actual screen mockups —
+  `03_GetStarted` ("Funding may be available through your workforce board") and `12_Practicum` (a full
+  "This may be funded... Check my eligibility" card) — so it's more settled in the real design than the
+  8/16 call alone suggested. Still only relevant once the never-employed path exists.
 
 ## Assessment Modules — intentional deferral, not a bug
 
@@ -117,6 +147,27 @@ Live data source: `js/data.js` (the only file `index.html` actually loads — `d
   live objection ("feels hackable," "IQ test") is unresolved pending the 8/22/26 team call. The current
   Chart Review screen's "no score, no fixed answer key" copy correctly reflects this. **Don't rebuild or
   re-add without checking in first.**
+- [ ] **Real design's mitigations, and why they don't fully resolve the objection:** screens
+  `07_AssessmentOverview`/`08_AssessmentModule` show untimed practice, unlimited retries, and "your
+  published score is a rolling average across sessions, never one bad afternoon." Real mitigations, but
+  the worker still chooses *when* to flip a session from practice to scored — a different flavor of the
+  same cherry-picking problem the audit path solves by having Rundle (not the worker) pick the sample
+  period. Worth raising this specific nuance at the 8/22 call, not just noting the objection as handled.
+  Module 2 also tracks a real rubric behind the scenes (over-flagging counts against the worker, visible
+  flag/accept counts) even with no live score shown — good detail if/when this gets built.
+
+## New concepts spotted in the real screens, not yet built (low priority, log only)
+
+- [ ] `10_Dashboard`: a "Your trajectory" panel showing a metric's change over time (e.g. "Coding
+  accuracy 94.1 to 97.4... measured across 30 scored sessions over six months").
+- [ ] `11_JobMatch`: role-filter chips (All roles / Ready now / One gap away / Requires Rundle) and a
+  "Close one gap, unlock 61 roles" impact panel.
+- [ ] `12_Practicum`: a human mentor-feedback panel (named mentor, dated review comment) — the KB's
+  "human review at each gate" made concrete.
+- [ ] Naming difference, not urgent: her Dashboard labels evidence with numeric "Tier 1/2/3" per O*NET
+  element rather than descriptive names like the app's new "Documented"/"Employer-verified" chips —
+  consider aligning if consistency with her screens matters more than the app's current, more readable
+  labels.
 
 ## Housekeeping
 
