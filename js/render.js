@@ -380,11 +380,12 @@ var CHART_REVIEW_CHARTS = [
 var CHART_REVIEW_SUMMARY = CHART_REVIEW_CHARTS.length + ' flagged charts reviewed · 1 real gap caught · Aug 2026';
 
 // ============================================================
-// Module 2 demo (AI-assisted audit) — a click-through quiz for
+// Module 2 demo (AI-assisted audit) — a hands-off auto-play for
 // presentation audiences, not the real graded module. Each synthetic
-// chart poses a real yes/no judgment call; the presenter (or the
-// audience, out loud) picks an answer before the reveal, so watching
-// along means actually playing along, not just watching a cursor move.
+// chart poses a real yes/no judgment call with two candidate answers;
+// a cursor visibly deliberates between them (so the audience can guess
+// along in their own head) before landing on the correct one and
+// revealing the finding. No clicking required from the presenter.
 // ============================================================
 var MODULE_DEMO_CHARTS = [
   {
@@ -434,8 +435,19 @@ var MODULE_DEMO_CHARTS = [
 ];
 var moduleDemoStep = 0;
 var moduleDemoAnswer = null;
+var moduleDemoTimers = [];
+
+function scheduleModuleDemoTimer(fn, delay) {
+  moduleDemoTimers.push(setTimeout(fn, delay));
+}
+
+function clearModuleDemoTimers() {
+  moduleDemoTimers.forEach(clearTimeout);
+  moduleDemoTimers = [];
+}
 
 function renderModuleDemo() {
+  clearModuleDemoTimers();
   moduleDemoStep = 0;
   moduleDemoAnswer = null;
   renderModuleDemoStep();
@@ -445,12 +457,56 @@ function answerModuleDemo(key) {
   if (moduleDemoAnswer) return;
   moduleDemoAnswer = key;
   renderModuleDemoStep();
+  clearModuleDemoTimers();
+  scheduleModuleDemoTimer(function () {
+    moduleDemoStep++;
+    moduleDemoAnswer = null;
+    renderModuleDemoStep();
+  }, reduceMotion ? 300 : 3200);
 }
 
-function advanceModuleDemo() {
-  moduleDemoStep++;
-  moduleDemoAnswer = null;
-  renderModuleDemoStep();
+// Moves a cursor between the two answer choices like someone weighing
+// them, then "clicks" the correct one — the audience gets to guess
+// silently while it plays out, nothing to click themselves.
+function autoPlayModuleDemoChoice(chart) {
+  var cursor = document.getElementById('module-demo-cursor');
+  var row = document.getElementById('module-demo-choices');
+  if (!cursor || !row) return;
+  var btns = row.querySelectorAll('.choice-btn');
+  if (btns.length < 2) return;
+  if (reduceMotion) { scheduleModuleDemoTimer(function () { answerModuleDemo(chart.correct); }, 200); return; }
+
+  var correctIdx = chart.choices.findIndex(function (c) { return c.key === chart.correct; });
+  var otherIdx = correctIdx === 0 ? 1 : 0;
+
+  function moveTo(idx) {
+    var btn = btns[idx];
+    var rowBox = row.getBoundingClientRect();
+    var b = btn.getBoundingClientRect();
+    cursor.style.left = (b.left - rowBox.left + b.width / 2) + 'px';
+    cursor.style.top = (b.top - rowBox.top + b.height * 0.4) + 'px';
+  }
+
+  moveTo(otherIdx);
+  cursor.classList.add('visible');
+
+  scheduleModuleDemoTimer(function () { btns[otherIdx].classList.add('considering'); }, 450);
+  scheduleModuleDemoTimer(function () {
+    btns[otherIdx].classList.remove('considering');
+    moveTo(correctIdx);
+    btns[correctIdx].classList.add('considering');
+  }, 1350);
+  scheduleModuleDemoTimer(function () {
+    btns[correctIdx].classList.remove('considering');
+    btns[correctIdx].classList.add('chosen');
+    var ring = document.createElement('div');
+    ring.className = 'demo-click-ring2';
+    ring.style.left = cursor.style.left;
+    ring.style.top = cursor.style.top;
+    row.appendChild(ring);
+    cursor.classList.remove('visible');
+  }, 2150);
+  scheduleModuleDemoTimer(function () { answerModuleDemo(chart.correct); }, 2500);
 }
 
 function renderModuleDemoStep() {
@@ -480,24 +536,23 @@ function renderModuleDemoStep() {
 
   if (!moduleDemoAnswer) {
     var choiceBtns = chart.choices.map(function (c) {
-      return '<div class="choice-btn" data-demo-choice="' + c.key + '">' + c.label + '</div>';
+      return '<div class="choice-btn">' + c.label + '</div>';
     }).join('');
     el.innerHTML = head +
       '<div class="chart-review-scroll">' +
-        '<div class="demo-ribbon">&#127919; Play along &mdash; call out your answer before clicking</div>' +
         '<div class="chart-card demo-reveal">' +
           chartHead +
           '<div class="code-row flagged"><div><div class="label">' + chart.label + '</div><div class="code mono">' + chart.aiCode + '</div></div></div>' +
         '</div>' +
         '<div class="prompt-box">' + chart.question + '</div>' +
       '</div>' +
-      '<div class="choice-row">' + choiceBtns + '</div>';
+      '<div class="choice-row" id="module-demo-choices">' + choiceBtns +
+        '<div class="demo-cursor" id="module-demo-cursor"><svg viewBox="0 0 24 24" fill="var(--sienna)" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"><path d="M4 4l7.07 17 2.51-7.39L21 11.07z"/></svg></div>' +
+      '</div>';
+    clearModuleDemoTimers();
+    scheduleModuleDemoTimer(function () { autoPlayModuleDemoChoice(chart); }, 300);
     return;
   }
-
-  var correct = moduleDemoAnswer === chart.correct;
-  var guessTag = '<div class="demo-guess-tag ' + (correct ? 'right' : 'wrong') + '">' +
-    (correct ? '&#10003; That&rsquo;s the finding' : 'Actual finding') + '</div>';
 
   var codeBlock;
   if (chart.newCode && chart.ghost) {
@@ -518,16 +573,11 @@ function renderModuleDemoStep() {
   }
   var drgBlock = chart.drgOld ? '<div class="demo-drg"><span class="demo-drg-old">' + chart.drgOld + '</span><span class="demo-drg-arrow">&rarr;</span><span class="demo-drg-new" style="animation-delay:0.3s">' + chart.drgNew + '</span></div>' : '';
   var impactTag = chart.impact ? ' <span class="demo-impact" style="animation-delay:0.4s">' + chart.impact + '</span>' : '';
-  var isLast = moduleDemoStep === MODULE_DEMO_CHARTS.length - 1;
 
   el.innerHTML = head +
     '<div class="chart-review-scroll">' +
       '<div class="chart-card demo-reveal">' + chartHead + codeBlock + drgBlock + '</div>' +
-      guessTag +
       '<div class="prompt-box demo-explain">' + chart.explain + impactTag + '</div>' +
-    '</div>' +
-    '<div class="choice-row">' +
-      '<div class="strengthen-cta" id="module-demo-next" style="flex:1;">' + (isLast ? 'Finish' : 'Next chart') + ' <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>' +
     '</div>';
 }
 

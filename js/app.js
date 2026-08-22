@@ -174,9 +174,6 @@
     if (e.target.closest('#verified-skills-view-all')) { showScreen('skill-detail'); return; }
     if (e.target.closest('#gateway-start-module2')) { showScreen('module-demo'); return; }
     if (e.target.closest('#home-next-review')) { showScreen('review'); return; }
-    var demoChoice = e.target.closest('[data-demo-choice]');
-    if (demoChoice) { answerModuleDemo(demoChoice.dataset.demoChoice); return; }
-    if (e.target.closest('#module-demo-next')) { advanceModuleDemo(); return; }
     if (e.target.closest('#module-demo-replay')) { renderModuleDemo(); return; }
     if (e.target.closest('#module-demo-continue')) {
       assessmentDone = true;
