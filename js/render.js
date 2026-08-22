@@ -245,6 +245,7 @@ function playDownload(persona, onDone) {
 // Screens 6-13
 // ============================================================
 var tierLabel = { expert: 'Expert', advanced: 'Advanced', developing: 'Developing' };
+var trustLabel = { credential: 'Credential-verified', employer: 'Employer-verified', documented: 'Documented', simulated: 'Simulation-verified' };
 
 // ============================================================
 // Chart review ("strengthen this evidence") — optional, untimed,
@@ -614,7 +615,8 @@ function renderHome(p, story) {
     var delay = reduceMotion ? '' : ' style="animation-delay:' + (0.05 + i * 0.07).toFixed(2) + 's"';
     return '<div class="skill-row' + revealCls + '"' + delay + '><div class="skill-icon ' + s.icon + '"><svg><use href="#' + s.svg + '"/></svg></div>' +
       '<div><div class="skill-name">' + s.name + '</div><div class="skill-evidence">' + s.evidence + '</div></div>' +
-      '<span class="tier ' + s.tier + '">' + tierLabel[s.tier] + '</span>' +
+      '<div class="skill-badges"><span class="tier ' + s.tier + '">' + tierLabel[s.tier] + '</span>' +
+      (s.trust ? '<span class="trust ' + s.trust + '">' + trustLabel[s.trust] + '</span>' : '') + '</div>' +
       '<svg class="skill-row-arrow"><use href="#i-chev"/></svg></div>';
   }).join('');
   var matchesDelay = 0.15 + story.skills.length * 0.07;
@@ -622,10 +624,15 @@ function renderHome(p, story) {
     var delay = matchesDelay + 0.15 + i * 0.09;
     var cardStyle = '--fit:0' + (reduceMotion ? '' : ';animation-delay:' + delay.toFixed(2) + 's');
     var topCls = i === 0 ? ' match-card-top' : '';
-    return '<div class="card match-card' + topCls + revealCls + '" data-match-idx="' + i + '" data-fit="' + m.fit + '" style="' + cardStyle + '"><div class="fit-ring"><span>' + m.fit + '%</span></div>' +
+    return '<div class="card match-card' + topCls + revealCls + '" data-match-idx="' + i + '" data-fit="' + m.fit + '" style="' + cardStyle + '"><div class="match-scores">' +
+      '<div class="fit-ring"><span>' + m.fit + '%</span></div>' +
+      (m.transfer != null ? '<div class="transfer-badge"><span>' + m.transfer + '</span><em>transfer</em></div>' : '') +
+      '</div>' +
       '<div class="match-body"><div class="match-title">' + m.title + '</div>' +
       '<div class="match-meta' + (m.good ? ' good' : '') + '">' + m.meta + '</div>' +
       (m.wage ? '<div class="match-wage">' + m.wage + '</div>' : '') +
+      (m.credential ? '<div class="match-credential">🔒 ' + m.credential + ' required</div>' : '') +
+      (m.closesAt ? '<div class="match-closes">Closes gap at → ' + m.closesAt + '</div>' : '') +
       (m.positions && m.positions.length ? '<div class="match-positions-link" data-open-positions="' + i + '">See open positions <svg><use href="#i-chev"/></svg></div>' : '') +
       '</div><svg class="match-card-arrow"><use href="#i-chev"/></svg>' +
       '</div>';

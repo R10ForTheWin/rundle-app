@@ -287,13 +287,22 @@
   .skill-icon.d { background: linear-gradient(155deg, #8A8074, var(--ink-onlight-soft) 55%, #4A4238); color: #fff; }
   .skill-name { font-size: 0.8rem; font-weight: 600; line-height: 1.2; }
   .skill-evidence { font-size: 0.68rem; color: var(--ink-soft); margin-top: 0.1rem; }
+  .skill-badges { margin-left: auto; display: flex; flex-direction: column; align-items: flex-end; gap: 0.3rem; flex: none; }
   .tier {
-    margin-left: auto; font-size: 0.65rem; font-weight: 700;
+    font-size: 0.65rem; font-weight: 700;
     padding: 0.22rem 0.5rem; border-radius: 999px; flex: none; white-space: nowrap;
   }
   .tier.expert { background: linear-gradient(155deg, #5FA38C, #2F6B57); color: #fff; }
   .tier.advanced { background: color-mix(in srgb, var(--amber) 68%, var(--surface-raised)); color: var(--ink); }
   .tier.developing { background: var(--line); color: var(--ink-soft); }
+  .trust {
+    font-size: 0.58rem; font-weight: 600; padding: 0.16rem 0.45rem; border-radius: 999px;
+    flex: none; white-space: nowrap;
+  }
+  .trust.credential { background: color-mix(in srgb, var(--ochre) 16%, var(--surface-raised)); color: var(--sienna); }
+  .trust.employer { background: var(--good-bg); color: var(--good); }
+  .trust.documented { background: color-mix(in srgb, var(--amber) 22%, var(--surface-raised)); color: #8A5A1E; }
+  .trust.simulated { background: color-mix(in srgb, var(--leaf) 22%, var(--surface-raised)); color: #3E6B2A; }
 
   .link-row {
     display: flex; align-items: center; justify-content: space-between;
@@ -364,6 +373,18 @@
 
   /* Matches list */
   .match-card { display: flex; gap: 0.7rem; align-items: flex-start; }
+  .match-scores { display: flex; flex-direction: column; align-items: center; gap: 0.35rem; flex: none; }
+  .transfer-badge {
+    display: flex; flex-direction: column; align-items: center; line-height: 1;
+    width: 2.6rem; padding: 0.2rem 0 0.3rem; border-radius: 0.6rem;
+    background: color-mix(in srgb, var(--amber) 16%, var(--surface-raised));
+    border: 1px solid color-mix(in srgb, var(--amber) 40%, transparent);
+  }
+  .transfer-badge span { font-family: 'Fraunces'; font-weight: 700; font-size: 0.62rem; color: #8A5A1E; }
+  .transfer-badge em {
+    font-style: normal; font-size: 0.44rem; font-weight: 700; letter-spacing: 0.03em;
+    text-transform: uppercase; color: #8A5A1E; opacity: 0.75; margin-top: 0.12rem;
+  }
   .match-card-top {
     border: 1.5px solid color-mix(in srgb, var(--good) 45%, transparent);
     background: linear-gradient(155deg, var(--surface-raised), color-mix(in srgb, var(--good) 6%, var(--surface-raised)));
@@ -412,6 +433,11 @@
   .match-meta { font-size: 0.68rem; color: var(--ink-soft); margin-top: 0.15rem; }
   .match-meta.good { color: var(--good); font-weight: 600; }
   .match-wage { font-size: 0.72rem; font-weight: 700; color: var(--sienna); margin-top: 0.25rem; }
+  .match-credential { font-size: 0.68rem; color: var(--ink-soft); margin-top: 0.2rem; }
+  .match-closes {
+    display: inline-block; font-size: 0.65rem; font-weight: 600; color: var(--good);
+    background: var(--good-bg); border-radius: 0.5rem; padding: 0.28rem 0.5rem; margin-top: 0.4rem;
+  }
   .match-positions-link {
     display: flex; align-items: center; gap: 0.25rem;
     font-size: 0.68rem; font-weight: 700; color: var(--good); margin-top: 0.4rem;

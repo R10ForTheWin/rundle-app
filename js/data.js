@@ -112,6 +112,7 @@ const STORY = {
         "name": "ICD-10-CM Coding",
         "evidence": "3,140 charts coded · 96% accuracy",
         "tier": "expert",
+        "trust": "documented",
         "icon": "a",
         "svg": "i-doc"
       },
@@ -119,6 +120,7 @@ const STORY = {
         "name": "ICD-10-PCS Coding",
         "evidence": "1,860 charts coded · 91% accuracy",
         "tier": "advanced",
+        "trust": "documented",
         "icon": "b",
         "svg": "i-doc"
       },
@@ -126,6 +128,7 @@ const STORY = {
         "name": "DRG Assignment",
         "evidence": "94% accuracy · 4 yrs verified tenure",
         "tier": "expert",
+        "trust": "employer",
         "icon": "a",
         "svg": "i-target"
       },
@@ -133,6 +136,7 @@ const STORY = {
         "name": "Documentation Review",
         "evidence": "89% query accuracy",
         "tier": "advanced",
+        "trust": "simulated",
         "icon": "c",
         "svg": "i-shield"
       }
@@ -153,9 +157,11 @@ const STORY = {
       {
         "title": "Health Information Technologist",
         "fit": 94,
+        "transfer": 72.1,
         "meta": "Ready now",
         "good": true,
-        "wage": "$68,020/yr median · +$16,880 vs. today",
+        "wage": "$67,310/yr median · +$12,510 vs. today",
+        "credential": "RHIT",
         "positions": [
           {
             "company": "Kaiser Permanente",
@@ -178,8 +184,11 @@ const STORY = {
       {
         "title": "Clinical Documentation Improvement Specialist",
         "fit": 88,
+        "transfer": 63.9,
+        "closesAt": "L3 · Subtle errors",
         "meta": "Ready in ~3 months · 1 skill gap",
-        "wage": "$83,000/yr median",
+        "wage": "$85,000/yr median",
+        "credential": "CCDS/CDIP",
         "positions": [
           {
             "company": "Cleveland Clinic",
@@ -200,16 +209,19 @@ const STORY = {
         ]
       },
       {
-        "title": "Coding Quality Auditor",
+        "title": "Medical Assistants",
         "fit": 82,
-        "meta": "Ready in ~6 months · audit methodology",
-        "wage": "$61,000/yr median"
+        "transfer": 68.1,
+        "meta": "Ready now",
+        "wage": "$44,200/yr median · about the same as today"
       },
       {
         "title": "Health Services Manager",
         "fit": 61,
+        "transfer": 30.2,
         "meta": "Long-term pathway",
-        "wage": "$116,000/yr median"
+        "wage": "$117,960/yr median",
+        "credential": "Bachelor's degree"
       }
     ],
     "gap": {
@@ -328,12 +340,8 @@ const STORY = {
         "Healthcare Business/Operations Analyst",
         "Medical Assistants",
         "Healthcare Compliance/Privacy Officer",
-        "Reimbursement Specialist",
-        "Utilization Review Coordinator",
-        "Medical Coding Auditor",
-        "Practice Operations Coordinator",
-        "Insurance Verification Specialist",
-        "Patient Access Coordinator"
+        "Bookkeeping, Accounting & Auditing Clerks",
+        "Data Entry Keyers"
       ]
     }
   },
@@ -359,6 +367,7 @@ const STORY = {
         "name": "ICD-10-CM Coding",
         "evidence": "640 charts coded · 88% accuracy",
         "tier": "advanced",
+        "trust": "documented",
         "icon": "a",
         "svg": "i-doc"
       },
@@ -366,6 +375,7 @@ const STORY = {
         "name": "ICD-10-PCS Coding",
         "evidence": "310 charts coded · 74% accuracy",
         "tier": "developing",
+        "trust": "documented",
         "icon": "b",
         "svg": "i-doc"
       },
@@ -373,6 +383,7 @@ const STORY = {
         "name": "DRG Assignment",
         "evidence": "81% accuracy · 1 yr verified tenure",
         "tier": "advanced",
+        "trust": "employer",
         "icon": "a",
         "svg": "i-target"
       },
@@ -380,13 +391,14 @@ const STORY = {
         "name": "Documentation Review",
         "evidence": "79% query accuracy",
         "tier": "developing",
+        "trust": "simulated",
         "icon": "c",
         "svg": "i-shield"
       }
     ],
     "ready": [
       {
-        "title": "Coding Quality Auditor",
+        "title": "Clinical Documentation Improvement Specialist",
         "fit": 68,
         "svg": "i-target"
       },
@@ -398,25 +410,28 @@ const STORY = {
     ],
     "matches": [
       {
-        "title": "Coding Quality Auditor",
+        "title": "Clinical Documentation Improvement Specialist",
         "fit": 68,
-        "meta": "Ready in ~6 months · audit methodology",
-        "wage": "$61,000/yr median",
+        "transfer": 63.9,
+        "closesAt": "L1 · Foundations",
+        "meta": "Ready in ~6 months · 1 skill gap",
+        "wage": "$85,000/yr median",
+        "credential": "CCDS/CDIP",
         "positions": [
           {
             "company": "Kaiser Permanente",
             "logoImg": "assets/img/logo-kaiser.png",
-            "role": "Coding Quality Auditor",
+            "role": "CDI Specialist",
             "location": "Remote",
-            "wage": "$58,000–$64,000/yr",
+            "wage": "$80,000–$86,000/yr",
             "posted": "5 days ago"
           },
           {
             "company": "Cedars-Sinai",
             "logoImg": "assets/img/logo-cedarssinai.png",
-            "role": "Inpatient Coding Auditor",
+            "role": "Clinical Documentation Specialist",
             "location": "Austin, TX",
-            "wage": "$56,000–$62,000/yr",
+            "wage": "$78,000–$84,000/yr",
             "posted": "2 weeks ago"
           }
         ]
@@ -424,24 +439,29 @@ const STORY = {
       {
         "title": "Health Information Technologist",
         "fit": 61,
+        "transfer": 72.1,
         "meta": "Ready in ~9 months · 2 skill gaps",
-        "wage": "$68,020/yr median"
+        "wage": "$67,310/yr median",
+        "credential": "RHIT"
       },
       {
-        "title": "Clinical Documentation Improvement Specialist",
-        "fit": 54,
-        "meta": "Long-term pathway",
-        "wage": "$83,000/yr median"
+        "title": "Medical Secretaries & Admin Assistants",
+        "fit": 58,
+        "transfer": 71.5,
+        "meta": "Ready now",
+        "wage": "$44,090/yr median · about the same as today"
       },
       {
         "title": "Health Services Manager",
         "fit": 31,
+        "transfer": 30.2,
         "meta": "Long-term pathway",
-        "wage": "$116,000/yr median"
+        "wage": "$117,960/yr median",
+        "credential": "Bachelor's degree"
       }
     ],
     "gap": {
-      "title": "Coding Quality Auditor",
+      "title": "Clinical Documentation Improvement Specialist",
       "fit": 68,
       "have": [
         {
@@ -455,7 +475,7 @@ const STORY = {
       ],
       "need": {
         "t": "ICD-10-PCS Coding proficiency",
-        "d": "Below the 85% threshold most auditor roles require"
+        "d": "Below the level most CDI roles require"
       },
       "provider": {
         "name": "ICD-10-PCS Intensive",
@@ -554,12 +574,8 @@ const STORY = {
         "Health Services Manager",
         "Healthcare Business/Operations Analyst",
         "Healthcare Compliance/Privacy Officer",
-        "Reimbursement Specialist",
-        "Utilization Review Coordinator",
-        "Medical Coding Auditor",
-        "Practice Operations Coordinator",
-        "Insurance Verification Specialist",
-        "Patient Access Coordinator"
+        "Bookkeeping, Accounting & Auditing Clerks",
+        "Data Entry Keyers"
       ]
     }
   },
@@ -585,6 +601,7 @@ const STORY = {
         "name": "ICD-10-CM Coding",
         "evidence": "180 charts coded · 71% accuracy",
         "tier": "developing",
+        "trust": "documented",
         "icon": "a",
         "svg": "i-doc"
       },
@@ -592,6 +609,7 @@ const STORY = {
         "name": "DRG Assignment",
         "evidence": "58% accuracy · <1 yr verified tenure",
         "tier": "developing",
+        "trust": "employer",
         "icon": "a",
         "svg": "i-target"
       },
@@ -599,6 +617,7 @@ const STORY = {
         "name": "Documentation Review",
         "evidence": "65% query accuracy",
         "tier": "developing",
+        "trust": "simulated",
         "icon": "c",
         "svg": "i-shield"
       }
@@ -636,10 +655,20 @@ const STORY = {
         ]
       },
       {
-        "title": "Coding Quality Auditor",
+        "title": "Healthcare Business/Operations Analyst",
         "fit": 28,
+        "transfer": 22.6,
         "meta": "Long-term pathway",
-        "wage": "$61,000/yr median"
+        "wage": "$101,190/yr median",
+        "credential": "Bachelor's degree"
+      },
+      {
+        "title": "Healthcare Compliance/Privacy Officer",
+        "fit": 22,
+        "transfer": 38.5,
+        "meta": "Long-term pathway",
+        "wage": "$75,000/yr median",
+        "credential": "CHC"
       }
     ],
     "gap": {
@@ -748,12 +777,8 @@ const STORY = {
         "Health Services Manager",
         "Healthcare Business/Operations Analyst",
         "Healthcare Compliance/Privacy Officer",
-        "Reimbursement Specialist",
-        "Utilization Review Coordinator",
-        "Medical Coding Auditor",
-        "Practice Operations Coordinator",
-        "Insurance Verification Specialist",
-        "Patient Access Coordinator"
+        "Bookkeeping, Accounting & Auditing Clerks",
+        "Data Entry Keyers"
       ]
     }
   },
@@ -779,6 +804,7 @@ const STORY = {
         "name": "ICD-10-CM Coding",
         "evidence": "8,200 charts coded · 98% accuracy",
         "tier": "expert",
+        "trust": "documented",
         "icon": "a",
         "svg": "i-doc"
       },
@@ -786,6 +812,7 @@ const STORY = {
         "name": "ICD-10-PCS Coding",
         "evidence": "5,100 charts coded · 96% accuracy",
         "tier": "expert",
+        "trust": "documented",
         "icon": "b",
         "svg": "i-doc"
       },
@@ -793,6 +820,7 @@ const STORY = {
         "name": "DRG Assignment",
         "evidence": "97% accuracy · 9 yrs verified tenure",
         "tier": "expert",
+        "trust": "employer",
         "icon": "a",
         "svg": "i-target"
       },
@@ -800,13 +828,14 @@ const STORY = {
         "name": "Documentation Review",
         "evidence": "95% query accuracy",
         "tier": "expert",
+        "trust": "simulated",
         "icon": "c",
         "svg": "i-shield"
       }
     ],
     "ready": [
       {
-        "title": "Coding Quality Auditor",
+        "title": "Medical Secretaries & Admin Assistants",
         "fit": 96,
         "svg": "i-target"
       },
@@ -818,26 +847,27 @@ const STORY = {
     ],
     "matches": [
       {
-        "title": "Coding Quality Auditor",
+        "title": "Medical Secretaries & Admin Assistants",
         "fit": 96,
+        "transfer": 71.5,
         "meta": "Ready now",
         "good": true,
-        "wage": "$61,000/yr median",
+        "wage": "$44,090/yr median · –$19,810 vs. today",
         "positions": [
           {
             "company": "Johns Hopkins Medicine",
             "logoImg": "assets/img/logo-johnshopkins.png",
-            "role": "Coding Quality Auditor",
+            "role": "Medical Secretary, HIM Dept.",
             "location": "Baltimore, MD",
-            "wage": "$60,000–$67,000/yr",
+            "wage": "$42,000–$46,000/yr",
             "posted": "1 day ago"
           },
           {
             "company": "HCA Healthcare",
             "logoImg": "assets/img/logo-hca.png",
-            "role": "Inpatient Coding Auditor",
+            "role": "Admin Assistant II",
             "location": "Remote",
-            "wage": "$58,000–$65,000/yr",
+            "wage": "$41,000–$45,500/yr",
             "posted": "4 days ago"
           }
         ]
@@ -845,15 +875,19 @@ const STORY = {
       {
         "title": "Clinical Documentation Improvement Specialist",
         "fit": 93,
+        "transfer": 63.9,
         "meta": "Ready now",
         "good": true,
-        "wage": "$83,000/yr median"
+        "wage": "$85,000/yr median",
+        "credential": "CCDS/CDIP"
       },
       {
         "title": "Health Services Manager",
         "fit": 84,
+        "transfer": 30.2,
         "meta": "Ready in ~6 months · leadership credential",
-        "wage": "$116,000/yr median",
+        "wage": "$117,960/yr median",
+        "credential": "Bachelor's degree",
         "positions": [
           {
             "company": "Ascension",
@@ -876,8 +910,10 @@ const STORY = {
       {
         "title": "Health Information Technologist",
         "fit": 91,
+        "transfer": 72.1,
         "meta": "Ready now",
-        "wage": "$68,020/yr median"
+        "wage": "$67,310/yr median",
+        "credential": "RHIT"
       }
     ],
     "gap": {
@@ -996,12 +1032,8 @@ const STORY = {
         "Billing & Posting Clerks",
         "Medical Secretaries & Admin Assistants",
         "Medical Assistants",
-        "Reimbursement Specialist",
-        "Utilization Review Coordinator",
-        "Medical Coding Auditor",
-        "Practice Operations Coordinator",
-        "Insurance Verification Specialist",
-        "Patient Access Coordinator"
+        "Bookkeeping, Accounting & Auditing Clerks",
+        "Data Entry Keyers"
       ]
     }
   },
@@ -1034,6 +1066,7 @@ const STORY = {
         "name": "ICD-10-CM Coding",
         "evidence": "2,100 charts coded · 90% accuracy",
         "tier": "advanced",
+        "trust": "documented",
         "icon": "a",
         "svg": "i-doc"
       },
@@ -1041,6 +1074,7 @@ const STORY = {
         "name": "ICD-10-PCS Coding",
         "evidence": "1,200 charts coded · 85% accuracy",
         "tier": "advanced",
+        "trust": "documented",
         "icon": "b",
         "svg": "i-doc"
       },
@@ -1048,6 +1082,7 @@ const STORY = {
         "name": "DRG Assignment",
         "evidence": "88% accuracy · 2 yrs verified coding tenure",
         "tier": "advanced",
+        "trust": "employer",
         "icon": "a",
         "svg": "i-target"
       },
@@ -1055,6 +1090,7 @@ const STORY = {
         "name": "Documentation Review",
         "evidence": "86% query accuracy",
         "tier": "advanced",
+        "trust": "simulated",
         "icon": "c",
         "svg": "i-shield"
       }
@@ -1066,7 +1102,7 @@ const STORY = {
         "svg": "i-doc"
       },
       {
-        "title": "Coding Quality Auditor",
+        "title": "Billing & Posting Clerks",
         "fit": 79,
         "svg": "i-target"
       }
@@ -1075,9 +1111,11 @@ const STORY = {
       {
         "title": "Health Information Technologist",
         "fit": 85,
+        "transfer": 72.1,
         "meta": "Ready now",
         "good": true,
-        "wage": "$68,020/yr median",
+        "wage": "$67,310/yr median",
+        "credential": "RHIT",
         "positions": [
           {
             "company": "Cedars-Sinai",
@@ -1098,16 +1136,20 @@ const STORY = {
         ]
       },
       {
-        "title": "Coding Quality Auditor",
+        "title": "Billing & Posting Clerks",
         "fit": 79,
-        "meta": "Ready in ~4 months · audit methodology",
-        "wage": "$61,000/yr median"
+        "transfer": 59.1,
+        "meta": "Ready now",
+        "wage": "$47,170/yr median · about the same as today"
       },
       {
         "title": "Clinical Documentation Improvement Specialist",
         "fit": 73,
+        "transfer": 63.9,
+        "closesAt": "L3 · Subtle errors",
         "meta": "Ready in ~6 months · 1 skill gap",
-        "wage": "$83,000/yr median",
+        "wage": "$85,000/yr median",
+        "credential": "CCDS/CDIP",
         "positions": [
           {
             "company": "Johns Hopkins Medicine",
@@ -1130,8 +1172,10 @@ const STORY = {
       {
         "title": "Health Services Manager",
         "fit": 55,
+        "transfer": 30.2,
         "meta": "Long-term pathway",
-        "wage": "$116,000/yr median"
+        "wage": "$117,960/yr median",
+        "credential": "Bachelor's degree"
       }
     ],
     "gap": {
@@ -1246,12 +1290,8 @@ const STORY = {
         "Healthcare Compliance/Privacy Officer",
         "Medical Secretaries & Admin Assistants",
         "Healthcare Business/Operations Analyst",
-        "Reimbursement Specialist",
-        "Utilization Review Coordinator",
-        "Medical Coding Auditor",
-        "Practice Operations Coordinator",
-        "Insurance Verification Specialist",
-        "Patient Access Coordinator"
+        "Bookkeeping, Accounting & Auditing Clerks",
+        "Data Entry Keyers"
       ]
     }
   }
