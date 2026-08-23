@@ -103,6 +103,13 @@ const STORY = {
         "title": "Meridian Regional Medical Center",
         "role": "Inpatient Coding Specialist",
         "note": "verified via payroll"
+      },
+      {
+        "from": "AUG 2021",
+        "to": "APR 2022",
+        "title": "Meridian Regional Medical Center",
+        "role": "HIM Coder Trainee",
+        "note": "verified via payroll"
       }
     ],
     "recordLabel": "Strong record",
@@ -358,6 +365,13 @@ const STORY = {
         "title": "Riverside Community Hospital",
         "role": "Inpatient Coding Specialist",
         "note": "verified via payroll"
+      },
+      {
+        "from": "AUG 2024",
+        "to": "MAY 2025",
+        "title": "Austin Metro Health",
+        "role": "Medical Records Clerk",
+        "note": "verified via payroll"
       }
     ],
     "recordLabel": "Building record",
@@ -592,6 +606,13 @@ const STORY = {
         "title": "Coastal Health Partners",
         "role": "HIM Coder Trainee",
         "note": "verified via payroll"
+      },
+      {
+        "from": "JUN 2024",
+        "to": "JAN 2026",
+        "title": "Coastal Health Partners",
+        "role": "Patient Access Representative",
+        "note": "verified via payroll"
       }
     ],
     "recordLabel": "Early record",
@@ -794,6 +815,13 @@ const STORY = {
         "to": "PRESENT",
         "title": "Lakeside Health System",
         "role": "Inpatient Coding Specialist",
+        "note": "verified via payroll"
+      },
+      {
+        "from": "JUL 2013",
+        "to": "FEB 2017",
+        "title": "Sunview Medical Group",
+        "role": "Outpatient Coding Specialist",
         "note": "verified via payroll"
       }
     ],
