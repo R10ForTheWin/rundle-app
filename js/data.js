@@ -114,7 +114,7 @@ const STORY = {
         "tier": "expert",
         "trust": "documented",
         "icon": "a",
-        "svg": "i-doc"
+        "svg": "i-medical"
       },
       {
         "name": "ICD-10-PCS Coding",
@@ -122,7 +122,7 @@ const STORY = {
         "tier": "advanced",
         "trust": "documented",
         "icon": "b",
-        "svg": "i-doc"
+        "svg": "i-medical"
       },
       {
         "name": "DRG Assignment",
@@ -369,7 +369,7 @@ const STORY = {
         "tier": "advanced",
         "trust": "documented",
         "icon": "a",
-        "svg": "i-doc"
+        "svg": "i-medical"
       },
       {
         "name": "ICD-10-PCS Coding",
@@ -377,7 +377,7 @@ const STORY = {
         "tier": "developing",
         "trust": "documented",
         "icon": "b",
-        "svg": "i-doc"
+        "svg": "i-medical"
       },
       {
         "name": "DRG Assignment",
@@ -603,7 +603,7 @@ const STORY = {
         "tier": "developing",
         "trust": "documented",
         "icon": "a",
-        "svg": "i-doc"
+        "svg": "i-medical"
       },
       {
         "name": "DRG Assignment",
@@ -806,7 +806,7 @@ const STORY = {
         "tier": "expert",
         "trust": "documented",
         "icon": "a",
-        "svg": "i-doc"
+        "svg": "i-medical"
       },
       {
         "name": "ICD-10-PCS Coding",
@@ -814,7 +814,7 @@ const STORY = {
         "tier": "expert",
         "trust": "documented",
         "icon": "b",
-        "svg": "i-doc"
+        "svg": "i-medical"
       },
       {
         "name": "DRG Assignment",
@@ -1068,7 +1068,7 @@ const STORY = {
         "tier": "advanced",
         "trust": "documented",
         "icon": "a",
-        "svg": "i-doc"
+        "svg": "i-medical"
       },
       {
         "name": "ICD-10-PCS Coding",
@@ -1076,7 +1076,7 @@ const STORY = {
         "tier": "advanced",
         "trust": "documented",
         "icon": "b",
-        "svg": "i-doc"
+        "svg": "i-medical"
       },
       {
         "name": "DRG Assignment",
