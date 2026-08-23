@@ -85,13 +85,12 @@
     <div class="section-pad" style="padding-top:0.8rem;">
       <div class="back-btn" style="display:flex;align-items:center;gap:0.3rem;cursor:pointer;margin-bottom:0.4rem;"><svg style="width:1rem;height:1rem;transform:rotate(180deg);color:var(--ink-soft)"><use href="#i-chev"/></svg></div>
       <div class="h-lead" style="font-size:1.1rem;">Connect your sources</div>
-      <p class="sub-lead" id="connect-sublead">Select the accounts Rundle should pull Renee's work history from.</p>
+      <p class="sub-lead" id="connect-sublead">Public sources Rundle uses to benchmark Renee's skills against the role.</p>
     </div>
     <div class="scroll section-pad" style="padding-top:0.3rem;">
       <div class="check-row" data-source="onet"><div class="check-box"><svg><use href="#i-check"/></svg></div><div class="check-logo"><img src="assets/img/logo-onet.png" alt="" /></div><div class="check-body"><div class="check-title">O&middot;NET</div><div class="check-sub">Occupation &amp; skill benchmarks</div></div></div>
       <div class="check-row" data-source="bls"><div class="check-box"><svg><use href="#i-check"/></svg></div><div class="check-logo"><img src="assets/img/logo-bls.jpg" alt="" /></div><div class="check-body"><div class="check-title">Bureau of Labor Statistics</div><div class="check-sub">Wage &amp; employment data</div></div></div>
       <div class="check-row" data-source="cos"><div class="check-box"><svg><use href="#i-check"/></svg></div><div class="check-logo"><img src="assets/img/logo-cos.png" alt="" /></div><div class="check-body"><div class="check-title">CareerOneStop</div><div class="check-sub">Certification &amp; training lookup</div></div></div>
-      <div class="check-row" data-source="ahima"><div class="check-box"><svg><use href="#i-check"/></svg></div><div class="check-logo wide"><img src="assets/img/logo-ahima.png" alt="" /></div><div class="check-body"><div class="check-title">AHIMA</div><div class="check-sub">Credential verification</div></div></div>
       <div class="cta pending" id="connect-cta">Connect selected sources <svg><use href="#i-arrow"/></svg></div>
     </div>
 </section>
@@ -265,7 +264,9 @@
     <div class="scroll section-pad" style="padding-top:0.3rem;" id="positions-body"></div>
 </section>
 
-<div id="demo-tap-zone" aria-hidden="true" style="position:absolute;bottom:0;right:0;width:2.4rem;height:2.4rem;z-index:999;"></div>
+<div id="demo-tap-zone" style="position:absolute;bottom:0.6rem;right:0.6rem;width:1.9rem;height:1.9rem;border-radius:999px;background:rgba(40,36,30,0.28);z-index:999;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="pointer-events:none;"><path d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg>
+</div>
 <div id="demo-jump-menu" style="display:none;"></div>
 </div>
 
