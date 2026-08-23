@@ -13,6 +13,23 @@
   var assessmentDone = false;
   var navStack = [];
 
+  // ---- Hidden presenter tools: 5 quick taps in the bottom-right corner
+  // toggles instant-animation mode (for re-running the demo without
+  // waiting out every timer); a long-press on the same corner, once that
+  // mode is on, opens a bare-bones jump-to-any-screen menu. Not meant to
+  // be discovered by accident — no visible affordance anywhere.
+  var demoFast = false;
+  try { demoFast = localStorage.getItem('rundle_fast') === '1'; } catch (e) {}
+  if (demoFast) reduceMotion = true;
+  var SCREEN_LABELS = {
+    cover: 'Cover', picker: 'Choose persona', connect: 'Connect sources',
+    credentials: 'AHIMA login', download: 'Downloading data', employment: 'Confirm work history',
+    'verified-skills': 'Verified skills', 'assessment-gateway': 'Assessment gateway',
+    'module-demo': 'Module 2 demo', mapping: 'Skill mapping', home: 'Job matches',
+    'skill-detail': 'Skill detail', review: 'Review', 'chart-review': 'Chart review',
+    'match-detail': 'Match / gap detail', training: 'Training', profile: 'Profile', positions: 'Open positions'
+  };
+
   function showScreen(id, opts) {
     opts = opts || {};
     var current = document.querySelector('.screen.active');
@@ -221,6 +238,72 @@
     var toggle = e.target.closest('.toggle-row .switch');
     if (toggle) { toggle.classList.toggle('on'); toggle.classList.toggle('off'); return; }
   });
+
+  function pulseTapZone(color) {
+    var zone = document.getElementById('demo-tap-zone');
+    if (!zone) return;
+    zone.style.transition = 'none';
+    zone.style.background = color;
+    requestAnimationFrame(function () {
+      zone.style.transition = 'background 0.6s ease';
+      zone.style.background = 'transparent';
+    });
+  }
+
+  function toggleDemoFast() {
+    demoFast = !demoFast;
+    reduceMotion = osReduceMotion || demoFast;
+    try { localStorage.setItem('rundle_fast', demoFast ? '1' : '0'); } catch (e) {}
+    pulseTapZone(demoFast ? 'rgba(184,108,45,0.4)' : 'rgba(120,120,120,0.3)');
+  }
+
+  function closeJumpMenu() {
+    var menu = document.getElementById('demo-jump-menu');
+    if (menu) { menu.style.display = 'none'; menu.innerHTML = ''; }
+  }
+
+  function openJumpMenu() {
+    var menu = document.getElementById('demo-jump-menu');
+    if (!menu) return;
+    var rows = SCREENS.map(function (id) {
+      return '<div data-jump="' + id + '" style="padding:0.55rem 0.9rem;font-size:0.78rem;font-weight:600;border-bottom:1px solid rgba(0,0,0,.08);cursor:pointer;">' + (SCREEN_LABELS[id] || id) + '</div>';
+    }).join('');
+    menu.innerHTML =
+      '<div id="demo-jump-backdrop" style="position:absolute;inset:0;background:rgba(20,20,15,.45);z-index:1000;display:flex;align-items:center;justify-content:center;">' +
+        '<div style="background:#fff;border-radius:0.9rem;max-height:70%;width:82%;overflow-y:auto;box-shadow:0 1rem 2rem rgba(0,0,0,.3);">' +
+          rows +
+        '</div>' +
+      '</div>';
+    menu.style.display = 'block';
+  }
+
+  document.addEventListener('click', function (e) {
+    if (e.target.id === 'demo-jump-backdrop') { closeJumpMenu(); return; }
+    var jump = e.target.closest('[data-jump]');
+    if (jump) { closeJumpMenu(); showScreen(jump.dataset.jump, { skipHistory: true }); return; }
+  });
+
+  var tapZone = document.getElementById('demo-tap-zone');
+  if (tapZone) {
+    var tapTimes = [];
+    var pressStart = 0;
+    tapZone.addEventListener('pointerdown', function () { pressStart = Date.now(); });
+    tapZone.addEventListener('pointerup', function () {
+      var held = Date.now() - pressStart;
+      if (held >= 600) {
+        if (demoFast) openJumpMenu();
+        tapTimes = [];
+        return;
+      }
+      var now = Date.now();
+      tapTimes = tapTimes.filter(function (t) { return now - t < 2500; });
+      tapTimes.push(now);
+      if (tapTimes.length >= 5) {
+        tapTimes = [];
+        toggleDemoFast();
+      }
+    });
+  }
 
   renderPicker();
   showScreen('cover');

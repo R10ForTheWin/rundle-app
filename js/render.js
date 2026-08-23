@@ -2,7 +2,11 @@
 // Pure(ish): each render* function reads PERSONAS/STORY and writes into
 // known mount points in index.html. Navigation lives in app.js.
 
-var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+// osReduceMotion is the real accessibility signal and never changes.
+// reduceMotion is what every animation actually checks — app.js's hidden
+// demo-fast toggle can force it on for reruns without touching every call site.
+var osReduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var reduceMotion = osReduceMotion;
 
 // ============================================================
 // Source-document builders (Downloading screen)
@@ -290,13 +294,16 @@ function toggleProviderSelect(tile) {
   }
   var btn = document.getElementById('employment-connect-btn');
   var altSection = document.getElementById('employment-alt-section');
+  var bottomCta = document.getElementById('employment-bottom-cta');
   if (wasSelected) {
     if (btn) { btn.classList.add('pending'); btn.textContent = 'Select a provider to connect'; }
     if (altSection) altSection.style.display = '';
+    if (bottomCta) bottomCta.style.display = '';
     return;
   }
   tile.classList.add('selected');
   if (btn) { btn.classList.remove('pending'); btn.textContent = 'Connect to ' + tile.dataset.provider; }
+  if (bottomCta) bottomCta.style.display = 'none';
   if (altSection) altSection.style.display = 'none';
 }
 
