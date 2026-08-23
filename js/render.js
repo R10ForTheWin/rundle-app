@@ -201,9 +201,9 @@ function confirmLogin(onDone) {
 var dlMount = document.getElementById('download-list');
 var dlToken = 0;
 
-function flyToInbox(sourceEl) {
+function flyToInbox(sourceEl, inboxId) {
   var screenEl = sourceEl.closest('.screen');
-  var inbox = document.getElementById('dl-inbox');
+  var inbox = document.getElementById(inboxId || 'dl-inbox');
   if (!screenEl || !inbox || reduceMotion) return;
   var screenRect = screenEl.getBoundingClientRect();
   var fromRect = sourceEl.getBoundingClientRect();
@@ -241,6 +241,8 @@ function renderEmployment(persona, story) {
   employmentPersona = persona;
   var el = document.getElementById('employment-body');
   if (!el) return;
+  var inboxCount = document.getElementById('employment-inbox-count');
+  if (inboxCount) inboxCount.textContent = '0/1';
   var providerRows = EMPLOYMENT_PROVIDERS.map(function (name, i) {
     var delay = ' style="animation-delay:' + (0.06 + i * 0.05).toFixed(2) + 's"';
     var brand = PAYROLL_BRAND[name];
@@ -310,7 +312,7 @@ var PAYROLL_BRAND = {
 };
 
 function payrollSkeleton(sourceLabel, brand) {
-  return '<div class="src-skel">' +
+  return '<div class="src-skel" id="employment-skel">' +
     '<div class="src-chrome"><span class="sdot"></span><span class="sdot"></span><span class="sdot"></span><span class="surl">' + brand.url + '</span></div>' +
     '<div class="src-skel-body"><span class="spin"></span><span class="src-skel-text">Connecting to ' + sourceLabel + '&hellip;<span class="u">' + brand.url + '</span></span></div>' +
   '</div>';
@@ -353,6 +355,10 @@ function connectEmployment(el, sourceLabel, kind) {
       el.classList.remove('connecting');
       el.classList.add('connected');
       if (connectBtn) { connectBtn.classList.remove('pending'); connectBtn.textContent = 'Connected to ' + sourceLabel; }
+      var skel = document.getElementById('employment-skel');
+      if (skel) flyToInbox(skel, 'employment-inbox');
+      var countEl = document.getElementById('employment-inbox-count');
+      if (countEl) countEl.textContent = '1/1';
       if (result) result.innerHTML = '<div class="reveal-row">' + payrollDoc(sourceLabel, brand, employmentPersona) + '</div>';
     }, reduceMotion ? 0 : 1500);
 
