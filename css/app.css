@@ -1119,7 +1119,8 @@
   .gw-side { flex: none; text-align: right; }
   .gw-time { font-size: 0.64rem; color: var(--ink-soft); margin-bottom: 0.35rem; }
   .gw-start-btn {
-    font-size: 0.68rem; font-weight: 700; color: #fff; background: linear-gradient(135deg, var(--amber), var(--ochre));
+    font-size: 0.68rem; font-weight: 700; color: #fff; background: linear-gradient(135deg, var(--sienna), #7A3A18);
+    box-shadow: 0 0.2rem 0.5rem -0.1rem color-mix(in srgb, var(--sienna) 55%, transparent);
     padding: 0.35rem 0.7rem; border-radius: 0.55rem; cursor: pointer; white-space: nowrap;
   }
   .gw-unavailable { font-size: 0.6rem; color: var(--ink-soft); white-space: nowrap; }
