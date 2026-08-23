@@ -631,16 +631,18 @@ function startModuleDemoRecording() {
   renderModuleDemoStep();
 }
 
+// No reveal screen — the cursor's "chosen" flash on the answer button
+// (in autoPlayModuleDemoChoice, right before this fires) is the only
+// feedback. This goes straight from one question to the next.
 function answerModuleDemo(key) {
   if (moduleDemoAnswer) return;
   moduleDemoAnswer = key;
-  renderModuleDemoStep();
   clearModuleDemoTimers();
   scheduleModuleDemoTimer(function () {
     moduleDemoStep++;
     moduleDemoAnswer = null;
     renderModuleDemoStep();
-  }, reduceMotion ? 300 : 5200);
+  }, reduceMotion ? 300 : 700);
 }
 
 // Moves a cursor between the answer choices like someone weighing them
@@ -721,69 +723,29 @@ function renderModuleDemoStep() {
     '<div class="demo-ribbon" style="margin:0 1.1rem 0.6rem;">&#9654; Watching a demo &mdash; this plays itself, nothing to tap</div>';
   var chartHead = '<div class="chart-head"><span class="demo-chart-num">' + (moduleDemoStep + 1) + '</span><div><div class="id">' + chart.title + '</div><div class="type">' + chart.type + '</div></div></div>';
 
-  if (!moduleDemoAnswer) {
-    var letters = ['A', 'B', 'C', 'D'];
-    var choiceBtns = chart.choices.map(function (c, i) {
-      return '<div class="choice-btn"><span class="choice-letter">' + letters[i] + '</span>' + c.label + '</div>';
-    }).join('');
-    el.innerHTML = head +
-      '<div class="chart-review-scroll">' +
-        '<div class="chart-card demo-reveal">' +
-          chartHead +
-          '<div class="code-row flagged"><div><div class="label">' + chart.label + '</div><div class="code mono">' + chart.aiCode + '</div></div></div>' +
-        '</div>' +
-        '<div class="prompt-box"><span class="prompt-q">?</span><span class="prompt-text">' + chart.question + '</span></div>' +
-        '<div class="choice-row" id="module-demo-choices">' + choiceBtns +
-          '<div class="demo-cursor" id="module-demo-cursor"><svg viewBox="0 0 24 24" fill="var(--sienna)" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"><path d="M4 4l7.07 17 2.51-7.39L21 11.07z"/></svg></div>' +
-        '</div>' +
-      '</div>';
-    // The question + all 4 choices can be taller than the viewport on a
-    // shorter screen -- since nothing here is manually scrollable during
-    // an auto-play, force the choices into view instead of leaving them
-    // silently cut off below the fold.
-    var choicesEl = document.getElementById('module-demo-choices');
-    if (choicesEl) choicesEl.scrollIntoView({ block: 'end' });
-    clearModuleDemoTimers();
-    scheduleModuleDemoTimer(function () { autoPlayModuleDemoChoice(chart); }, 900);
-    return;
-  }
-
-  var codeBlock;
-  if (chart.newCode && chart.ghost) {
-    codeBlock = '<div class="code-row flagged"><div style="flex:1;"><div class="label">' + chart.label + '</div>' +
-      '<div class="demo-code-stack">' +
-        '<span class="demo-code-ghost">' + chart.aiCode + '</span>' +
-        '<span class="demo-code-added mono" style="animation-delay:0.25s">' + chart.newCode + '</span>' +
-      '</div></div></div>';
-  } else if (chart.newCode) {
-    codeBlock = '<div class="code-row flagged"><div style="flex:1;"><div class="label">' + chart.label + '</div>' +
-      '<div class="demo-code-wrap">' +
-        '<span class="demo-code-old mono">' + chart.aiCode + '</span>' +
-        '<span class="demo-code-new mono" style="animation-delay:0.15s">' + chart.newCode + '</span>' +
-      '</div></div></div>';
-  } else if (chart.removeCode) {
-    codeBlock = '<div class="code-row flagged"><div><div class="label">' + chart.label + '</div><div class="code mono demo-code-old">' + chart.aiCode + '</div></div>' +
-      '<div class="demo-confirm" style="color:var(--sienna);">&#10007; Removed</div></div>';
-  } else {
-    codeBlock = '<div class="code-row flagged"><div><div class="label">' + chart.label + '</div><div class="code mono">' + chart.aiCode + '</div></div>' +
-      '<div class="demo-confirm">&#10003; Confirmed</div></div>';
-  }
-  var drgBlock = chart.drgOld ? '<div class="demo-drg"><span class="demo-drg-old">' + chart.drgOld + '</span><span class="demo-drg-arrow">&rarr;</span><span class="demo-drg-new" style="animation-delay:0.3s">' + chart.drgNew + '</span></div>' : '';
-  var impactTag = chart.impact ? '<div style="padding:0.5rem 0.85rem 0.7rem;"><span class="demo-impact" style="animation-delay:0.4s">' + chart.impact + '</span></div>' : '';
-
-  // Ties the reveal back to the multiple-choice question it came from --
-  // without this, the reveal card is just a bare chart, no sign a
-  // question was ever answered to get here.
-  var answerLetters = ['A', 'B', 'C', 'D'];
-  var chosenIdx = chart.choices.findIndex(function (c) { return c.key === moduleDemoAnswer; });
-  var chosenBlock = chosenIdx > -1
-    ? '<div class="demo-chosen"><span class="choice-letter">' + answerLetters[chosenIdx] + '</span>' + chart.choices[chosenIdx].label + '</div>'
-    : '';
-
+  var letters = ['A', 'B', 'C', 'D'];
+  var choiceBtns = chart.choices.map(function (c, i) {
+    return '<div class="choice-btn"><span class="choice-letter">' + letters[i] + '</span>' + c.label + '</div>';
+  }).join('');
   el.innerHTML = head +
     '<div class="chart-review-scroll">' +
-      '<div class="chart-card demo-reveal">' + chartHead + chosenBlock + codeBlock + drgBlock + impactTag + '</div>' +
+      '<div class="chart-card demo-reveal">' +
+        chartHead +
+        '<div class="code-row flagged"><div><div class="label">' + chart.label + '</div><div class="code mono">' + chart.aiCode + '</div></div></div>' +
+      '</div>' +
+      '<div class="prompt-box"><span class="prompt-q">?</span><span class="prompt-text">' + chart.question + '</span></div>' +
+      '<div class="choice-row" id="module-demo-choices">' + choiceBtns +
+        '<div class="demo-cursor" id="module-demo-cursor"><svg viewBox="0 0 24 24" fill="var(--sienna)" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"><path d="M4 4l7.07 17 2.51-7.39L21 11.07z"/></svg></div>' +
+      '</div>' +
     '</div>';
+  // The question + all 4 choices can be taller than the viewport on a
+  // shorter screen -- since nothing here is manually scrollable during
+  // an auto-play, force the choices into view instead of leaving them
+  // silently cut off below the fold.
+  var choicesEl = document.getElementById('module-demo-choices');
+  if (choicesEl) choicesEl.scrollIntoView({ block: 'end' });
+  clearModuleDemoTimers();
+  scheduleModuleDemoTimer(function () { autoPlayModuleDemoChoice(chart); }, 900);
 }
 
 function renderReviewTab(skillName, reviewDone) {
