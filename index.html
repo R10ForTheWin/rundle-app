@@ -47,7 +47,7 @@
         <div class="cover-word">Rundle</div>
       </div>
       <div class="cover-head">You lost your job to AI.<br><span style="color:#F0C878">AI will help you find a better one.</span></div>
-      <img class="cover-rudy" src="assets/img/rudy-cover.png?v=1" alt="Rudy, the Rundle mascot, carrying a ladder" />
+      <img class="cover-rudy" src="assets/img/rudy-cover.gif?v=1" alt="Rudy, the Rundle mascot, carrying a ladder and waving" />
       <div class="cover-cta" id="cover-cta">Let's Begin!</div>
     </div>
     <div class="cover-foot">Prototype &middot; MGMT 241, Team 8</div>
@@ -109,7 +109,7 @@
       <p class="sub-lead">Connect payroll, or enter it yourself.</p>
     </div>
     <div class="chart-review-scroll" id="employment-body" style="padding-top:0.5rem;"></div>
-    <div class="choice-row" style="padding-top:0.3rem;">
+    <div class="choice-row" id="employment-bottom-cta" style="padding-top:0.3rem;">
       <div class="cta pending" id="employment-continue-btn">Continue</div>
     </div>
 </section>
@@ -184,7 +184,10 @@
 
 <section class="screen" id="screen-verified-skills" data-screen="verified-skills">
     <div class="app-header">
-      <div class="identity" id="verified-skills-identity"></div>
+      <div style="display:flex;align-items:center;gap:0.6rem;">
+        <div class="back-btn" style="display:flex;align-items:center;cursor:pointer;"><svg style="width:1rem;height:1rem;transform:rotate(180deg);color:var(--ink-soft)"><use href="#i-chev"/></svg></div>
+        <div class="identity" id="verified-skills-identity"></div>
+      </div>
       <div class="bell"><svg><use href="#i-bell"/></svg><span class="dot"></span></div>
     </div>
     <div class="scroll">

@@ -611,8 +611,8 @@
   .cover-mark { width: 2.5rem; height: 2.5rem; position: relative; z-index: 1; }
   .cover-rudy {
     width: 13.5rem; height: auto; position: relative; z-index: 1;
-    -webkit-mask-image: radial-gradient(ellipse closest-side, #000 74%, transparent 100%);
-    mask-image: radial-gradient(ellipse closest-side, #000 74%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse farthest-side, #000 92%, transparent 100%);
+    mask-image: radial-gradient(ellipse farthest-side, #000 92%, transparent 100%);
   }
   .cover-brand-row { display: flex; align-items: center; gap: 0.5rem; }
   .figure-motif { position: absolute; pointer-events: none; }
@@ -1015,8 +1015,8 @@
   .employment-connect-cta.pending {
     cursor: default; background: linear-gradient(135deg, var(--amber), var(--ochre)); color: rgba(255,255,255,0.75);
   }
-  .employment-connect-cta.done { opacity: 0.85; cursor: default; }
-  .employment-connect-cta:not(.pending):not(.done):active { transform: scale(0.98); }
+  .employment-connect-cta.done { cursor: pointer; }
+  .employment-connect-cta:not(.pending):active { transform: scale(0.98); }
   .employment-or { text-align: center; font-size: 0.68rem; color: var(--ink-soft); margin: 0.7rem 0; }
   .employment-upload {
     display: flex; align-items: center; gap: 0.7rem; cursor: pointer; margin-top: 0.5rem;
