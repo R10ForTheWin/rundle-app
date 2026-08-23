@@ -510,20 +510,6 @@ var CHART_REVIEW_SUMMARY = CHART_REVIEW_CHARTS.length + ' flagged charts reviewe
 // ============================================================
 var MODULE_DEMO_CHARTS = [
   {
-    title: 'Synthetic chart &middot; Pneumonia', type: 'Inpatient &middot; 4-day stay',
-    label: 'Principal diagnosis',
-    aiCode: 'J18.9 &middot; Pneumonia, unspecified organism',
-    question: 'The physician&rsquo;s note names the exact organism. Does the AI&rsquo;s code capture that?',
-    choices: [{ key: 'fix', label: 'Needs a more specific code' }, { key: 'right', label: 'Already specific enough' }],
-    correct: 'fix',
-    isCorrection: true,
-    newCode: 'J15.1 &middot; Pneumonia due to Pseudomonas',
-    drgOld: 'DRG 179 &middot; Simple pneumonia',
-    drgNew: 'DRG 177 &middot; Pneumonia w/ major complication',
-    explain: 'Physician&rsquo;s note names the organism &mdash; the AI&rsquo;s draft missed it. That one detail changes the DRG.',
-    impact: '+$1,850 case value'
-  },
-  {
     title: 'Synthetic chart &middot; Diabetic CKD', type: 'Inpatient &middot; 3-day stay',
     label: 'Principal diagnosis',
     aiCode: 'E11.22 &middot; Diabetes with diabetic CKD, plus N18.31',
@@ -531,24 +517,12 @@ var MODULE_DEMO_CHARTS = [
     choices: [
       { key: 'right', label: 'Yes &mdash; no query needed' },
       { key: 'query', label: 'No &mdash; query to confirm the link' },
-      { key: 'fix', label: 'No &mdash; code diabetes alone' }
+      { key: 'fix', label: 'No &mdash; code diabetes alone' },
+      { key: 'unrelated', label: 'No &mdash; code them as unrelated conditions' }
     ],
     correct: 'right',
     isCorrection: false,
     explain: 'The word &ldquo;with&rdquo; in the ICD-10-CM index presumes a causal relationship unless the record states another cause &mdash; no query needed. Reaching for a query here is the most common wrong answer in the module, a habit left from before that convention was clarified.'
-  },
-  {
-    title: 'Synthetic chart &middot; Hip fracture', type: 'Inpatient &middot; 5-day stay',
-    label: 'Secondary diagnosis',
-    aiCode: 'No secondary diagnosis coded',
-    ghost: true,
-    question: 'Labs show reduced kidney function. Did the AI capture that as a secondary diagnosis?',
-    choices: [{ key: 'fix', label: 'Something&rsquo;s missing' }, { key: 'right', label: 'Nothing missing' }],
-    correct: 'fix',
-    isCorrection: true,
-    newCode: 'N17.9 &middot; Acute kidney injury',
-    explain: 'Labs showed reduced kidney function the AI didn&rsquo;t code for. A missed secondary diagnosis undercounts how complex the case really was.',
-    impact: '+$980 case value'
   },
   {
     title: 'Synthetic chart &middot; Sepsis', type: 'Inpatient &middot; 4-day stay',
@@ -558,12 +532,13 @@ var MODULE_DEMO_CHARTS = [
     choices: [
       { key: 'uti', label: 'The UTI' },
       { key: 'sepsis', label: 'The sepsis' },
-      { key: 'shock', label: 'Add septic shock too &mdash; pressors were used' }
+      { key: 'shock', label: 'Add septic shock too &mdash; pressors were used' },
+      { key: 'query', label: 'Query the provider to confirm it was present on admission' }
     ],
     correct: 'sepsis',
     isCorrection: true,
     newCode: '1&#41; A41.51 sepsis due to E. coli &middot; 2&#41; N39.0 UTI',
-    explain: 'Sepsis present on admission and meeting principal-diagnosis criteria sequences first. Septic shock is the trap &mdash; it needs the provider to document it; pressor use is a clinical indicator, not documentation on its own. This moves the case out of the UTI DRG family entirely &mdash; the biggest dollar swing in the set.',
+    explain: 'Sepsis present on admission and meeting principal-diagnosis criteria sequences first &mdash; that&rsquo;s already stated, so a query is unnecessary. Septic shock is the other trap &mdash; it needs the provider to document it; pressor use is a clinical indicator, not documentation on its own. This moves the case out of the UTI DRG family entirely &mdash; the biggest dollar swing in the set.',
     impact: '+$3,400 case value'
   },
   {
@@ -574,12 +549,13 @@ var MODULE_DEMO_CHARTS = [
     choices: [
       { key: 'keep', label: 'Keep it as coded' },
       { key: 'remove', label: 'Remove it &mdash; not supported' },
-      { key: 'upgrade', label: 'Make it more specific instead' }
+      { key: 'upgrade', label: 'Make it more specific instead' },
+      { key: 'query', label: 'Query the provider to confirm the infection' }
     ],
     correct: 'remove',
     isCorrection: true,
     removeCode: true,
-    explain: 'No culture, no antibiotic order, no clinical note backing up an infection. A code the documentation doesn&rsquo;t support gets removed, not made more specific &mdash; that would just be a more precise version of the same unsupported claim.',
+    explain: 'No culture, no antibiotic order, no clinical note backing up an infection. A code the documentation doesn&rsquo;t support gets removed, not made more specific or sent back on a query &mdash; there&rsquo;s nothing in the chart for a query to confirm.',
     impact: 'Improper payment averted'
   },
   {
@@ -591,12 +567,13 @@ var MODULE_DEMO_CHARTS = [
     choices: [
       { key: 'dehydration', label: 'E86.0 &middot; Dehydration' },
       { key: 'hyponatremia', label: 'E87.1 &middot; Hyponatremia' },
-      { key: 'aki', label: 'N17.9 &middot; Acute kidney injury' }
+      { key: 'aki', label: 'N17.9 &middot; Acute kidney injury' },
+      { key: 'fluid', label: 'E87.8 &middot; Other fluid balance disorder' }
     ],
     correct: 'hyponatremia',
     isCorrection: true,
     newCode: 'E87.1 &middot; Hyponatremia',
-    explain: '128 mEq/L is the lab definition of hyponatremia specifically. Dehydration and kidney injury are close clinical neighbors, but each needs its own supporting evidence in the note &mdash; the lab value only backs up one of the three.',
+    explain: '128 mEq/L is the lab definition of hyponatremia specifically. The other three are close clinical neighbors &mdash; a vaguer fluid-balance code included &mdash; but each needs its own supporting evidence in the note, and the lab value only backs up one of them.',
     impact: '+$720 case value'
   },
   {
@@ -607,12 +584,13 @@ var MODULE_DEMO_CHARTS = [
     choices: [
       { key: 'score', label: 'Delete &mdash; under 50% confidence' },
       { key: 'judgment', label: 'Delete &mdash; no workup this stay, not reportable' },
-      { key: 'accept', label: 'Accept &mdash; it&rsquo;s in the chart' }
+      { key: 'accept', label: 'Accept &mdash; it&rsquo;s in the chart' },
+      { key: 'query', label: 'Query the provider to confirm it&rsquo;s still active' }
     ],
     correct: 'judgment',
     isCorrection: true,
     removeCode: true,
-    explain: 'The confidence score is a property of the model, not evidence about the patient &mdash; deleting because of a number you can&rsquo;t audit is still outsourcing the judgment. This one is unreportable on the actual chart facts: no workup, no treatment, just a copied history line. Next case the model might be 90% confident and wrong.',
+    explain: 'The confidence score is a property of the model, not evidence about the patient &mdash; deleting because of a number you can&rsquo;t audit is still outsourcing the judgment. A query gets partial credit; it&rsquo;s reasonable but adds a step the chart facts already answer. This one is unreportable as-is: no workup, no treatment, just a copied history line.',
     impact: 'Improper payment averted'
   }
 ];
