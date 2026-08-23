@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,600&display=swap" />
-<link rel="stylesheet" href="css/app.css?v=91" />
+<link rel="stylesheet" href="css/app.css?v=92" />
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute">
@@ -222,8 +222,21 @@
 </section>
 
 <section class="screen" id="screen-module-demo" data-screen="module-demo">
-    <div class="app-header"><div class="back-btn" data-back="home" style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;"><svg style="width:1rem;height:1rem;transform:rotate(180deg);color:var(--ink-soft)"><use href="#i-chev"/></svg><div class="name">AI-assisted audit</div></div></div>
+    <div class="app-header">
+      <div class="back-btn" data-back="home" style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;"><svg style="width:1rem;height:1rem;transform:rotate(180deg);color:var(--ink-soft)"><use href="#i-chev"/></svg><div class="name">AI-assisted audit</div></div>
+      <div class="rec-badge" id="module-demo-rec-badge" style="display:none;"><span class="rec-dot"></span>REC</div>
+    </div>
     <div id="module-demo-body" style="flex:1;min-height:0;display:flex;flex-direction:column;"></div>
+    <div id="recording-consent-modal" style="display:none;position:absolute;inset:0;z-index:50;align-items:center;justify-content:center;background:rgba(20,20,15,.5);">
+      <div style="background:#fff;border-radius:1rem;padding:1.4rem 1.3rem;width:82%;max-width:20rem;box-shadow:0 1rem 2rem rgba(0,0,0,.3);text-align:center;">
+        <div style="width:2.6rem;height:2.6rem;border-radius:999px;background:#D3352C;display:flex;align-items:center;justify-content:center;margin:0 auto 0.8rem;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><rect x="2" y="6" width="14" height="12" rx="2.5"/><path d="M17.5 10.2 22 7.5v9l-4.5-2.7z"/></svg>
+        </div>
+        <div style="font-family:'Fraunces';font-weight:600;font-size:1rem;margin-bottom:0.4rem;">Screen recording is on</div>
+        <p style="font-size:0.78rem;color:var(--ink-soft);line-height:1.5;margin:0 0 1.1rem;">This assessment session is recorded for quality and integrity review. Recording stops automatically when you leave this module.</p>
+        <div class="cta" id="recording-consent-ack" style="margin-top:0;">I understand</div>
+      </div>
+    </div>
 </section>
 
 <section class="screen" id="screen-match-detail" data-screen="match-detail">
@@ -269,7 +282,7 @@
 </div>
 
 <script src="js/data.js?v=43"></script>
-<script src="js/render.js?v=70"></script>
-<script src="js/app.js?v=56"></script>
+<script src="js/render.js?v=71"></script>
+<script src="js/app.js?v=57"></script>
 </body>
 </html>

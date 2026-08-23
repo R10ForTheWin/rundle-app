@@ -220,6 +220,14 @@
     flex: none;
   }
   .identity { display: flex; align-items: center; gap: 0.55rem; }
+  .rec-badge {
+    display: flex; align-items: center; gap: 0.32rem; flex: none;
+    font-size: 0.64rem; font-weight: 700; letter-spacing: 0.03em;
+    color: #D3352C; background: rgba(211,53,44,0.1);
+    padding: 0.25rem 0.55rem; border-radius: 999px;
+  }
+  .rec-dot { width: 0.42rem; height: 0.42rem; border-radius: 999px; background: #D3352C; animation: recPulse 1.4s ease-in-out infinite; }
+  @keyframes recPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
   .avatar {
     width: 2.1rem; height: 2.1rem; border-radius: 999px;
     background: var(--amber);

@@ -184,6 +184,7 @@
       return;
     }
     if (e.target.closest('#gateway-start-module2')) { showScreen('module-demo'); return; }
+    if (e.target.closest('#recording-consent-ack')) { startModuleDemoRecording(); return; }
     if (e.target.closest('#home-next-review')) { showScreen('review'); return; }
     if (e.target.closest('#module-demo-replay')) { renderModuleDemo(); return; }
     if (e.target.closest('#module-demo-continue')) {

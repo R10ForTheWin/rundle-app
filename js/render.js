@@ -635,6 +635,21 @@ function renderModuleDemo() {
   clearModuleDemoTimers();
   moduleDemoStep = 0;
   moduleDemoAnswer = null;
+  var body = document.getElementById('module-demo-body');
+  if (body) body.innerHTML = '';
+  var badge = document.getElementById('module-demo-rec-badge');
+  if (badge) badge.style.display = 'none';
+  var modal = document.getElementById('recording-consent-modal');
+  if (modal) modal.style.display = 'flex';
+}
+
+// Only fires from the modal's "I understand" button — starts the REC
+// indicator and the auto-play once the recording notice is acknowledged.
+function startModuleDemoRecording() {
+  var modal = document.getElementById('recording-consent-modal');
+  if (modal) modal.style.display = 'none';
+  var badge = document.getElementById('module-demo-rec-badge');
+  if (badge) badge.style.display = '';
   renderModuleDemoStep();
 }
 
