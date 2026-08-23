@@ -5,7 +5,7 @@
 (function () {
   var SCREENS = ['cover', 'picker', 'connect', 'credentials', 'download', 'employment', 'verified-skills',
     'assessment-gateway', 'module-demo', 'mapping',
-    'home', 'skill-detail', 'review', 'chart-review', 'match-detail', 'training', 'profile', 'positions'];
+    'home', 'review', 'chart-review', 'match-detail', 'training', 'profile', 'positions'];
 
   var selectedPersona = PERSONAS[0];
   var chartReviewDone = false;
@@ -26,7 +26,7 @@
     credentials: 'AHIMA login', download: 'Downloading data', employment: 'Confirm work history',
     'verified-skills': 'Verified skills', 'assessment-gateway': 'Assessment gateway',
     'module-demo': 'Module 2 demo', mapping: 'Skill mapping', home: 'Job matches',
-    'skill-detail': 'Skill detail', review: 'Review', 'chart-review': 'Chart review',
+    review: 'Review', 'chart-review': 'Chart review',
     'match-detail': 'Match / gap detail', training: 'Training', profile: 'Profile', positions: 'Open positions'
   };
 
@@ -75,8 +75,6 @@
       });
     } else if (id === 'home') {
       animateMatchRingsIn(document.getElementById('home-content'));
-    } else if (id === 'skill-detail') {
-      renderSkillDetail(selectedPersona, STORY[selectedPersona.id], chartReviewDone);
     } else if (id === 'review') {
       renderReviewTab(STORY[selectedPersona.id].skillDetail.name, chartReviewDone);
     } else if (id === 'chart-review') {
@@ -166,12 +164,6 @@
     var uploadCard = e.target.closest('#employment-upload:not(.connected)');
     if (uploadCard) { connectEmployment(uploadCard, 'your resume', 'resume'); return; }
 
-    if (e.target.closest('#employment-manual-btn')) {
-      var manualBtn = document.getElementById('employment-manual-btn');
-      if (manualBtn) unlockEmploymentContinue();
-      return;
-    }
-
     if (e.target.closest('#employment-continue-btn')) {
       if (!e.target.closest('#employment-continue-btn').classList.contains('pending')) showScreen('verified-skills');
       return;
@@ -189,7 +181,6 @@
       showScreen(assessmentDone ? 'mapping' : 'assessment-gateway');
       return;
     }
-    if (e.target.closest('#verified-skills-view-all')) { showScreen('skill-detail'); return; }
     if (e.target.closest('#gateway-start-module2')) { showScreen('module-demo'); return; }
     if (e.target.closest('#home-next-review')) { showScreen('review'); return; }
     if (e.target.closest('#module-demo-replay')) { renderModuleDemo(); return; }
@@ -198,12 +189,9 @@
       showScreen('verified-skills', { skipHistory: true });
       return;
     }
-    if (e.target.closest('.skill-row')) { showScreen('skill-detail'); return; }
-    if (e.target.closest('#skilldetail-next-review')) { showScreen('review'); return; }
-    if (e.target.closest('#skilldetail-back-home')) { showScreen('verified-skills', { skipHistory: true }); return; }
 
     if (e.target.closest('#strengthen-evidence-btn')) { showScreen('chart-review'); return; }
-    if (e.target.closest('#review-view-evidence-btn')) { showScreen('skill-detail'); return; }
+    if (e.target.closest('#review-view-evidence-btn')) { showScreen('verified-skills', { skipHistory: true }); return; }
 
     if (e.target.closest('#chart-review-start-btn')) {
       chartReviewStep = 0;
@@ -250,11 +238,26 @@
     });
   }
 
+  // Screens whose onScreenShow re-triggers a timed animation from
+  // scratch, safely (no risk of wiping progress a user already made,
+  // like a completed payroll connection) — the only ones fast-forward
+  // is allowed to restart.
+  var FAST_FORWARD_SCREENS = { connect: true, credentials: true, download: true, 'module-demo': true };
+
+  function fastForwardCurrentScreen() {
+    var current = document.querySelector('.screen.active');
+    var id = current && current.dataset.screen;
+    if (id && FAST_FORWARD_SCREENS[id]) onScreenShow(id);
+  }
+
   function toggleDemoFast() {
     demoFast = !demoFast;
     reduceMotion = osReduceMotion || demoFast;
     try { localStorage.setItem('rundle_fast', demoFast ? '1' : '0'); } catch (e) {}
+    var zone = document.getElementById('demo-tap-zone');
+    if (zone) zone.classList.toggle('fast', demoFast);
     pulseTapZone(demoFast ? 'rgba(184,108,45,0.4)' : 'rgba(120,120,120,0.3)');
+    if (demoFast) fastForwardCurrentScreen();
   }
 
   function closeJumpMenu() {
@@ -285,24 +288,19 @@
 
   var tapZone = document.getElementById('demo-tap-zone');
   if (tapZone) {
-    var tapTimes = [];
+    tapZone.classList.toggle('fast', demoFast);
     var pressStart = 0;
-    tapZone.addEventListener('pointerdown', function () { pressStart = Date.now(); });
-    tapZone.addEventListener('pointerup', function () {
+    // stopPropagation on every stage: this zone sits inside #app, whose
+    // click-delegation handler (".back-btn" etc.) would otherwise see the
+    // synthetic click a pointerup produces and could act on it.
+    tapZone.addEventListener('pointerdown', function (e) { pressStart = Date.now(); e.stopPropagation(); });
+    tapZone.addEventListener('pointerup', function (e) {
+      e.stopPropagation();
       var held = Date.now() - pressStart;
-      if (held >= 600) {
-        if (demoFast) openJumpMenu();
-        tapTimes = [];
-        return;
-      }
-      var now = Date.now();
-      tapTimes = tapTimes.filter(function (t) { return now - t < 2500; });
-      tapTimes.push(now);
-      if (tapTimes.length >= 5) {
-        tapTimes = [];
-        toggleDemoFast();
-      }
+      if (held >= 600) { openJumpMenu(); return; }
+      toggleDemoFast();
     });
+    tapZone.addEventListener('click', function (e) { e.stopPropagation(); });
   }
 
   renderPicker();

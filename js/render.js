@@ -268,10 +268,6 @@ function renderEmployment(persona, story) {
     '<div id="employment-alt-section">' +
       '<div class="employment-or reveal-row" style="animation-delay:0.3s">or</div>' +
       '<div class="card employment-manual reveal-row" style="animation-delay:0.35s">' +
-        '<div class="employment-manual-title">Enter it manually instead</div>' +
-        '<div class="employment-manual-sub">Shows on your transcript as self-reported, which employers weigh less.</div>' +
-        '<div class="employment-manual-cta" id="employment-manual-btn">Enter manually</div>' +
-        '<div class="employment-manual-divider">or</div>' +
         '<div class="employment-upload" id="employment-upload">' +
           '<div class="employment-upload-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M12 4 7 9M12 4l5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg></div>' +
           '<div><div class="employment-upload-title">Upload your resume</div><div class="employment-upload-sub">PDF or DOCX &mdash; we&rsquo;ll pull your work history from it</div></div>' +
@@ -370,7 +366,7 @@ function connectEmployment(el, sourceLabel, kind) {
     }, reduceMotion ? 0 : 1500);
 
     setTimeout(function () {
-      if (connectBtn) { connectBtn.classList.add('done'); connectBtn.textContent = 'Connected — continue'; }
+      if (connectBtn) { connectBtn.classList.add('done'); connectBtn.textContent = 'Connected — Continue'; }
       if (result) {
         var empStory = STORY[employmentPersona.id];
         var tl = empStory.employer.map(function (e) {
@@ -1138,16 +1134,21 @@ function renderVerifiedSkills(p, story, assessmentDone) {
     return '<div class="skill-row' + revealCls + '"' + delay + '><div class="skill-icon ' + s.icon + '"><svg><use href="#' + s.svg + '"/></svg></div>' +
       '<div><div class="skill-name">' + s.name + (isNew ? ' <span class="skill-new-tag">New</span>' : '') + '</div><div class="skill-evidence">' + s.evidence + '</div></div>' +
       '<div class="skill-badges"><span class="tier ' + s.tier + '">' + tierLabel[s.tier] + '</span>' +
-      (s.trust ? '<span class="trust ' + s.trust + '">' + trustLabel[s.trust] + '</span>' : '') + '</div>' +
-      '<svg class="skill-row-arrow"><use href="#i-chev"/></svg></div>';
+      (s.trust ? '<span class="trust ' + s.trust + '">' + trustLabel[s.trust] + '</span>' : '') + '</div></div>';
   }).join('');
+  var credentialCard =
+    '<div class="card"><div class="card-title-row"><span class="card-title">Credential tie-in</span></div>' +
+      '<div style="display:flex;align-items:center;gap:0.5rem;"><svg style="width:1.1rem;height:1.1rem;color:var(--sienna)"><use href="#i-shield"/></svg>' +
+      '<div><div style="font-size:0.78rem;font-weight:600;">' + p.cred + ' &middot; AHIMA</div><div class="status-ok"><svg><use href="#i-check"/></svg>' +
+      (p.status === 'active' ? 'Active, verified' : 'In progress') + '</div></div></div></div>';
   el.innerHTML =
     heroBlock +
+    credentialCard +
     '<div class="card"><div class="card-title-row"><span class="card-title">Verified skills</span><span class="count-chip">' + skills.length + ' skills</span></div>' +
       '<div class="skill-list-head"><div class="skill-list-head-spacer"></div><div class="skill-list-head-name"></div>' +
-        '<div class="skill-list-head-badges"><span>Level</span><span>Evidence</span></div><div class="skill-list-head-arrow"></div></div>' +
+        '<div class="skill-list-head-badges"><span>Level</span><span>Evidence</span></div></div>' +
       skillRows +
-      '<div class="link-row" id="verified-skills-view-all"><span>View all skills and evidence</span><svg><use href="#i-chev"/></svg></div></div>';
+    '</div>';
   var continueBtn = document.getElementById('verified-skills-continue-btn');
   if (continueBtn) continueBtn.textContent = assessmentDone ? 'Continue' : 'Continue to assessment';
 }
@@ -1216,45 +1217,6 @@ function animateMatchRingsIn(container) {
   // becomes visible meant most of the sweep had already finished by the
   // time it was actually on screen, so only the tail end was ever seen.
   setTimeout(function () { requestAnimationFrame(tick); }, 300);
-}
-
-function renderSkillDetail(p, story, reviewDone) {
-  var titleEl = document.getElementById('skilldetail-title');
-  if (titleEl) titleEl.textContent = story.skillDetail.name;
-  var el = document.getElementById('skilldetail-body');
-  if (!el) return;
-  var sd = story.skillDetail;
-  var errRows = sd.errors.map(function (e) {
-    return '<div style="display:flex;justify-content:space-between;">' + e.t + ' <span class="mono">' + e.n + '</span></div>';
-  }).join('');
-  var strengthenBlock = reviewDone
-    ? '<div class="evidence-preview" style="margin-bottom:0.7rem;">' +
-        '<span class="tag"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>AI-assisted review</span>' +
-        '<div class="line">' + CHART_REVIEW_SUMMARY + '</div></div>'
-    : '';
-  var topError = sd.errors.slice().sort(function (a, b) { return b.n - a.n; })[0];
-  var forwardBlock = sd.tier === 'expert' ? '' :
-    '<div class="card strengthen-card">' +
-      '<div class="card-title-row"><span class="card-title">What would move this forward</span></div>' +
-      '<p>Two things raise this: more verified reps, and fewer flagged errors on your most common issue &mdash; <strong style="color:var(--ink);">' + topError.t + '</strong> (' + topError.n + ' flagged so far).</p>' +
-      (reviewDone ? '' : '<div class="strengthen-cta" id="skilldetail-next-review">Strengthen with a quick review <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>') +
-    '</div>';
-  el.innerHTML =
-    '<div class="card"><div class="card-title-row"><span class="card-title">Rundle evidence</span><span class="tier ' + sd.tier + '">Level: ' + tierLabel[sd.tier] + '</span></div>' +
-      '<div class="bar-row"><div class="bar-label"><span>Accuracy</span><span class="mono">' + sd.accuracy + '%</span></div><div class="bar-track"><div class="bar-fill" style="width:' + (100 - sd.accuracy) + '%"></div></div></div>' +
-      '<div class="bar-row"><div class="bar-label"><span>' + sd.metricLabel + '</span><span class="mono">' + sd.count + '</span></div></div>' +
-      '<div class="divider-label">Common error types</div>' +
-      '<div style="font-size:0.72rem;color:var(--ink-soft);line-height:1.9;">' + errRows + '</div></div>' +
-    strengthenBlock +
-    forwardBlock +
-    '<div class="card"><div class="card-title-row"><span class="card-title">Occupation benchmark</span></div>' +
-      '<p style="font-size:0.72rem;color:var(--ink-soft);line-height:1.5;margin:0 0 0.5rem;">O&middot;NET: Medical Records Specialists (29-2072.00) ranks <strong style="color:var(--ink);">Attention to Detail</strong> as the single most important work style for this role &mdash; 100 of 100.</p>' +
-      '<div class="bar-track"><div class="bar-fill" style="width:0%"></div></div></div>' +
-    '<div class="card"><div class="card-title-row"><span class="card-title">Credential tie-in</span></div>' +
-      '<div style="display:flex;align-items:center;gap:0.5rem;"><svg style="width:1.1rem;height:1.1rem;color:var(--sienna)"><use href="#i-shield"/></svg>' +
-      '<div><div style="font-size:0.78rem;font-weight:600;">' + p.cred + ' &middot; AHIMA</div><div class="status-ok"><svg><use href="#i-check"/></svg>' +
-      (p.status === 'active' ? 'Active, verified' : 'In progress') + '</div></div></div></div>' +
-    '<div class="cta" id="skilldetail-back-home">Back to home <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>';
 }
 
 function renderGap(p, story) {
@@ -1402,7 +1364,6 @@ function renderAll(persona) {
   var story = STORY[persona.id];
   if (!story) return;
   renderHome(persona, story);
-  renderSkillDetail(persona, story);
   renderGap(persona, story);
   renderTraining(persona, story);
   renderProfile(persona, story);

@@ -136,7 +136,7 @@ const STORY = {
         "name": "Documentation Review",
         "evidence": "89% query accuracy",
         "tier": "advanced",
-        "trust": "simulated",
+        "trust": "documented",
         "icon": "c",
         "svg": "i-shield"
       }
@@ -391,7 +391,7 @@ const STORY = {
         "name": "Documentation Review",
         "evidence": "79% query accuracy",
         "tier": "developing",
-        "trust": "simulated",
+        "trust": "documented",
         "icon": "c",
         "svg": "i-shield"
       }
@@ -617,7 +617,7 @@ const STORY = {
         "name": "Documentation Review",
         "evidence": "65% query accuracy",
         "tier": "developing",
-        "trust": "simulated",
+        "trust": "documented",
         "icon": "c",
         "svg": "i-shield"
       }
@@ -828,7 +828,7 @@ const STORY = {
         "name": "Documentation Review",
         "evidence": "95% query accuracy",
         "tier": "expert",
-        "trust": "simulated",
+        "trust": "documented",
         "icon": "c",
         "svg": "i-shield"
       }
@@ -1090,7 +1090,7 @@ const STORY = {
         "name": "Documentation Review",
         "evidence": "86% query accuracy",
         "tier": "advanced",
-        "trust": "simulated",
+        "trust": "documented",
         "icon": "c",
         "svg": "i-shield"
       }

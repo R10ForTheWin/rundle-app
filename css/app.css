@@ -203,7 +203,7 @@
 
   /* ---------- Interactive affordances (real app, not gallery) ---------- */
   .cover-cta, .persona-card, .cta, .map-match-btn,
-  .link-row, .match-positions-link, .match-card, .skill-row,
+  .link-row, .match-positions-link, .match-card,
   .toggle-row .switch, .check-row { cursor: pointer; }
 
   /* ---------- Shared content bits ---------- */
@@ -272,7 +272,6 @@
   }
   .skill-row:last-of-type { border-bottom: none; }
   .skill-row > div:nth-child(2) { flex: 1; min-width: 0; }
-  .skill-row-arrow { width: 0.75rem; height: 0.75rem; flex: none; color: var(--ink-soft); opacity: 0.6; }
   .skill-icon {
     width: 2.1rem; height: 2.1rem; border-radius: 0.6rem; flex: none;
     display: flex; align-items: center; justify-content: center;
@@ -308,7 +307,6 @@
     width: 7.6rem; text-align: center; font-size: 0.56rem; font-weight: 700;
     text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-soft);
   }
-  .skill-list-head-arrow { width: 0.75rem; flex: none; }
   .trust.credential { background: color-mix(in srgb, var(--ochre) 16%, var(--surface-raised)); color: var(--sienna); }
   .trust.employer { background: var(--good-bg); color: var(--good); }
   .trust.documented { background: color-mix(in srgb, var(--amber) 22%, var(--surface-raised)); color: #8A5A1E; }
@@ -740,6 +738,7 @@
   .source-panels { padding: 0 0.65rem 0.75rem; display: flex; flex-direction: column; gap: 0.6rem; }
   .src-note { font-size: 0.62rem; color: var(--ink-soft); padding: 0 0.05rem; }
   .src-doc { border-radius: 0.55rem; overflow: hidden; border: 1px solid #D8D8D8; background: #fff; }
+  #employment-result .src-doc { margin-top: 0.7rem; }
   .src-chrome { display: flex; align-items: center; gap: 0.35rem; padding: 0.32rem 0.5rem; background: #E7E7E5; }
   .src-chrome .sdot { width: 0.38rem; height: 0.38rem; border-radius: 999px; background: #C6C6C4; }
   .src-chrome .surl {
@@ -1279,3 +1278,13 @@
     .demo-code-old { text-decoration: line-through; opacity: 0.55; }
     .demo-code-ghost { display: none; }
   }
+
+  /* hidden presenter corner: a faint dot so it can be found on purpose,
+     without reading as a real app control */
+  #demo-tap-zone::after {
+    content: ''; position: absolute; right: 0.55rem; bottom: 0.55rem;
+    width: 0.3rem; height: 0.3rem; border-radius: 999px;
+    background: var(--ink-soft); opacity: 0.3;
+    transition: opacity 0.25s ease, background 0.25s ease;
+  }
+  #demo-tap-zone.fast::after { background: var(--ochre); opacity: 0.75; }
