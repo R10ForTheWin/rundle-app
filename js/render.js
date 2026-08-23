@@ -173,7 +173,7 @@ function playLoginTypewriter() {
   btn.textContent = 'Log in';
   btn.style.background = '';
   btn.classList.add('pending');
-  status.textContent = 'Demo credentials — nothing is sent anywhere.';
+  status.textContent = '';
   setTimeout(function () {
     typeInto(loginUser, 'Demo_Login', 110, function () {
       if (caretUser) caretUser.style.display = 'none';
