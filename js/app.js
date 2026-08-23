@@ -3,7 +3,7 @@
 // this file decides which screen is visible and what triggers what.
 
 (function () {
-  var SCREENS = ['cover', 'picker', 'employment', 'credentials', 'connect', 'download', 'verified-skills',
+  var SCREENS = ['cover', 'picker', 'credentials', 'employment', 'connect', 'download', 'verified-skills',
     'assessment-gateway', 'module-demo', 'mapping',
     'home', 'review', 'chart-review', 'match-detail', 'training', 'profile', 'positions'];
 
@@ -137,14 +137,14 @@
     }
 
     if (e.target.closest('#picker-continue-btn')) {
-      if (!e.target.closest('#picker-continue-btn').classList.contains('pending')) showScreen('employment');
+      if (!e.target.closest('#picker-continue-btn').classList.contains('pending')) showScreen('credentials');
       return;
     }
 
     if (e.target.closest('#connect-cta')) { showScreen('download'); return; }
 
     if (e.target.closest('#login-btn')) {
-      confirmLogin(function () { showScreen('connect', { skipHistory: true }); });
+      confirmLogin(function () { showScreen('employment', { skipHistory: true }); });
       return;
     }
 
@@ -153,7 +153,7 @@
 
     var connectBtn = e.target.closest('#employment-connect-btn');
     if (connectBtn) {
-      if (connectBtn.classList.contains('done')) { showScreen('credentials'); return; }
+      if (connectBtn.classList.contains('done')) { showScreen('connect'); return; }
       if (!connectBtn.classList.contains('pending')) {
         var selectedProvider = document.querySelector('.employment-provider.selected');
         if (selectedProvider) connectEmployment(selectedProvider, selectedProvider.dataset.provider, 'payroll');
@@ -165,7 +165,7 @@
     if (uploadCard) { connectEmployment(uploadCard, 'your resume', 'resume'); return; }
 
     if (e.target.closest('#employment-continue-btn')) {
-      if (!e.target.closest('#employment-continue-btn').classList.contains('pending')) showScreen('credentials');
+      if (!e.target.closest('#employment-continue-btn').classList.contains('pending')) showScreen('connect');
       return;
     }
 
