@@ -4,7 +4,7 @@
 
 (function () {
   var SCREENS = ['cover', 'picker', 'connect', 'credentials', 'download', 'employment', 'verified-skills',
-    'assessment-gateway', 'module-demo', 'results-summary', 'mapping',
+    'assessment-gateway', 'module-demo', 'mapping',
     'home', 'skill-detail', 'review', 'chart-review', 'match-detail', 'training', 'profile', 'positions'];
 
   var selectedPersona = PERSONAS[0];
@@ -52,8 +52,6 @@
       renderAssessmentGateway();
     } else if (id === 'module-demo') {
       renderModuleDemo();
-    } else if (id === 'results-summary') {
-      renderResultsSummary(selectedPersona, STORY[selectedPersona.id]);
     } else if (id === 'mapping') {
       renderMap(selectedPersona, STORY[selectedPersona.id], function () {
         showScreen('home', { skipHistory: true });
@@ -140,7 +138,8 @@
 
     var connectBtn = e.target.closest('#employment-connect-btn');
     if (connectBtn) {
-      if (!connectBtn.classList.contains('pending') && !connectBtn.classList.contains('done')) {
+      if (connectBtn.classList.contains('done')) { showScreen('verified-skills'); return; }
+      if (!connectBtn.classList.contains('pending')) {
         var selectedProvider = document.querySelector('.employment-provider.selected');
         if (selectedProvider) connectEmployment(selectedProvider, selectedProvider.dataset.provider, 'payroll');
       }
@@ -179,10 +178,9 @@
     if (e.target.closest('#module-demo-replay')) { renderModuleDemo(); return; }
     if (e.target.closest('#module-demo-continue')) {
       assessmentDone = true;
-      showScreen('results-summary', { skipHistory: true });
+      showScreen('verified-skills', { skipHistory: true });
       return;
     }
-    if (e.target.closest('#results-summary-continue')) { showScreen('verified-skills', { skipHistory: true }); return; }
     if (e.target.closest('.skill-row')) { showScreen('skill-detail'); return; }
     if (e.target.closest('#skilldetail-next-review')) { showScreen('review'); return; }
     if (e.target.closest('#skilldetail-back-home')) { showScreen('verified-skills', { skipHistory: true }); return; }

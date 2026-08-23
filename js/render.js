@@ -243,32 +243,41 @@ function renderEmployment(persona, story) {
   if (!el) return;
   var providerRows = EMPLOYMENT_PROVIDERS.map(function (name, i) {
     var delay = ' style="animation-delay:' + (0.06 + i * 0.05).toFixed(2) + 's"';
+    var brand = PAYROLL_BRAND[name];
     return '<div class="employment-provider reveal-row" data-provider="' + name + '"' + delay + '>' +
-      '<div class="ep-name">' + name + '</div>' +
+      '<div class="ep-logo"><img src="assets/img/' + brand.logo + '" alt="' + name + '" /></div>' +
       '<div class="ep-radio"><span class="ep-radio-spin"></span><svg class="ep-radio-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></div>' +
       '</div>';
   }).join('');
   el.innerHTML =
-    '<div class="card reveal-row" style="animation-delay:0s"><div class="card-title-row"><span class="card-title">Connect your payroll account</span></div>' +
+    '<div class="matches-empty-note reveal-row" style="animation-delay:0s;">' +
+      '<img class="matches-empty-avatar" src="assets/img/rudy-note.png?v=3" alt="Rudy" />' +
+      '<div class="matches-empty-bubble"><p>Pick whichever one holds your paystubs &mdash; I&rsquo;ll do the rest.</p></div>' +
+    '</div>' +
+    '<div class="card reveal-row" style="animation-delay:0.05s"><div class="card-title-row"><span class="card-title">Connect your payroll account</span></div>' +
       '<div class="employment-providers" id="employment-providers">' + providerRows + '</div>' +
       '<div class="employment-hint">Your employer is never contacted. 200+ providers supported.</div>' +
       '<div class="employment-connect-cta pending" id="employment-connect-btn">Select a provider to connect</div>' +
     '</div>' +
-    '<div class="employment-or reveal-row" style="animation-delay:0.3s">or</div>' +
-    '<div class="card employment-manual reveal-row" style="animation-delay:0.35s">' +
-      '<div class="employment-manual-title">Enter it manually instead</div>' +
-      '<div class="employment-manual-sub">Shows on your transcript as self-reported, which employers weigh less.</div>' +
-      '<div class="employment-manual-cta" id="employment-manual-btn">Enter manually</div>' +
-      '<div class="employment-manual-divider">or</div>' +
-      '<div class="employment-upload" id="employment-upload">' +
-        '<div class="employment-upload-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M12 4 7 9M12 4l5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg></div>' +
-        '<div><div class="employment-upload-title">Upload your resume</div><div class="employment-upload-sub">PDF or DOCX &mdash; we&rsquo;ll pull your work history from it</div></div>' +
-        '<div class="ep-status"><span class="ep-spin"></span><span class="ep-check">&#10003; Extracted</span></div>' +
+    '<div id="employment-alt-section">' +
+      '<div class="employment-or reveal-row" style="animation-delay:0.3s">or</div>' +
+      '<div class="card employment-manual reveal-row" style="animation-delay:0.35s">' +
+        '<div class="employment-manual-title">Enter it manually instead</div>' +
+        '<div class="employment-manual-sub">Shows on your transcript as self-reported, which employers weigh less.</div>' +
+        '<div class="employment-manual-cta" id="employment-manual-btn">Enter manually</div>' +
+        '<div class="employment-manual-divider">or</div>' +
+        '<div class="employment-upload" id="employment-upload">' +
+          '<div class="employment-upload-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M12 4 7 9M12 4l5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg></div>' +
+          '<div><div class="employment-upload-title">Upload your resume</div><div class="employment-upload-sub">PDF or DOCX &mdash; we&rsquo;ll pull your work history from it</div></div>' +
+          '<div class="ep-status"><span class="ep-spin"></span><span class="ep-check">&#10003; Extracted</span></div>' +
+        '</div>' +
       '</div>' +
     '</div>' +
     '<div id="employment-result"></div>';
   var continueBtn = document.getElementById('employment-continue-btn');
   if (continueBtn) continueBtn.classList.add('pending');
+  var bottomCta = document.getElementById('employment-bottom-cta');
+  if (bottomCta) bottomCta.style.display = '';
 }
 
 function toggleProviderSelect(tile) {
@@ -278,12 +287,15 @@ function toggleProviderSelect(tile) {
     providersEl.querySelectorAll('.employment-provider.selected').forEach(function (t) { t.classList.remove('selected'); });
   }
   var btn = document.getElementById('employment-connect-btn');
+  var altSection = document.getElementById('employment-alt-section');
   if (wasSelected) {
     if (btn) { btn.classList.add('pending'); btn.textContent = 'Select a provider to connect'; }
+    if (altSection) altSection.style.display = '';
     return;
   }
   tile.classList.add('selected');
   if (btn) { btn.classList.remove('pending'); btn.textContent = 'Connect to ' + tile.dataset.provider; }
+  if (altSection) altSection.style.display = 'none';
 }
 
 // Payroll providers get the same "pull a real source" treatment as the
@@ -291,10 +303,10 @@ function toggleProviderSelect(tile) {
 // full of the worker's actual employment record, THEN the trust-tagged
 // timeline card underneath it. Resume/manual keep the simpler single-step reveal.
 var PAYROLL_BRAND = {
-  Workday: { color: '#F58220', url: 'workday.com/wd/employee/worker-history' },
-  ADP: { color: '#D0271D', url: 'adp.com/workforcenow/employment-verification' },
-  UKG: { color: '#0033A0', url: 'ukg.com/portal/employment-record' },
-  Paycom: { color: '#00629B', url: 'paycom.com/employee/employment-history' }
+  Workday: { color: '#3069B5', logo: 'logo-workday.svg', url: 'workday.com/wd/employee/worker-history' },
+  ADP: { color: '#EE2722', logo: 'logo-adp.svg', url: 'adp.com/workforcenow/employment-verification' },
+  UKG: { color: '#005857', logo: 'logo-ukg.svg', url: 'ukg.com/portal/employment-record' },
+  Paycom: { color: '#00833E', logo: 'logo-paycom.svg', url: 'paycom.com/employee/employment-history' }
 };
 
 function payrollSkeleton(sourceLabel, brand) {
@@ -309,7 +321,7 @@ function payrollDoc(sourceLabel, brand, persona) {
   return '<div class="src-doc">' +
     '<div class="src-chrome"><span class="sdot"></span><span class="sdot"></span><span class="sdot"></span><span class="surl">' + brand.url + '</span></div>' +
     '<div class="src-head" style="background:' + brand.color + ';">' +
-      '<div class="mark payroll-mark" style="color:' + brand.color + ';">' + sourceLabel + '</div>' +
+      '<div class="mark payroll-mark"><img src="assets/img/' + brand.logo + '" alt="' + sourceLabel + '" /></div>' +
       '<div><div class="org">' + sourceLabel + '</div><div class="sub">Employment &amp; payroll records</div></div>' +
     '</div>' +
     '<div class="src-body">' +
@@ -340,15 +352,12 @@ function connectEmployment(el, sourceLabel, kind) {
     setTimeout(function () {
       el.classList.remove('connecting');
       el.classList.add('connected');
+      if (connectBtn) { connectBtn.classList.remove('pending'); connectBtn.textContent = 'Connected to ' + sourceLabel; }
       if (result) result.innerHTML = '<div class="reveal-row">' + payrollDoc(sourceLabel, brand, employmentPersona) + '</div>';
     }, reduceMotion ? 0 : 1500);
 
     setTimeout(function () {
-      if (connectBtn) {
-        connectBtn.classList.remove('pending');
-        connectBtn.classList.add('done');
-        connectBtn.textContent = 'Connected to ' + sourceLabel;
-      }
+      if (connectBtn) { connectBtn.classList.add('done'); connectBtn.textContent = 'Connected — continue'; }
       if (result) {
         var empStory = STORY[employmentPersona.id];
         var tl = empStory.employer.map(function (e) {
@@ -356,12 +365,14 @@ function connectEmployment(el, sourceLabel, kind) {
         }).join('');
         result.insertAdjacentHTML('beforeend',
           '<div class="card employment-result-card reveal-row">' +
-            '<div class="employment-result-head"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>Verified from ' + sourceLabel + '<span class="trust employer">Employer-verified</span></div>' +
+            '<div class="employment-result-head"><span class="ep-logo" style="height:1.1rem;padding:0.1rem 0.3rem;"><img src="assets/img/' + brand.logo + '" alt="' + sourceLabel + '" /></span>Verified from ' + sourceLabel + '<span class="trust employer">Employer-verified</span></div>' +
             '<div class="timeline">' + tl + '</div>' +
           '</div>'
         );
       }
       unlockEmploymentContinue();
+      var bottomCta = document.getElementById('employment-bottom-cta');
+      if (bottomCta) bottomCta.style.display = 'none';
     }, reduceMotion ? 0 : 2400);
     return;
   }
@@ -600,7 +611,7 @@ function renderModuleDemoStep() {
             '<span class="tag"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>Session complete</span>' +
             '<div class="line">4 charts reviewed &middot; 3 corrections caught &middot; 1 confirmed &middot; nothing counts until this session is flipped to scored</div>' +
           '</div>' +
-          '<div class="demo-continue-cta" id="module-demo-continue">See your matches <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>' +
+          '<div class="demo-continue-cta" id="module-demo-continue">Show my verified skills <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>' +
           '<div class="back-cta" id="module-demo-replay">&#8635; Replay demo</div>' +
         '</div>' +
       '</div>';
@@ -833,7 +844,7 @@ function renderMap(p, story, onMatched) {
       }
       mapMatched = true;
       matchBtn.classList.add('done');
-      matchBtn.innerHTML = '<svg><use href="#i-arrow"/></svg>Next';
+      matchBtn.innerHTML = '<svg><use href="#i-arrow"/></svg>See your job matches';
       drawMapLines();
       var foot = el.querySelector('.map-foot');
       if (foot) foot.textContent = 'Same evidence, mapped to adjacent-fit roles.';
@@ -1014,9 +1025,6 @@ function renderHome(p, story) {
     '<div class="matches-empty-note">' +
       '<img class="matches-empty-avatar" src="assets/img/rudy-note.png?v=3" alt="Rudy" />' +
       '<div class="matches-empty-bubble"><p>More roles will show up here as you verify more skills.</p></div>' +
-    '</div>' +
-    '<div class="card strengthen-card" style="margin-top:0.7rem;"><div class="card-title-row"><span class="card-title">What&rsquo;s next</span></div>' +
-      '<p>Check Training to close a skill gap and open up more matches.</p>' +
     '</div>';
   // Rings stay at --fit:0 here — animateMatchRingsIn() sweeps them once the
   // screen is actually visible; bumping while display:none has no paint to
@@ -1040,9 +1048,22 @@ function renderVerifiedSkills(p, story, assessmentDone) {
   var el = document.getElementById('verified-skills-content');
   if (!el) return;
   var sub = document.getElementById('verified-skills-sub');
-  if (sub) {
-    sub.textContent = assessmentDone ? 'Updated just now — your audit demo added a new verified skill.' : '';
-    sub.style.display = assessmentDone ? '' : 'none';
+  if (sub) { sub.textContent = ''; sub.style.display = 'none'; }
+  var heroBlock = '';
+  if (assessmentDone) {
+    heroBlock =
+      '<div class="done-wrap" style="padding-top:0.3rem;">' +
+        '<div class="done-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>' +
+        '<h2>You are verified</h2>' +
+        '<p>Your transcript is live and it is yours. It stays private until you decide who can see it.</p>' +
+      '</div>' +
+      '<div class="card results-stats">' +
+        '<div class="results-stat"><div class="results-stat-label">Credentials</div><div class="results-stat-value">1 verified</div><div class="results-stat-sub">' + p.cred + ', ' + p.status + '</div></div>' +
+        '<div class="results-stat"><div class="results-stat-label">Employment</div><div class="results-stat-value">' + p.tenure + '</div><div class="results-stat-sub">Payroll confirmed</div></div>' +
+        '<div class="results-stat"><div class="results-stat-label">Records reviewed</div><div class="results-stat-value">' + story.skills.length + ' of ' + story.skills.length + '</div><div class="results-stat-sub">0 gaps disclosed</div></div>' +
+        '<div class="results-stat"><div class="results-stat-label">Assessment</div><div class="results-stat-value">' + story.sim.accuracy + '%</div><div class="results-stat-sub">Across 4 charts</div></div>' +
+        '<div class="results-cred-row"><span>Credential valid through <strong>' + p.renew + '</strong>. We will remind you when it is time to renew.</span><span class="trust employer">Simulation-verified</span></div>' +
+      '</div>';
   }
   var skills = story.skills.slice();
   if (assessmentDone) skills.push(ASSESSMENT_SKILL_RESULT);
@@ -1057,6 +1078,7 @@ function renderVerifiedSkills(p, story, assessmentDone) {
       '<svg class="skill-row-arrow"><use href="#i-chev"/></svg></div>';
   }).join('');
   el.innerHTML =
+    heroBlock +
     '<div class="card"><div class="card-title-row"><span class="card-title">Verified skills</span><span class="count-chip">' + skills.length + ' skills</span></div>' +
       '<div class="skill-list-head"><div class="skill-list-head-spacer"></div><div class="skill-list-head-name"></div>' +
         '<div class="skill-list-head-badges"><span>Level</span><span>Evidence</span></div><div class="skill-list-head-arrow"></div></div>' +
@@ -1095,37 +1117,6 @@ function renderAssessmentGateway() {
   }).join('');
   el.innerHTML = rows +
     '<div class="demo-ribbon" style="margin-top:0.9rem;">&#10024; Practice mode is on &mdash; untimed, unlimited retries. Your published score is a rolling average across sessions, never one bad afternoon.</div>';
-}
-
-// ============================================================
-// Results summary — "You are verified," shown right after the audit
-// demo finishes, before returning to (an updated) Verified Skills.
-// ============================================================
-function renderResultsSummary(p, story) {
-  var el = document.getElementById('results-summary-body');
-  if (!el) return;
-  var topMatch = story.matches[0];
-  el.innerHTML =
-    '<div class="done-wrap" style="padding-top:0.5rem;">' +
-      '<div class="done-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>' +
-      '<h2>You are verified</h2>' +
-      '<p>Your transcript is live and it is yours. It stays private until you decide who can see it.</p>' +
-    '</div>' +
-    '<div class="card results-stats">' +
-      '<div class="results-stat"><div class="results-stat-label">Credentials</div><div class="results-stat-value">1 verified</div><div class="results-stat-sub">' + p.cred + ', ' + p.status + '</div></div>' +
-      '<div class="results-stat"><div class="results-stat-label">Employment</div><div class="results-stat-value">' + p.tenure + '</div><div class="results-stat-sub">Payroll confirmed</div></div>' +
-      '<div class="results-stat"><div class="results-stat-label">Records reviewed</div><div class="results-stat-value">' + story.skills.length + ' of ' + story.skills.length + '</div><div class="results-stat-sub">0 gaps disclosed</div></div>' +
-      '<div class="results-stat"><div class="results-stat-label">Assessment</div><div class="results-stat-value">' + story.sim.accuracy + '%</div><div class="results-stat-sub">Across 4 charts</div></div>' +
-      '<div class="results-cred-row"><span>Credential valid through <strong>' + p.renew + '</strong>. We will remind you when it is time to renew.</span><span class="trust employer">Simulation-verified</span></div>' +
-    '</div>' +
-    '<div class="results-teaser">' +
-      '<div><div class="results-teaser-title">You are ' + topMatch.fit + '% ready for ' + topMatch.title + '</div>' +
-      '<div class="results-teaser-sub">That role pays ' + topMatch.wage.split(' median')[0] + ', see the gap that&rsquo;s left.</div></div>' +
-      '<div class="results-teaser-pct">' + topMatch.fit + '%</div>' +
-    '</div>' +
-    '<div class="results-actions">' +
-      '<div class="cta" id="results-summary-continue" style="margin-top:0;">See my proven skills <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>' +
-    '</div>';
 }
 
 // Sweeps every ring on screen from 0 up to its real fit value (clockwise,
