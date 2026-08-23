@@ -137,11 +137,11 @@ function typePasswordReveal(el, text, speed, done) {
   })();
 }
 
-// Auto-checks the public-data sources (not AHIMA, which needs a real
-// login on the next screen) one after another, then flips the CTA from
-// pending copper to ready green once all three have checked in.
+// Auto-checks each source one after another, then flips the CTA from
+// pending copper to ready green once all four have checked in. AHIMA
+// still gets a real login on the next screen regardless of this box.
 function playConnectAutoCheck() {
-  var order = ['onet', 'bls', 'cos'];
+  var order = ['onet', 'bls', 'cos', 'ahima'];
   var ctaBtn = document.getElementById('connect-cta');
   var step = reduceMotion ? 0 : 550;
   order.forEach(function (key, i) {
