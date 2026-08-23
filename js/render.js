@@ -1142,6 +1142,18 @@ var ASSESSMENT_SKILL_RESULT = {
   tier: 'advanced', trust: 'simulated'
 };
 
+// A real seal-style credential badge (shield + ribbon tails) instead
+// of a small line-art icon -- reads as an actual earned badge.
+function credentialBadgeSvg() {
+  return '<svg viewBox="0 0 24 24">' +
+    '<defs><linearGradient id="credBadgeGrad" x1="0" y1="0" x2="1" y2="1">' +
+      '<stop offset="0" stop-color="#DB8940"/><stop offset="1" stop-color="var(--sienna)"/>' +
+    '</linearGradient></defs>' +
+    '<path d="M12 2 3 6v6c0 5 4 8.5 9 10 5-1.5 9-5 9-10V6l-9-4Z" fill="url(#credBadgeGrad)" stroke="#fff" stroke-width="1"/>' +
+    '<path d="M8.5 12.5l2.5 2.5 5-5.5" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>' +
+  '</svg>';
+}
+
 function renderVerifiedSkills(p, story, assessmentDone) {
   renderIdentity('verified-skills-identity', p);
   var el = document.getElementById('verified-skills-content');
@@ -1168,8 +1180,8 @@ function renderVerifiedSkills(p, story, assessmentDone) {
   }).join('');
   var credentialCard =
     '<div class="card"><div class="card-title-row"><span class="card-title">Credential tie-in</span></div>' +
-      '<div style="display:flex;align-items:center;gap:0.5rem;"><svg style="width:1.1rem;height:1.1rem;color:var(--sienna)"><use href="#i-shield"/></svg>' +
-      '<div><div style="font-size:0.78rem;font-weight:600;">' + p.cred + ' &middot; AHIMA</div><div class="status-ok"><svg><use href="#i-check"/></svg>' +
+      '<div style="display:flex;align-items:center;gap:0.8rem;"><div class="credential-badge">' + credentialBadgeSvg() + '</div>' +
+      '<div><div style="font-size:0.85rem;font-weight:700;">' + p.cred + ' &middot; AHIMA</div><div class="status-ok"><svg><use href="#i-check"/></svg>' +
       (p.status === 'active' ? 'Active, verified' : 'In progress') + '</div></div></div></div>';
   el.innerHTML =
     heroBlock +

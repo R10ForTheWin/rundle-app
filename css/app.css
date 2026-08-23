@@ -1195,6 +1195,15 @@
   .done-badge::before { left: 0.35rem; transform: rotate(14deg); }
   .done-badge::after { right: 0.35rem; transform: rotate(-14deg); }
   .done-badge svg { width: 1.5rem; height: 1.5rem; color: #fff; }
+  .credential-badge { width: 2.7rem; height: 2.7rem; flex: none; position: relative; display: flex; align-items: center; justify-content: center; }
+  .credential-badge svg { width: 100%; height: 100%; filter: drop-shadow(0 0.2rem 0.35rem color-mix(in srgb, var(--sienna) 45%, transparent)); }
+  .credential-badge::before, .credential-badge::after {
+    content: ''; position: absolute; bottom: -0.3rem; width: 0.45rem; height: 0.75rem;
+    background: var(--sienna); z-index: -1;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 72%, 0 100%);
+  }
+  .credential-badge::before { left: 0.42rem; transform: rotate(12deg); }
+  .credential-badge::after { right: 0.42rem; transform: rotate(-12deg); }
   .done-wrap h2 { font-size: 1.1rem; font-family: 'Fraunces'; font-weight: 600; }
   .done-wrap p { font-size: 0.82rem; color: var(--ink-soft); line-height: 1.55; max-width: 16rem; margin: 0; }
   .back-cta {
