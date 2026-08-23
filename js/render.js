@@ -141,11 +141,11 @@ function typePasswordReveal(el, text, speed, done) {
   })();
 }
 
-// Auto-checks each source one after another, then flips the CTA from
-// pending copper to ready green once all four have checked in. AHIMA
-// still gets a real login on the next screen regardless of this box.
+// Auto-checks each public source one after another, then flips the CTA
+// from pending copper to ready green once all three have checked in.
+// AHIMA already got its real login on an earlier screen.
 function playConnectAutoCheck() {
-  var order = ['onet', 'bls', 'cos', 'ahima'];
+  var order = ['onet', 'bls', 'cos'];
   var ctaBtn = document.getElementById('connect-cta');
   var step = reduceMotion ? 0 : 550;
   order.forEach(function (key, i) {
@@ -1081,11 +1081,11 @@ function renderHome(p, story) {
       '</div>';
   }).join('');
   el.innerHTML =
-    matchRows +
-    '<div class="matches-empty-note">' +
-      '<img class="matches-empty-avatar" src="assets/img/rudy-note.png?v=3" alt="Rudy" />' +
+    '<div class="matches-empty-note home-hero-note">' +
+      '<img class="home-hero-avatar" src="assets/img/rudy-home-wave.gif" alt="Rudy waving" />' +
       '<div class="matches-empty-bubble"><p>More roles will show up here as you verify more skills.</p></div>' +
-    '</div>';
+    '</div>' +
+    matchRows;
   // Rings stay at --fit:0 here — animateMatchRingsIn() sweeps them once the
   // screen is actually visible; bumping while display:none has no paint to
   // transition from, so the fill would just snap in with no animation.

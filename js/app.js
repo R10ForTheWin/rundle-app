@@ -3,7 +3,7 @@
 // this file decides which screen is visible and what triggers what.
 
 (function () {
-  var SCREENS = ['cover', 'picker', 'connect', 'credentials', 'download', 'employment', 'verified-skills',
+  var SCREENS = ['cover', 'picker', 'employment', 'credentials', 'connect', 'download', 'verified-skills',
     'assessment-gateway', 'module-demo', 'mapping',
     'home', 'review', 'chart-review', 'match-detail', 'training', 'profile', 'positions'];
 
@@ -115,7 +115,7 @@
       });
     }
     var sub = document.getElementById('connect-sublead');
-    if (sub) sub.textContent = 'Select the accounts Rundle should pull ' + picked.name.split(' ')[0] + '’s work history from.';
+    if (sub) sub.textContent = 'Public sources Rundle uses to benchmark ' + picked.name.split(' ')[0] + '’s skills against the role.';
   }
 
   // ---- Click delegation ----
@@ -137,14 +137,14 @@
     }
 
     if (e.target.closest('#picker-continue-btn')) {
-      if (!e.target.closest('#picker-continue-btn').classList.contains('pending')) showScreen('connect');
+      if (!e.target.closest('#picker-continue-btn').classList.contains('pending')) showScreen('employment');
       return;
     }
 
-    if (e.target.closest('#connect-cta')) { showScreen('credentials'); return; }
+    if (e.target.closest('#connect-cta')) { showScreen('download'); return; }
 
     if (e.target.closest('#login-btn')) {
-      confirmLogin(function () { showScreen('download', { skipHistory: true }); });
+      confirmLogin(function () { showScreen('connect', { skipHistory: true }); });
       return;
     }
 
@@ -153,7 +153,7 @@
 
     var connectBtn = e.target.closest('#employment-connect-btn');
     if (connectBtn) {
-      if (connectBtn.classList.contains('done')) { showScreen('verified-skills'); return; }
+      if (connectBtn.classList.contains('done')) { showScreen('credentials'); return; }
       if (!connectBtn.classList.contains('pending')) {
         var selectedProvider = document.querySelector('.employment-provider.selected');
         if (selectedProvider) connectEmployment(selectedProvider, selectedProvider.dataset.provider, 'payroll');
@@ -165,12 +165,12 @@
     if (uploadCard) { connectEmployment(uploadCard, 'your resume', 'resume'); return; }
 
     if (e.target.closest('#employment-continue-btn')) {
-      if (!e.target.closest('#employment-continue-btn').classList.contains('pending')) showScreen('verified-skills');
+      if (!e.target.closest('#employment-continue-btn').classList.contains('pending')) showScreen('credentials');
       return;
     }
 
     if (e.target.closest('#download-next-btn')) {
-      showScreen('employment', { skipHistory: true });
+      showScreen('verified-skills', { skipHistory: true });
       return;
     }
 
