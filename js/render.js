@@ -241,9 +241,25 @@ function flyToInbox(sourceEl, inboxId) {
 // ============================================================
 var EMPLOYMENT_PROVIDERS = ['Workday', 'ADP', 'UKG', 'Paycom'];
 var employmentPersona = null;
+// Set once connectEmployment finishes, so Verified Skills can show the
+// same employment-history card without knowing which provider (or
+// resume) the demo run actually used.
+var employmentConnection = null;
+
+function employmentHistoryCard(story) {
+  if (!employmentConnection) return '';
+  var tl = story.employer.map(function (e) {
+    return '<div class="tl-item"><div class="tl-date">' + e.from + ' &mdash; ' + e.to + '</div><div class="tl-title">' + e.title + '</div><div class="tl-sub">' + e.role + '</div></div>';
+  }).join('');
+  var head = employmentConnection.kind === 'payroll'
+    ? '<span class="ep-logo" style="height:1.1rem;padding:0.1rem 0.3rem;"><img src="assets/img/' + employmentConnection.brand.logo + '" alt="' + employmentConnection.sourceLabel + '" /></span>Verified from ' + employmentConnection.sourceLabel + '<span class="trust employer">Employer-verified</span>'
+    : '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>Extracted from your resume<span class="trust documented">Documented</span>';
+  return '<div class="card employment-result-card"><div class="employment-result-head">' + head + '</div><div class="timeline">' + tl + '</div></div>';
+}
 
 function renderEmployment(persona, story) {
   employmentPersona = persona;
+  employmentConnection = null;
   var el = document.getElementById('employment-body');
   if (!el) return;
   var inboxCount = document.getElementById('employment-inbox-count');
@@ -368,6 +384,7 @@ function connectEmployment(el, sourceLabel, kind) {
 
     setTimeout(function () {
       if (connectBtn) { connectBtn.classList.add('done'); connectBtn.textContent = 'Connected — Continue'; }
+      employmentConnection = { kind: 'payroll', sourceLabel: sourceLabel, brand: brand };
       if (result) {
         var empStory = STORY[employmentPersona.id];
         var tl = empStory.employer.map(function (e) {
@@ -390,6 +407,7 @@ function connectEmployment(el, sourceLabel, kind) {
   setTimeout(function () {
     el.classList.remove('connecting');
     el.classList.add('connected');
+    employmentConnection = { kind: 'resume' };
     if (result) {
       var empStory = STORY[employmentPersona.id];
       var tl = empStory.employer.map(function (e) {
@@ -693,7 +711,7 @@ function renderModuleDemoStep() {
             '<span class="tag"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>Demo complete</span>' +
             '<div class="line">' + MODULE_DEMO_CHARTS.length + ' charts reviewed &middot; ' + MODULE_DEMO_CORRECTIONS + ' corrections caught &middot; ' + MODULE_DEMO_CONFIRMED + ' confirmed &middot; this was a preview walkthrough, not a scored session</div>' +
           '</div>' +
-          '<div class="demo-continue-cta" id="module-demo-continue">Show my verified skills <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>' +
+          '<div class="demo-continue-cta" id="module-demo-continue">Show my new verified skills <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>' +
           '<div class="back-cta" id="module-demo-replay">&#8635; Replay demo</div>' +
         '</div>' +
       '</div>';
@@ -914,7 +932,7 @@ function renderMap(p, story, onMatched) {
       '<rect x="22" y="12" width="7" height="22" rx="3.5" fill="#E4B877" transform="rotate(-55 25 23)"/>' +
     '</svg>' +
     '<div class="back-btn" style="display:flex;align-items:center;gap:0.3rem;cursor:pointer;position:relative;"><svg style="width:1rem;height:1rem;transform:rotate(180deg);color:#6B6258"><use href="#i-chev"/></svg></div>' +
-    '<div><div class="map-head">Mapping your skills</div><p class="map-sub">Reading ' + first + '&rsquo;s verified work history against roles in growing fields.</p></div>' +
+    '<div><div class="map-head">Mapping your skills</div><p class="map-sub">Reading ' + first + '&rsquo;s verified work history and skills against roles in growing medical fields.</p></div>' +
     '<div class="map-match-btn" id="map-match-btn"><svg><use href="#i-match"/></svg>Click to match</div>' +
     '<div class="map-scroll"><div class="map-stage" id="map-stage">' +
       '<div class="map-cols" id="map-cols"><div class="map-col" id="map-col-l">' + skillChips + '</div><div class="map-col right" id="map-col-r">' + roleChips + '</div></div>' +
@@ -1102,7 +1120,6 @@ function renderHome(p, story) {
       '<div class="match-meta' + (m.good ? ' good' : '') + '">' + m.meta + '</div>' +
       (m.wage ? '<div class="match-wage">' + m.wage + '</div>' : '') +
       (m.credential ? '<div class="match-credential">🔒 ' + m.credential + ' required</div>' : '') +
-      (m.closesAt ? '<div class="match-closes">Closes gap at → ' + m.closesAt + '</div>' : '') +
       (m.positions && m.positions.length ? '<div class="match-positions-link" data-open-positions="' + i + '">See open positions <svg><use href="#i-chev"/></svg></div>' : '') +
       '</div><svg class="match-card-arrow"><use href="#i-chev"/></svg>' +
       '</div>';
@@ -1134,26 +1151,17 @@ function renderVerifiedSkills(p, story, assessmentDone) {
   renderIdentity('verified-skills-identity', p);
   var el = document.getElementById('verified-skills-content');
   if (!el) return;
-  var sub = document.getElementById('verified-skills-sub');
-  if (sub) { sub.textContent = ''; sub.style.display = 'none'; }
+  var skills = story.skills.slice();
+  if (assessmentDone) skills.push(ASSESSMENT_SKILL_RESULT);
   var heroBlock = '';
   if (assessmentDone) {
     heroBlock =
-      '<div class="done-wrap" style="padding-top:0.3rem;">' +
+      '<div class="done-wrap" style="padding-top:0.3rem;padding-bottom:0.4rem;">' +
         '<div class="done-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>' +
         '<h2>Module 1 complete</h2>' +
-        '<p>You caught what the AI got wrong and confirmed what it got right &mdash; that result is now part of your transcript. It stays private until you decide who sees it.</p>' +
-      '</div>' +
-      '<div class="card results-stats">' +
-        '<div class="results-stat"><div class="results-stat-label">Credentials</div><div class="results-stat-value">1 verified</div><div class="results-stat-sub">' + p.cred + ', ' + p.status + '</div></div>' +
-        '<div class="results-stat"><div class="results-stat-label">Employment</div><div class="results-stat-value">' + p.tenure + '</div><div class="results-stat-sub">Payroll confirmed</div></div>' +
-        '<div class="results-stat"><div class="results-stat-label">Records reviewed</div><div class="results-stat-value">' + story.skills.length + ' of ' + story.skills.length + '</div><div class="results-stat-sub">0 gaps disclosed</div></div>' +
-        '<div class="results-stat"><div class="results-stat-label">Assessment</div><div class="results-stat-value">' + story.sim.accuracy + '%</div><div class="results-stat-sub">Across ' + MODULE_DEMO_CHARTS.length + ' charts</div></div>' +
-        '<div class="results-cred-row"><span>Credential valid through <strong>' + p.renew + '</strong>. We will remind you when it is time to renew.</span><span class="trust employer">Simulation-verified</span></div>' +
+        '<p>You now have <strong style="color:var(--ink);">' + skills.length + ' verified skills</strong> &mdash; 1 new, earned from this assessment.</p>' +
       '</div>';
   }
-  var skills = story.skills.slice();
-  if (assessmentDone) skills.push(ASSESSMENT_SKILL_RESULT);
   var revealCls = reduceMotion ? '' : ' reveal-row';
   var skillRows = skills.map(function (s, i) {
     var delay = reduceMotion ? '' : ' style="animation-delay:' + (0.05 + i * 0.07).toFixed(2) + 's"';
@@ -1171,6 +1179,7 @@ function renderVerifiedSkills(p, story, assessmentDone) {
   el.innerHTML =
     heroBlock +
     credentialCard +
+    employmentHistoryCard(story) +
     '<div class="card"><div class="card-title-row"><span class="card-title">Verified skills</span><span class="count-chip">' + skills.length + ' skills</span></div>' +
       '<div class="skill-list-head"><div class="skill-list-head-spacer"></div><div class="skill-list-head-name"></div>' +
         '<div class="skill-list-head-badges"><span>Level</span><span>Evidence</span></div></div>' +
