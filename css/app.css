@@ -289,6 +289,7 @@
   .skill-icon {
     width: 2.1rem; height: 2.1rem; border-radius: 0.6rem; flex: none;
     display: flex; align-items: center; justify-content: center;
+    position: relative;
   }
   .skill-icon svg { width: 1rem; height: 1rem; }
   .skill-icon {
@@ -1081,10 +1082,13 @@
   .employment-manual-divider { text-align: center; font-size: 0.66rem; color: var(--ink-soft); margin: 0.6rem 0 0; }
 
   /* ---------- Verified Skills: "New" tag on the post-assessment skill ---------- */
+  /* Sits as a small ribbon on the icon's corner rather than inline with
+     the skill name -- inline wrapped onto its own line for longer names. */
   .skill-new-tag {
-    display: inline-block; font-size: 0.6rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.03em;
-    color: #fff; background: linear-gradient(135deg, #5FA38C, var(--good)); padding: 0.15rem 0.45rem; border-radius: 999px; margin-left: 0.35rem;
-    vertical-align: middle; box-shadow: 0 0.15rem 0.4rem -0.1rem color-mix(in srgb, var(--good) 60%, transparent);
+    position: absolute; top: -0.4rem; right: -0.4rem;
+    font-size: 0.52rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.03em;
+    color: #fff; background: linear-gradient(135deg, #5FA38C, var(--good)); padding: 0.14rem 0.4rem; border-radius: 999px;
+    white-space: nowrap; box-shadow: 0 0.15rem 0.35rem -0.05rem color-mix(in srgb, var(--good) 60%, transparent), 0 0 0 2px var(--surface-raised);
   }
 
   /* ---------- Assessment gateway (five modules) ---------- */
@@ -1268,7 +1272,19 @@
   }
 
   /* the deliberating cursor that weighs the two answer choices before "clicking" one */
-  #screen-module-demo .choice-btn { cursor: default; transition: background 0.25s ease, border-color 0.25s ease; }
+  #screen-module-demo .choice-btn {
+    cursor: default; transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    background: var(--surface-raised); border: 1.5px solid var(--line);
+    box-shadow: 0 0.15rem 0.4rem -0.1rem rgba(42,38,34,0.1);
+  }
+  .demo-question-label {
+    font-size: 0.66rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--sienna); margin-bottom: 0.15rem;
+  }
+  .demo-question-text {
+    padding: 0.6rem 0.85rem; font-size: 0.78rem; font-weight: 700; color: var(--ink);
+    border-bottom: 1px solid var(--line);
+  }
   .choice-row#module-demo-choices { position: relative; flex-direction: column; padding: 0.6rem 0 0; gap: 0.5rem; margin-top: 0.6rem; }
   .choice-row#module-demo-choices .choice-btn { text-align: left; padding: 0.6rem 0.8rem; display: flex; align-items: center; gap: 0.6rem; }
   .choice-letter {

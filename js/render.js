@@ -501,7 +501,7 @@ var CHART_REVIEW_CHARTS = [
 var CHART_REVIEW_SUMMARY = CHART_REVIEW_CHARTS.length + ' flagged charts reviewed · 1 real gap caught · Aug 2026';
 
 // ============================================================
-// Module 1 demo (AI-assisted audit) — a hands-off auto-play for
+// Module 1 demo (Chart Coding Review) — a hands-off auto-play for
 // presentation audiences, not the real graded module. Each synthetic
 // chart poses a real yes/no judgment call with two candidate answers;
 // a cursor visibly deliberates between them (so the audience can guess
@@ -721,7 +721,7 @@ function renderModuleDemoStep() {
   }).join('');
   var head = '<div class="progress-row">' + dots + '<span class="progress-label">Module 1 &middot; chart ' + (moduleDemoStep + 1) + ' of ' + MODULE_DEMO_CHARTS.length + '</span></div>' +
     '<div class="demo-ribbon" style="margin:0 1.1rem 0.6rem;">&#9654; Watching a demo &mdash; this plays itself, nothing to tap</div>';
-  var chartHead = '<div class="chart-head"><span class="demo-chart-num">' + (moduleDemoStep + 1) + '</span><div><div class="id">' + chart.title + '</div><div class="type">' + chart.type + '</div></div></div>';
+  var chartHead = '<div class="chart-head"><div><div class="demo-question-label">Question #' + (moduleDemoStep + 1) + '</div><div class="id">' + chart.title + '</div><div class="type">' + chart.type + '</div></div></div>';
 
   var letters = ['A', 'B', 'C', 'D'];
   var choiceBtns = chart.choices.map(function (c, i) {
@@ -731,6 +731,7 @@ function renderModuleDemoStep() {
     '<div class="chart-review-scroll">' +
       '<div class="chart-card demo-reveal">' +
         chartHead +
+        '<div class="demo-question-text">Review this AI-coded entry &mdash; what&rsquo;s the right call?</div>' +
         '<div class="code-row flagged"><div><div class="label">' + chart.label + '</div><div class="code mono">' + chart.aiCode + '</div></div></div>' +
       '</div>' +
       '<div class="choice-row" id="module-demo-choices">' + choiceBtns +
@@ -1149,8 +1150,8 @@ function renderVerifiedSkills(p, story, assessmentDone) {
   var skillRows = skills.map(function (s, i) {
     var delay = reduceMotion ? '' : ' style="animation-delay:' + (0.05 + i * 0.07).toFixed(2) + 's"';
     var isNew = assessmentDone && s === ASSESSMENT_SKILL_RESULT;
-    return '<div class="skill-row' + revealCls + '"' + delay + '><div class="skill-icon ' + s.icon + '"><svg><use href="#' + s.svg + '"/></svg></div>' +
-      '<div><div class="skill-name">' + s.name + (isNew ? ' <span class="skill-new-tag">New</span>' : '') + '</div><div class="skill-evidence">' + s.evidence + '</div></div>' +
+    return '<div class="skill-row' + revealCls + '"' + delay + '><div class="skill-icon ' + s.icon + '"><svg><use href="#' + s.svg + '"/></svg>' + (isNew ? '<span class="skill-new-tag">New</span>' : '') + '</div>' +
+      '<div><div class="skill-name">' + s.name + '</div><div class="skill-evidence">' + s.evidence + '</div></div>' +
       '<div class="skill-badges"><span class="tier ' + s.tier + '">' + tierLabel[s.tier] + '</span>' +
       (s.trust ? '<span class="trust ' + s.trust + '">' + trustLabel[s.trust] + '</span>' : '') + '</div></div>';
   }).join('');
@@ -1178,7 +1179,7 @@ function renderVerifiedSkills(p, story, assessmentDone) {
 // four are shown for context, not fabricated as interactive features.
 // ============================================================
 var ASSESSMENT_MODULES = [
-  { n: 1, name: 'AI-assisted audit', desc: 'Review charts an AI already coded. Catch what it got wrong, leave what it got right.', time: '40 min', status: 'demo', tag: 'Where you stand out' },
+  { n: 1, name: 'Chart Coding Review', desc: 'Review charts an AI already coded. Catch what it got wrong, leave what it got right.', time: '40 min', status: 'demo' },
   { n: 2, name: 'Inpatient coding', desc: 'Code eight synthetic charts, sequence the principal diagnosis, derive the DRG.', time: '45 min', status: 'unavailable' },
   { n: 3, name: 'Physician query', desc: 'Draft a compliant, non-leading query for an ambiguous chart.', time: '25 min', status: 'unavailable' },
   { n: 4, name: 'Compliance judgment', desc: 'Scenario items on guidelines, upcoding risk and when to escalate.', time: '20 min', status: 'unavailable' },
@@ -1196,7 +1197,7 @@ function renderAssessmentGateway() {
         (m.tag ? '<span class="gw-tag">' + m.tag + '</span>' : '') + '</div>' +
         '<div class="gw-desc">' + m.desc + '</div></div>' +
       '<div class="gw-side"><div class="gw-time">' + m.time + '</div>' +
-      (isDemo ? '<div class="gw-start-btn" id="gateway-start-module2">Continue</div>' : '<div class="gw-unavailable">Not in this demo</div>') +
+      (isDemo ? '<div class="gw-start-btn" id="gateway-start-module2">Begin Assessment</div>' : '<div class="gw-unavailable">Not in this demo</div>') +
       '</div></div>';
   }).join('');
   el.innerHTML = rows;
