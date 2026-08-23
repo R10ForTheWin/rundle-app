@@ -141,11 +141,12 @@ function typePasswordReveal(el, text, speed, done) {
   })();
 }
 
-// Auto-checks each public source one after another, then flips the CTA
-// from pending copper to ready green once all three have checked in.
-// AHIMA already got its real login on an earlier screen.
+// Auto-checks each source one after another, then flips the CTA from
+// pending copper to ready green once all four have checked in. AHIMA
+// already got its real login on an earlier screen — this box just
+// confirms it's included.
 function playConnectAutoCheck() {
-  var order = ['onet', 'bls', 'cos'];
+  var order = ['onet', 'bls', 'cos', 'ahima'];
   var ctaBtn = document.getElementById('connect-cta');
   var step = reduceMotion ? 0 : 550;
   order.forEach(function (key, i) {
@@ -480,7 +481,7 @@ var CHART_REVIEW_CHARTS = [
 var CHART_REVIEW_SUMMARY = CHART_REVIEW_CHARTS.length + ' flagged charts reviewed · 1 real gap caught · Aug 2026';
 
 // ============================================================
-// Module 2 demo (AI-assisted audit) — a hands-off auto-play for
+// Module 1 demo (AI-assisted audit) — a hands-off auto-play for
 // presentation audiences, not the real graded module. Each synthetic
 // chart poses a real yes/no judgment call with two candidate answers;
 // a cursor visibly deliberates between them (so the audience can guess
@@ -703,7 +704,7 @@ function renderModuleDemoStep() {
   var dots = MODULE_DEMO_CHARTS.map(function (c, i) {
     return '<div class="progress-dot' + (i < moduleDemoStep ? ' done' : (i === moduleDemoStep ? ' active' : '')) + '"></div>';
   }).join('');
-  var head = '<div class="progress-row">' + dots + '<span class="progress-label">Module 2 &middot; chart ' + (moduleDemoStep + 1) + ' of ' + MODULE_DEMO_CHARTS.length + '</span></div>' +
+  var head = '<div class="progress-row">' + dots + '<span class="progress-label">Module 1 &middot; chart ' + (moduleDemoStep + 1) + ' of ' + MODULE_DEMO_CHARTS.length + '</span></div>' +
     '<div class="demo-ribbon" style="margin:0 1.1rem 0.6rem;">&#9654; Watching a demo &mdash; this plays itself, nothing to tap</div>';
   var chartHead = '<div class="chart-head"><span class="demo-chart-num">' + (moduleDemoStep + 1) + '</span><div><div class="id">' + chart.title + '</div><div class="type">' + chart.type + '</div></div></div>';
 
@@ -1140,7 +1141,7 @@ function renderVerifiedSkills(p, story, assessmentDone) {
     heroBlock =
       '<div class="done-wrap" style="padding-top:0.3rem;">' +
         '<div class="done-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>' +
-        '<h2>Module 2 complete</h2>' +
+        '<h2>Module 1 complete</h2>' +
         '<p>You caught what the AI got wrong and confirmed what it got right &mdash; that result is now part of your transcript. It stays private until you decide who sees it.</p>' +
       '</div>' +
       '<div class="card results-stats">' +
@@ -1181,12 +1182,12 @@ function renderVerifiedSkills(p, story, assessmentDone) {
 
 // ============================================================
 // Assessment gateway — the "five modules" overview, gateway into the
-// audit demo. Only Module 2 is real (it's the built demo); the other
+// audit demo. Only Module 1 is real (it's the built demo); the other
 // four are shown for context, not fabricated as interactive features.
 // ============================================================
 var ASSESSMENT_MODULES = [
-  { n: 1, name: 'Inpatient coding', desc: 'Code eight synthetic charts, sequence the principal diagnosis, derive the DRG.', time: '45 min', status: 'unavailable' },
-  { n: 2, name: 'AI-assisted audit', desc: 'Review charts an AI already coded. Catch what it got wrong, leave what it got right.', time: '40 min', status: 'demo', tag: 'Where you stand out' },
+  { n: 1, name: 'AI-assisted audit', desc: 'Review charts an AI already coded. Catch what it got wrong, leave what it got right.', time: '40 min', status: 'demo', tag: 'Where you stand out' },
+  { n: 2, name: 'Inpatient coding', desc: 'Code eight synthetic charts, sequence the principal diagnosis, derive the DRG.', time: '45 min', status: 'unavailable' },
   { n: 3, name: 'Physician query', desc: 'Draft a compliant, non-leading query for an ambiguous chart.', time: '25 min', status: 'unavailable' },
   { n: 4, name: 'Compliance judgment', desc: 'Scenario items on guidelines, upcoding risk and when to escalate.', time: '20 min', status: 'unavailable' },
   { n: 5, name: 'Working style', desc: 'A short inventory. Advisory only, reported separately, never a pass or fail.', time: '15 min', status: 'unavailable' }
@@ -1206,8 +1207,7 @@ function renderAssessmentGateway() {
       (isDemo ? '<div class="gw-start-btn" id="gateway-start-module2">Continue</div>' : '<div class="gw-unavailable">Not in this demo</div>') +
       '</div></div>';
   }).join('');
-  el.innerHTML = rows +
-    '<div class="demo-ribbon" style="margin-top:0.9rem;">&#10024; Practice mode is on &mdash; untimed, unlimited retries. Your published score is a rolling average across sessions, never one bad afternoon.</div>';
+  el.innerHTML = rows;
 }
 
 // Sweeps every ring on screen from 0 up to its real fit value (clockwise,

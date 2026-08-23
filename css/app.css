@@ -37,6 +37,11 @@
     --good-bg-onlight: #E3F0EA;
     --phone-notch: #000000;
     --shadow-color: 226 60% 10%;
+
+    /* Deliberately NOT a brand color — used only for "this is a demo
+       artifact, not the product" notices, so they never blend in. */
+    --demo-accent: #6D28D9;
+    --demo-accent-soft: #EDE6FB;
   }
 
   @media (prefers-color-scheme: dark) {
@@ -671,13 +676,14 @@
     display: inline-flex; gap: 0.4rem; align-items: flex-start;
     width: fit-content; max-width: calc(100% - 2.2rem);
     margin: 0 1.1rem 0.9rem;
-    background: color-mix(in srgb, var(--ochre) 15%, var(--surface-raised));
-    border: 1px solid color-mix(in srgb, var(--ochre) 40%, transparent);
+    background: var(--demo-accent);
+    border: 1px solid var(--demo-accent);
     border-radius: 1.1rem; padding: 0.4rem 0.65rem;
+    box-shadow: 0 0.3rem 0.7rem -0.2rem color-mix(in srgb, var(--demo-accent) 50%, transparent);
   }
-  .demo-banner svg { width: 0.85rem; height: 0.85rem; color: var(--sienna); flex: none; margin-top: 0.1rem; }
-  .demo-banner .t { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.03em; color: var(--sienna); text-transform: uppercase; }
-  .demo-banner .d { font-size: 0.6rem; color: var(--ink-soft); line-height: 1.3; margin-top: 0.05rem; }
+  .demo-banner svg { width: 0.85rem; height: 0.85rem; color: #fff; flex: none; margin-top: 0.1rem; }
+  .demo-banner .t { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.03em; color: #fff; text-transform: uppercase; }
+  .demo-banner .d { font-size: 0.6rem; color: color-mix(in srgb, #fff 88%, transparent); line-height: 1.3; margin-top: 0.05rem; }
 
   /* ---------- Connect-sources checklist (screen 3) ---------- */
   .check-row { display: flex; align-items: center; gap: 0.65rem; padding: 0.7rem 0.15rem; border-bottom: 1px solid var(--line); }
@@ -1185,10 +1191,11 @@
     padding: 0.1rem 0.4rem; border-radius: 999px;
   }
   .demo-ribbon {
-    font-size: 0.68rem; font-weight: 700; color: var(--sienna); text-align: center;
-    background: color-mix(in srgb, var(--ochre) 12%, var(--surface-raised));
-    border: 1px dashed color-mix(in srgb, var(--ochre) 45%, transparent);
+    font-size: 0.68rem; font-weight: 700; color: #fff; text-align: center;
+    background: var(--demo-accent);
+    border: 1px solid var(--demo-accent);
     border-radius: 0.7rem; padding: 0.5rem 0.7rem; margin-bottom: 0.8rem;
+    box-shadow: 0 0.3rem 0.7rem -0.2rem color-mix(in srgb, var(--demo-accent) 50%, transparent);
   }
   .demo-chart-num {
     width: 1.5rem; height: 1.5rem; border-radius: 999px; flex: none;

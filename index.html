@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,600&display=swap" />
-<link rel="stylesheet" href="css/app.css?v=89" />
+<link rel="stylesheet" href="css/app.css?v=90" />
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute">
@@ -83,6 +83,7 @@
       <div class="check-row" data-source="onet"><div class="check-box"><svg><use href="#i-check"/></svg></div><div class="check-logo"><img src="assets/img/logo-onet.png" alt="" /></div><div class="check-body"><div class="check-title">O&middot;NET</div><div class="check-sub">Occupation &amp; skill benchmarks</div></div></div>
       <div class="check-row" data-source="bls"><div class="check-box"><svg><use href="#i-check"/></svg></div><div class="check-logo"><img src="assets/img/logo-bls.jpg" alt="" /></div><div class="check-body"><div class="check-title">Bureau of Labor Statistics</div><div class="check-sub">Wage &amp; employment data</div></div></div>
       <div class="check-row" data-source="cos"><div class="check-box"><svg><use href="#i-check"/></svg></div><div class="check-logo"><img src="assets/img/logo-cos.png" alt="" /></div><div class="check-body"><div class="check-title">CareerOneStop</div><div class="check-sub">Certification &amp; training lookup</div></div></div>
+      <div class="check-row" data-source="ahima"><div class="check-box"><svg><use href="#i-check"/></svg></div><div class="check-logo wide"><img src="assets/img/logo-ahima.png" alt="" /></div><div class="check-body"><div class="check-title">AHIMA</div><div class="check-sub">Credential verification</div></div></div>
       <div class="cta pending" id="connect-cta">Connect selected sources <svg><use href="#i-arrow"/></svg></div>
     </div>
 </section>
@@ -91,7 +92,7 @@
     <div class="section-pad" style="padding-top:1rem;">
       <div class="back-btn" style="display:flex;align-items:center;gap:0.3rem;cursor:pointer;margin-bottom:0.4rem;"><svg style="width:1rem;height:1rem;transform:rotate(180deg);color:var(--ink-soft)"><use href="#i-chev"/></svg></div>
       <div class="h-lead" style="font-size:1.1rem;">Connect your accounts</div>
-      <p class="sub-lead">AHIMA is the only source that needs your login — O&middot;NET, BLS, and CareerOneStop are public data, pulled automatically. Rundle never sees or stores your password.</p>
+      <p class="sub-lead">AHIMA is the only source that needs your login — O&middot;NET, BLS, and CareerOneStop are public data, pulled automatically. Rundle never sees or stores your password. You&rsquo;ll connect payroll next to confirm your work history.</p>
     </div>
     <div class="section-pad login-form">
       <label class="field-label">Login</label>
@@ -136,7 +137,7 @@
       <!-- populated by script at end of page -->
     </div>
     <div class="section-pad" style="padding-top:0;">
-      <div class="cta" id="download-next-btn" style="display:none;">Next <svg><use href="#i-arrow"/></svg></div>
+      <div class="cta" id="download-next-btn" style="display:none;">See current verified skills <svg><use href="#i-arrow"/></svg></div>
     </div>
 </section>
 
@@ -261,7 +262,7 @@
 </div>
 
 <script src="js/data.js?v=43"></script>
-<script src="js/render.js?v=67"></script>
-<script src="js/app.js?v=54"></script>
+<script src="js/render.js?v=68"></script>
+<script src="js/app.js?v=55"></script>
 </body>
 </html>

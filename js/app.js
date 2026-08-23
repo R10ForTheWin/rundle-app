@@ -25,7 +25,7 @@
     cover: 'Cover', picker: 'Choose persona', connect: 'Connect sources',
     credentials: 'AHIMA login', download: 'Downloading data', employment: 'Confirm work history',
     'verified-skills': 'Verified skills', 'assessment-gateway': 'Assessment gateway',
-    'module-demo': 'Module 2 demo', mapping: 'Skill mapping', home: 'Job matches',
+    'module-demo': 'Module 1 demo', mapping: 'Skill mapping', home: 'Job matches',
     review: 'Review', 'chart-review': 'Chart review',
     'match-detail': 'Match / gap detail', training: 'Training', profile: 'Profile', positions: 'Open positions'
   };
