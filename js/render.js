@@ -1114,8 +1114,8 @@ function renderVerifiedSkills(p, story, assessmentDone) {
     heroBlock =
       '<div class="done-wrap" style="padding-top:0.3rem;">' +
         '<div class="done-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>' +
-        '<h2>You are verified</h2>' +
-        '<p>Your transcript is live and it is yours. It stays private until you decide who can see it.</p>' +
+        '<h2>Module 2 complete</h2>' +
+        '<p>You caught what the AI got wrong and confirmed what it got right &mdash; that result is now part of your transcript. It stays private until you decide who sees it.</p>' +
       '</div>' +
       '<div class="card results-stats">' +
         '<div class="results-stat"><div class="results-stat-label">Credentials</div><div class="results-stat-value">1 verified</div><div class="results-stat-sub">' + p.cred + ', ' + p.status + '</div></div>' +
