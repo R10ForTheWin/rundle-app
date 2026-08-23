@@ -733,7 +733,6 @@ function renderModuleDemoStep() {
         chartHead +
         '<div class="code-row flagged"><div><div class="label">' + chart.label + '</div><div class="code mono">' + chart.aiCode + '</div></div></div>' +
       '</div>' +
-      '<div class="prompt-box"><span class="prompt-q">?</span><span class="prompt-text">' + chart.question + '</span></div>' +
       '<div class="choice-row" id="module-demo-choices">' + choiceBtns +
         '<div class="demo-cursor" id="module-demo-cursor"><svg viewBox="0 0 24 24" fill="var(--sienna)" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"><path d="M4 4l7.07 17 2.51-7.39L21 11.07z"/></svg></div>' +
       '</div>' +
