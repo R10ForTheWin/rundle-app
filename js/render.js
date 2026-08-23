@@ -771,9 +771,18 @@ function renderModuleDemoStep() {
   var drgBlock = chart.drgOld ? '<div class="demo-drg"><span class="demo-drg-old">' + chart.drgOld + '</span><span class="demo-drg-arrow">&rarr;</span><span class="demo-drg-new" style="animation-delay:0.3s">' + chart.drgNew + '</span></div>' : '';
   var impactTag = chart.impact ? '<div style="padding:0.5rem 0.85rem 0.7rem;"><span class="demo-impact" style="animation-delay:0.4s">' + chart.impact + '</span></div>' : '';
 
+  // Ties the reveal back to the multiple-choice question it came from --
+  // without this, the reveal card is just a bare chart, no sign a
+  // question was ever answered to get here.
+  var answerLetters = ['A', 'B', 'C', 'D'];
+  var chosenIdx = chart.choices.findIndex(function (c) { return c.key === moduleDemoAnswer; });
+  var chosenBlock = chosenIdx > -1
+    ? '<div class="demo-chosen"><span class="choice-letter">' + answerLetters[chosenIdx] + '</span>' + chart.choices[chosenIdx].label + '</div>'
+    : '';
+
   el.innerHTML = head +
     '<div class="chart-review-scroll">' +
-      '<div class="chart-card demo-reveal">' + chartHead + codeBlock + drgBlock + impactTag + '</div>' +
+      '<div class="chart-card demo-reveal">' + chartHead + chosenBlock + codeBlock + drgBlock + impactTag + '</div>' +
     '</div>';
 }
 

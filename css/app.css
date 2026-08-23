@@ -1323,6 +1323,17 @@
     display: flex; align-items: center; gap: 0.25rem; font-size: 0.68rem; font-weight: 700; color: var(--good);
     flex: none; margin-top: 0.2rem; opacity: 0; animation: demoPop 0.4s cubic-bezier(.3,1.4,.5,1) forwards;
   }
+  .demo-chosen {
+    display: flex; align-items: center; gap: 0.55rem;
+    padding: 0.6rem 0.85rem; border-bottom: 1px solid var(--line);
+    font-size: 0.76rem; font-weight: 600; color: var(--ink);
+  }
+  .demo-chosen .choice-letter {
+    flex: none; width: 1.4rem; height: 1.4rem; border-radius: 999px;
+    background: var(--sienna); color: #fff; border: none;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fraunces'; font-weight: 700; font-size: 0.68rem;
+  }
 
   .demo-summary { opacity: 0; animation: demoReveal 0.5s cubic-bezier(.22,.8,.32,1) forwards; margin-bottom: 1rem; }
   .demo-continue-cta {
