@@ -503,14 +503,18 @@ var MODULE_DEMO_CHARTS = [
     impact: '+$1,850 case value'
   },
   {
-    title: 'Synthetic chart &middot; Post-op infection', type: 'Inpatient &middot; 2-day stay',
+    title: 'Synthetic chart &middot; Diabetic CKD', type: 'Inpatient &middot; 3-day stay',
     label: 'Principal diagnosis',
-    aiCode: 'T81.4XXA &middot; Infection following a procedure',
-    question: 'Is this code already correct, or does it need a fix?',
-    choices: [{ key: 'right', label: 'Looks right' }, { key: 'fix', label: 'Needs a fix' }],
+    aiCode: 'E11.22 &middot; Diabetes with diabetic CKD, plus N18.31',
+    question: 'The provider never writes that the CKD is caused by the diabetes. Does the AI&rsquo;s link still hold?',
+    choices: [
+      { key: 'right', label: 'Yes &mdash; no query needed' },
+      { key: 'query', label: 'No &mdash; query to confirm the link' },
+      { key: 'fix', label: 'No &mdash; code diabetes alone' }
+    ],
     correct: 'right',
     isCorrection: false,
-    explain: 'AI got this one right. Confirming instead of &ldquo;fixing&rdquo; it keeps the false-positive rate down &mdash; over-correcting counts against a worker too.'
+    explain: 'The word &ldquo;with&rdquo; in the ICD-10-CM index presumes a causal relationship unless the record states another cause &mdash; no query needed. Reaching for a query here is the most common wrong answer in the module, a habit left from before that convention was clarified.'
   },
   {
     title: 'Synthetic chart &middot; Hip fracture', type: 'Inpatient &middot; 5-day stay',
@@ -526,15 +530,20 @@ var MODULE_DEMO_CHARTS = [
     impact: '+$980 case value'
   },
   {
-    title: 'Synthetic chart &middot; Sepsis', type: 'Inpatient &middot; 3-day stay',
+    title: 'Synthetic chart &middot; Sepsis', type: 'Inpatient &middot; 4-day stay',
     label: 'Diagnosis sequence',
-    aiCode: '1&#41; T81.4XXA infection &middot; 2&#41; A41.9 sepsis',
-    question: 'Which condition should be sequenced first &mdash; the infection, or the sepsis?',
-    choices: [{ key: 'infection', label: 'The infection' }, { key: 'sepsis', label: 'The sepsis' }],
+    aiCode: '1&#41; N39.0 UTI &middot; 2&#41; A41.51 sepsis due to E. coli',
+    question: 'BP 82/48, lactate 4.2, pressors for 12 hours, sepsis present on admission. Which comes first &mdash; the UTI, or the sepsis?',
+    choices: [
+      { key: 'uti', label: 'The UTI' },
+      { key: 'sepsis', label: 'The sepsis' },
+      { key: 'shock', label: 'Add septic shock too &mdash; pressors were used' }
+    ],
     correct: 'sepsis',
     isCorrection: true,
-    newCode: '1&#41; A41.9 sepsis &middot; 2&#41; T81.4XXA infection',
-    explain: 'AI had the right two codes but listed them in the wrong order. Sequencing decides which condition drives the DRG &mdash; order matters as much as the code itself.'
+    newCode: '1&#41; A41.51 sepsis due to E. coli &middot; 2&#41; N39.0 UTI',
+    explain: 'Sepsis present on admission and meeting principal-diagnosis criteria sequences first. Septic shock is the trap &mdash; it needs the provider to document it; pressor use is a clinical indicator, not documentation on its own. This moves the case out of the UTI DRG family entirely &mdash; the biggest dollar swing in the set.',
+    impact: '+$3,400 case value'
   },
   {
     title: 'Synthetic chart &middot; UTI', type: 'Inpatient &middot; 3-day stay',
@@ -568,6 +577,22 @@ var MODULE_DEMO_CHARTS = [
     newCode: 'E87.1 &middot; Hyponatremia',
     explain: '128 mEq/L is the lab definition of hyponatremia specifically. Dehydration and kidney injury are close clinical neighbors, but each needs its own supporting evidence in the note &mdash; the lab value only backs up one of the three.',
     impact: '+$720 case value'
+  },
+  {
+    title: 'Synthetic chart &middot; Heart failure history', type: 'Inpatient &middot; 3-day stay',
+    label: 'Secondary diagnosis (AI flag)',
+    aiCode: 'I50.32 &middot; Chronic diastolic heart failure (41% confidence)',
+    question: 'Copied forward from an old history list &mdash; no workup, no mention this stay. Trust the score?',
+    choices: [
+      { key: 'score', label: 'Delete &mdash; under 50% confidence' },
+      { key: 'judgment', label: 'Delete &mdash; no workup this stay, not reportable' },
+      { key: 'accept', label: 'Accept &mdash; it&rsquo;s in the chart' }
+    ],
+    correct: 'judgment',
+    isCorrection: true,
+    removeCode: true,
+    explain: 'The confidence score is a property of the model, not evidence about the patient &mdash; deleting because of a number you can&rsquo;t audit is still outsourcing the judgment. This one is unreportable on the actual chart facts: no workup, no treatment, just a copied history line. Next case the model might be 90% confident and wrong.',
+    impact: 'Improper payment averted'
   }
 ];
 var MODULE_DEMO_CORRECTIONS = MODULE_DEMO_CHARTS.filter(function (c) { return c.isCorrection; }).length;
@@ -683,8 +708,9 @@ function renderModuleDemoStep() {
   var chartHead = '<div class="chart-head"><span class="demo-chart-num">' + (moduleDemoStep + 1) + '</span><div><div class="id">' + chart.title + '</div><div class="type">' + chart.type + '</div></div></div>';
 
   if (!moduleDemoAnswer) {
-    var choiceBtns = chart.choices.map(function (c) {
-      return '<div class="choice-btn">' + c.label + '</div>';
+    var letters = ['A', 'B', 'C', 'D'];
+    var choiceBtns = chart.choices.map(function (c, i) {
+      return '<div class="choice-btn"><span class="choice-letter">' + letters[i] + '</span>' + c.label + '</div>';
     }).join('');
     el.innerHTML = head +
       '<div class="chart-review-scroll">' +
