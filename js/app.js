@@ -304,4 +304,11 @@
 
   renderPicker();
   showScreen('cover');
+
+  // Safety net: the cover GIF fades in via its own onload, but if that
+  // somehow never fires (odd cache edge case), don't leave it invisible.
+  setTimeout(function () {
+    var coverImg = document.querySelector('.cover-rudy');
+    if (coverImg) coverImg.classList.add('loaded');
+  }, 2500);
 })();
