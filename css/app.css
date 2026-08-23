@@ -287,7 +287,8 @@
   .skill-icon.d { background: linear-gradient(155deg, #8A8074, var(--ink-onlight-soft) 55%, #4A4238); color: #fff; }
   .skill-name { font-size: 0.8rem; font-weight: 600; line-height: 1.2; }
   .skill-evidence { font-size: 0.68rem; color: var(--ink-soft); margin-top: 0.1rem; }
-  .skill-badges { margin-left: auto; display: flex; flex-direction: column; align-items: flex-end; gap: 0.3rem; flex: none; }
+  .skill-badges { margin-left: auto; display: flex; flex-direction: column; align-items: stretch; gap: 0.3rem; flex: none; }
+  .skill-badges .tier, .skill-badges .trust { width: 7.6rem; text-align: center; }
   .tier {
     font-size: 0.65rem; font-weight: 700;
     padding: 0.22rem 0.5rem; border-radius: 999px; flex: none; white-space: nowrap;
@@ -299,6 +300,15 @@
     font-size: 0.58rem; font-weight: 600; padding: 0.16rem 0.45rem; border-radius: 999px;
     flex: none; white-space: nowrap;
   }
+  .skill-list-head { display: flex; align-items: center; gap: 0.6rem; padding: 0 0 0.4rem; }
+  .skill-list-head-spacer { width: 2.1rem; flex: none; }
+  .skill-list-head-name { flex: 1; min-width: 0; }
+  .skill-list-head-badges { display: flex; flex-direction: column; gap: 0.3rem; flex: none; }
+  .skill-list-head-badges span {
+    width: 7.6rem; text-align: center; font-size: 0.56rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-soft);
+  }
+  .skill-list-head-arrow { width: 0.75rem; flex: none; }
   .trust.credential { background: color-mix(in srgb, var(--ochre) 16%, var(--surface-raised)); color: var(--sienna); }
   .trust.employer { background: var(--good-bg); color: var(--good); }
   .trust.documented { background: color-mix(in srgb, var(--amber) 22%, var(--surface-raised)); color: #8A5A1E; }
@@ -331,7 +341,6 @@
     background: linear-gradient(155deg, var(--surface-raised), color-mix(in srgb, var(--ochre) 7%, var(--surface-raised)));
     box-shadow: 0 0.4rem 1rem rgba(162,78,32,.14);
   }
-  .ready-card-title { font-size: 1.05rem; }
   .ready-row {
     display: flex; align-items: center; gap: 0.55rem; padding: 0.6rem 0;
   }
@@ -769,6 +778,10 @@
   .src-status { font-size: 0.58rem; font-weight: 700; padding: 0.1rem 0.4rem; border-radius: 999px; }
   .src-status.active { background: #E1F0E4; color: #2C6E3F; }
   .src-status.pending { background: #F3EAD3; color: #8A6A1E; }
+  .src-head .payroll-mark {
+    width: auto; min-width: 4rem; height: 1.7rem; padding: 0 0.5rem; border-radius: 0.5rem;
+    background: #fff; font-size: 0.66rem; letter-spacing: -0.01em; white-space: nowrap;
+  }
 
   /* ---------- Skill-mapping "engine" screen ---------- */
   .map-panel {
@@ -996,10 +1009,12 @@
   .employment-hint { font-size: 0.66rem; color: var(--ink-soft); margin-top: 0.6rem; }
   .employment-connect-cta {
     margin-top: 0.6rem; text-align: center; font-size: 0.78rem; font-weight: 700; color: #fff;
-    background: linear-gradient(135deg, var(--ochre), var(--sienna)); border-radius: 0.7rem; padding: 0.65rem;
-    cursor: pointer; transition: opacity 0.2s ease, transform 0.15s ease;
+    background: linear-gradient(135deg, #5FA38C, var(--good)); border-radius: 0.7rem; padding: 0.65rem;
+    cursor: pointer; transition: background 0.5s ease, color 0.4s ease, transform 0.15s ease;
   }
-  .employment-connect-cta.pending { opacity: 0.4; cursor: default; background: var(--line); color: var(--ink-soft); }
+  .employment-connect-cta.pending {
+    cursor: default; background: linear-gradient(135deg, var(--amber), var(--ochre)); color: rgba(255,255,255,0.75);
+  }
   .employment-connect-cta.done { opacity: 0.85; cursor: default; }
   .employment-connect-cta:not(.pending):not(.done):active { transform: scale(0.98); }
   .employment-or { text-align: center; font-size: 0.68rem; color: var(--ink-soft); margin: 0.7rem 0; }
@@ -1052,6 +1067,10 @@
   }
 
   /* ---------- Assessment gateway (five modules) ---------- */
+  .gw-eyebrow {
+    font-size: 0.66rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--sienna); margin-bottom: 0.2rem;
+  }
   .gw-module {
     display: flex; align-items: flex-start; gap: 0.7rem; background: var(--surface-raised);
     border: 1.5px solid var(--line); border-radius: 0.9rem; padding: 0.75rem 0.8rem; margin-bottom: 0.6rem;

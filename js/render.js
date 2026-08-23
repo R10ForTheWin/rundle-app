@@ -286,40 +286,102 @@ function toggleProviderSelect(tile) {
   if (btn) { btn.classList.remove('pending'); btn.textContent = 'Connect to ' + tile.dataset.provider; }
 }
 
+// Payroll providers get the same "pull a real source" treatment as the
+// Download screen — a browser-chrome skeleton that morphs into a doc
+// full of the worker's actual employment record, THEN the trust-tagged
+// timeline card underneath it. Resume/manual keep the simpler single-step reveal.
+var PAYROLL_BRAND = {
+  Workday: { color: '#F58220', url: 'workday.com/wd/employee/worker-history' },
+  ADP: { color: '#D0271D', url: 'adp.com/workforcenow/employment-verification' },
+  UKG: { color: '#0033A0', url: 'ukg.com/portal/employment-record' },
+  Paycom: { color: '#00629B', url: 'paycom.com/employee/employment-history' }
+};
+
+function payrollSkeleton(sourceLabel, brand) {
+  return '<div class="src-skel">' +
+    '<div class="src-chrome"><span class="sdot"></span><span class="sdot"></span><span class="sdot"></span><span class="surl">' + brand.url + '</span></div>' +
+    '<div class="src-skel-body"><span class="spin"></span><span class="src-skel-text">Connecting to ' + sourceLabel + '&hellip;<span class="u">' + brand.url + '</span></span></div>' +
+  '</div>';
+}
+
+function payrollDoc(sourceLabel, brand, persona) {
+  var current = STORY[persona.id].employer[0];
+  return '<div class="src-doc">' +
+    '<div class="src-chrome"><span class="sdot"></span><span class="sdot"></span><span class="sdot"></span><span class="surl">' + brand.url + '</span></div>' +
+    '<div class="src-head" style="background:' + brand.color + ';">' +
+      '<div class="mark payroll-mark" style="color:' + brand.color + ';">' + sourceLabel + '</div>' +
+      '<div><div class="org">' + sourceLabel + '</div><div class="sub">Employment &amp; payroll records</div></div>' +
+    '</div>' +
+    '<div class="src-body">' +
+      '<div class="row"><span class="k">Employee</span><span class="v">' + persona.name + '</span></div>' +
+      '<div class="row"><span class="k">Employer</span><span class="v">' + current.title + '</span></div>' +
+      '<div class="row"><span class="k">Position</span><span class="v">' + current.role + '</span></div>' +
+      '<div class="row"><span class="k">Start Date</span><span class="v">' + current.from + '</span></div>' +
+      '<div class="row"><span class="k">Status</span><span class="v">Active</span></div>' +
+    '</div>' +
+    '<div class="src-foot">Referenced for ' + persona.name + ' &middot; ' + sourceLabel + ' Employment Verification</div>' +
+  '</div>';
+}
+
 function connectEmployment(el, sourceLabel, kind) {
   if (el.classList.contains('connecting') || el.classList.contains('connected')) return;
   el.classList.remove('selected');
   el.classList.add('connecting');
   var connectBtn = document.getElementById('employment-connect-btn');
   var providersEl = document.getElementById('employment-providers');
+  var result = document.getElementById('employment-result');
+
   if (kind === 'payroll') {
     if (providersEl) providersEl.classList.add('locked');
     if (connectBtn) { connectBtn.classList.add('pending'); connectBtn.textContent = 'Connecting to ' + sourceLabel + '…'; }
+    var brand = PAYROLL_BRAND[sourceLabel] || { color: 'var(--sienna)', url: sourceLabel.toLowerCase() + '.com' };
+    if (result) result.innerHTML = '<div class="reveal-row">' + payrollSkeleton(sourceLabel, brand) + '</div>';
+
+    setTimeout(function () {
+      el.classList.remove('connecting');
+      el.classList.add('connected');
+      if (result) result.innerHTML = '<div class="reveal-row">' + payrollDoc(sourceLabel, brand, employmentPersona) + '</div>';
+    }, reduceMotion ? 0 : 1500);
+
+    setTimeout(function () {
+      if (connectBtn) {
+        connectBtn.classList.remove('pending');
+        connectBtn.classList.add('done');
+        connectBtn.textContent = 'Connected to ' + sourceLabel;
+      }
+      if (result) {
+        var empStory = STORY[employmentPersona.id];
+        var tl = empStory.employer.map(function (e) {
+          return '<div class="tl-item"><div class="tl-date">' + e.from + ' &mdash; ' + e.to + '</div><div class="tl-title">' + e.title + '</div><div class="tl-sub">' + e.role + '</div></div>';
+        }).join('');
+        result.insertAdjacentHTML('beforeend',
+          '<div class="card employment-result-card reveal-row">' +
+            '<div class="employment-result-head"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>Verified from ' + sourceLabel + '<span class="trust employer">Employer-verified</span></div>' +
+            '<div class="timeline">' + tl + '</div>' +
+          '</div>'
+        );
+      }
+      unlockEmploymentContinue();
+    }, reduceMotion ? 0 : 2400);
+    return;
   }
+
   setTimeout(function () {
     el.classList.remove('connecting');
     el.classList.add('connected');
-    if (kind === 'payroll' && connectBtn) {
-      connectBtn.classList.remove('pending');
-      connectBtn.classList.add('done');
-      connectBtn.textContent = 'Connected to ' + sourceLabel;
-    }
-    var result = document.getElementById('employment-result');
     if (result) {
       var empStory = STORY[employmentPersona.id];
       var tl = empStory.employer.map(function (e) {
         return '<div class="tl-item"><div class="tl-date">' + e.from + ' &mdash; ' + e.to + '</div><div class="tl-title">' + e.title + '</div><div class="tl-sub">' + e.role + '</div></div>';
       }).join('');
-      var heading = kind === 'resume' ? 'Extracted from your resume' : 'Verified from ' + sourceLabel;
-      var trustTag = kind === 'resume' ? '<span class="trust documented">Documented</span>' : '<span class="trust employer">Employer-verified</span>';
       result.innerHTML =
         '<div class="card employment-result-card reveal-row">' +
-          '<div class="employment-result-head"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>' + heading + trustTag + '</div>' +
+          '<div class="employment-result-head"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>Extracted from your resume<span class="trust documented">Documented</span></div>' +
           '<div class="timeline">' + tl + '</div>' +
         '</div>';
     }
     unlockEmploymentContinue();
-  }, kind === 'resume' ? 1100 : 800);
+  }, 1100);
 }
 
 function unlockEmploymentContinue() {
@@ -948,7 +1010,6 @@ function renderHome(p, story) {
       '</div>';
   }).join('');
   el.innerHTML =
-    '<div class="card-title-row"><span class="card-title ready-card-title">Matches</span><span class="count-chip">' + story.matches.length + '</span></div>' +
     matchRows +
     '<div class="matches-empty-note">' +
       '<img class="matches-empty-avatar" src="assets/img/rudy-note.png?v=3" alt="Rudy" />' +
@@ -979,7 +1040,10 @@ function renderVerifiedSkills(p, story, assessmentDone) {
   var el = document.getElementById('verified-skills-content');
   if (!el) return;
   var sub = document.getElementById('verified-skills-sub');
-  if (sub) sub.textContent = assessmentDone ? 'Updated just now — your audit demo added a new verified skill.' : 'Verified by real work. Backed by evidence.';
+  if (sub) {
+    sub.textContent = assessmentDone ? 'Updated just now — your audit demo added a new verified skill.' : '';
+    sub.style.display = assessmentDone ? '' : 'none';
+  }
   var skills = story.skills.slice();
   if (assessmentDone) skills.push(ASSESSMENT_SKILL_RESULT);
   var revealCls = reduceMotion ? '' : ' reveal-row';
@@ -994,6 +1058,8 @@ function renderVerifiedSkills(p, story, assessmentDone) {
   }).join('');
   el.innerHTML =
     '<div class="card"><div class="card-title-row"><span class="card-title">Verified skills</span><span class="count-chip">' + skills.length + ' skills</span></div>' +
+      '<div class="skill-list-head"><div class="skill-list-head-spacer"></div><div class="skill-list-head-name"></div>' +
+        '<div class="skill-list-head-badges"><span>Level</span><span>Evidence</span></div><div class="skill-list-head-arrow"></div></div>' +
       skillRows +
       '<div class="link-row" id="verified-skills-view-all"><span>View all skills and evidence</span><svg><use href="#i-chev"/></svg></div></div>';
   var continueBtn = document.getElementById('verified-skills-continue-btn');
@@ -1119,7 +1185,7 @@ function renderSkillDetail(p, story, reviewDone) {
       (reviewDone ? '' : '<div class="strengthen-cta" id="skilldetail-next-review">Strengthen with a quick review <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>') +
     '</div>';
   el.innerHTML =
-    '<div class="card"><div class="card-title-row"><span class="card-title">Rundle evidence</span><span class="tier ' + sd.tier + '">' + tierLabel[sd.tier] + '</span></div>' +
+    '<div class="card"><div class="card-title-row"><span class="card-title">Rundle evidence</span><span class="tier ' + sd.tier + '">Level: ' + tierLabel[sd.tier] + '</span></div>' +
       '<div class="bar-row"><div class="bar-label"><span>Accuracy</span><span class="mono">' + sd.accuracy + '%</span></div><div class="bar-track"><div class="bar-fill" style="width:' + (100 - sd.accuracy) + '%"></div></div></div>' +
       '<div class="bar-row"><div class="bar-label"><span>' + sd.metricLabel + '</span><span class="mono">' + sd.count + '</span></div></div>' +
       '<div class="divider-label">Common error types</div>' +
