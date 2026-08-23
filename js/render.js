@@ -396,6 +396,8 @@ function connectEmployment(el, sourceLabel, kind) {
             '<div class="timeline">' + tl + '</div>' +
           '</div>'
         );
+        var newCard = result.lastElementChild;
+        if (newCard && !reduceMotion) setTimeout(function () { newCard.scrollIntoView({ behavior: 'smooth', block: 'end' }); }, 50);
       }
       unlockEmploymentContinue();
       var bottomCta = document.getElementById('employment-bottom-cta');
@@ -645,7 +647,7 @@ function answerModuleDemo(key) {
     moduleDemoStep++;
     moduleDemoAnswer = null;
     renderModuleDemoStep();
-  }, reduceMotion ? 300 : 3200);
+  }, reduceMotion ? 300 : 5200);
 }
 
 // Moves a cursor between the answer choices like someone weighing them
@@ -677,16 +679,16 @@ function autoPlayModuleDemoChoice(chart) {
   moveTo(visitOrder[0]);
   cursor.classList.add('visible');
 
-  var stepMs = Math.max(500, Math.floor(1800 / visitOrder.length));
+  var stepMs = Math.max(850, Math.floor(2800 / visitOrder.length));
   visitOrder.forEach(function (idx, i) {
     scheduleModuleDemoTimer(function () {
       btns.forEach(function (b) { b.classList.remove('considering'); });
       moveTo(idx);
       btns[idx].classList.add('considering');
-    }, 450 + i * stepMs);
+    }, 750 + i * stepMs);
   });
 
-  var clickAt = 450 + (visitOrder.length - 1) * stepMs + stepMs * 0.6;
+  var clickAt = 750 + (visitOrder.length - 1) * stepMs + stepMs * 0.7;
   scheduleModuleDemoTimer(function () {
     btns[correctIdx].classList.remove('considering');
     btns[correctIdx].classList.add('chosen');
@@ -697,7 +699,7 @@ function autoPlayModuleDemoChoice(chart) {
     row.appendChild(ring);
     cursor.classList.remove('visible');
   }, clickAt);
-  scheduleModuleDemoTimer(function () { answerModuleDemo(chart.correct); }, clickAt + 350);
+  scheduleModuleDemoTimer(function () { answerModuleDemo(chart.correct); }, clickAt + 500);
 }
 
 function renderModuleDemoStep() {
@@ -737,13 +739,13 @@ function renderModuleDemoStep() {
           chartHead +
           '<div class="code-row flagged"><div><div class="label">' + chart.label + '</div><div class="code mono">' + chart.aiCode + '</div></div></div>' +
         '</div>' +
-        '<div class="prompt-box">' + chart.question + '</div>' +
-      '</div>' +
-      '<div class="choice-row" id="module-demo-choices">' + choiceBtns +
-        '<div class="demo-cursor" id="module-demo-cursor"><svg viewBox="0 0 24 24" fill="var(--sienna)" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"><path d="M4 4l7.07 17 2.51-7.39L21 11.07z"/></svg></div>' +
+        '<div class="prompt-box"><span class="prompt-q">?</span><span class="prompt-text">' + chart.question + '</span></div>' +
+        '<div class="choice-row" id="module-demo-choices">' + choiceBtns +
+          '<div class="demo-cursor" id="module-demo-cursor"><svg viewBox="0 0 24 24" fill="var(--sienna)" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"><path d="M4 4l7.07 17 2.51-7.39L21 11.07z"/></svg></div>' +
+        '</div>' +
       '</div>';
     clearModuleDemoTimers();
-    scheduleModuleDemoTimer(function () { autoPlayModuleDemoChoice(chart); }, 300);
+    scheduleModuleDemoTimer(function () { autoPlayModuleDemoChoice(chart); }, 900);
     return;
   }
 
@@ -952,7 +954,7 @@ function renderMap(p, story, onMatched) {
       matchBtn.innerHTML = '<svg><use href="#i-arrow"/></svg>See your job matches';
       drawMapLines();
       var foot = el.querySelector('.map-foot');
-      if (foot) foot.textContent = 'Same evidence, mapped to adjacent-fit roles.';
+      if (foot) foot.style.display = 'none';
     });
   }
 
@@ -1152,7 +1154,7 @@ function renderVerifiedSkills(p, story, assessmentDone) {
   var el = document.getElementById('verified-skills-content');
   if (!el) return;
   var skills = story.skills.slice();
-  if (assessmentDone) skills.push(ASSESSMENT_SKILL_RESULT);
+  if (assessmentDone) skills.unshift(ASSESSMENT_SKILL_RESULT);
   var heroBlock = '';
   if (assessmentDone) {
     heroBlock =

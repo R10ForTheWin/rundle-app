@@ -51,6 +51,8 @@
 
   function onScreenShow(id) {
     if (id === 'connect') {
+      var avatar = document.getElementById('connect-avatar');
+      if (avatar) avatar.innerHTML = '<img src="' + selectedPersona.avatar + '" alt="' + selectedPersona.name + '" />';
       playConnectAutoCheck();
     } else if (id === 'credentials') {
       playLoginTypewriter();
@@ -115,7 +117,7 @@
       });
     }
     var sub = document.getElementById('connect-sublead');
-    if (sub) sub.textContent = 'Public sources Rundle uses to benchmark ' + picked.name.split(' ')[0] + '’s skills against the role.';
+    if (sub) sub.textContent = 'Public sources Rundle uses to benchmark your skills against the role.';
   }
 
   // ---- Click delegation ----
