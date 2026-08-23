@@ -13,14 +13,14 @@
   var assessmentDone = false;
   var navStack = [];
 
-  // ---- Hidden presenter tools: 5 quick taps in the bottom-right corner
-  // toggles instant-animation mode (for re-running the demo without
-  // waiting out every timer); a long-press on the same corner, once that
-  // mode is on, opens a bare-bones jump-to-any-screen menu. Not meant to
-  // be discovered by accident — no visible affordance anywhere.
+  // ---- Hidden presenter tools: a short tap on the corner toggles
+  // instant-animation mode (for re-running the demo without waiting out
+  // every timer); a long-press on the same corner opens a bare-bones
+  // jump-to-any-screen menu. Deliberately NOT persisted across reloads —
+  // it used to stick via localStorage, which meant a stray tap during
+  // testing silently killed every animation for good until you noticed
+  // and found the gesture again. Always starts off on a fresh load.
   var demoFast = false;
-  try { demoFast = localStorage.getItem('rundle_fast') === '1'; } catch (e) {}
-  if (demoFast) reduceMotion = true;
   var SCREEN_LABELS = {
     cover: 'Cover', picker: 'Choose persona', connect: 'Connect sources',
     credentials: 'AHIMA login', download: 'Downloading data', employment: 'Confirm work history',
@@ -253,7 +253,6 @@
   function toggleDemoFast() {
     demoFast = !demoFast;
     reduceMotion = osReduceMotion || demoFast;
-    try { localStorage.setItem('rundle_fast', demoFast ? '1' : '0'); } catch (e) {}
     var zone = document.getElementById('demo-tap-zone');
     if (zone) zone.classList.toggle('fast', demoFast);
     pulseTapZone(demoFast ? 'rgba(184,108,45,0.4)' : 'rgba(120,120,120,0.3)');
