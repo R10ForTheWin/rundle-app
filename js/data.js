@@ -130,7 +130,7 @@ const STORY = {
         "tier": "expert",
         "trust": "employer",
         "icon": "a",
-        "svg": "i-target"
+        "svg": "i-diagnosis"
       },
       {
         "name": "Documentation Review",
@@ -138,7 +138,7 @@ const STORY = {
         "tier": "advanced",
         "trust": "documented",
         "icon": "c",
-        "svg": "i-shield"
+        "svg": "i-diagnosis"
       }
     ],
     "ready": [
@@ -385,7 +385,7 @@ const STORY = {
         "tier": "advanced",
         "trust": "employer",
         "icon": "a",
-        "svg": "i-target"
+        "svg": "i-diagnosis"
       },
       {
         "name": "Documentation Review",
@@ -393,7 +393,7 @@ const STORY = {
         "tier": "developing",
         "trust": "documented",
         "icon": "c",
-        "svg": "i-shield"
+        "svg": "i-diagnosis"
       }
     ],
     "ready": [
@@ -611,7 +611,7 @@ const STORY = {
         "tier": "developing",
         "trust": "employer",
         "icon": "a",
-        "svg": "i-target"
+        "svg": "i-diagnosis"
       },
       {
         "name": "Documentation Review",
@@ -619,7 +619,7 @@ const STORY = {
         "tier": "developing",
         "trust": "documented",
         "icon": "c",
-        "svg": "i-shield"
+        "svg": "i-diagnosis"
       }
     ],
     "ready": [
@@ -822,7 +822,7 @@ const STORY = {
         "tier": "expert",
         "trust": "employer",
         "icon": "a",
-        "svg": "i-target"
+        "svg": "i-diagnosis"
       },
       {
         "name": "Documentation Review",
@@ -830,7 +830,7 @@ const STORY = {
         "tier": "expert",
         "trust": "documented",
         "icon": "c",
-        "svg": "i-shield"
+        "svg": "i-diagnosis"
       }
     ],
     "ready": [
@@ -1084,7 +1084,7 @@ const STORY = {
         "tier": "advanced",
         "trust": "employer",
         "icon": "a",
-        "svg": "i-target"
+        "svg": "i-diagnosis"
       },
       {
         "name": "Documentation Review",
@@ -1092,7 +1092,7 @@ const STORY = {
         "tier": "advanced",
         "trust": "documented",
         "icon": "c",
-        "svg": "i-shield"
+        "svg": "i-diagnosis"
       }
     ],
     "ready": [
