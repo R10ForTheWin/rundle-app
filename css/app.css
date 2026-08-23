@@ -1062,7 +1062,7 @@
   }
   .employment-upload.connecting .ep-spin { display: flex; }
   .employment-upload.connected .ep-check { display: flex; color: var(--good); }
-  .employment-result-card { margin-top: 0.7rem; }
+  .employment-result-card { margin-top: 1.4rem; }
   .employment-result-head {
     display: flex; align-items: center; gap: 0.4rem; font-size: 0.76rem; font-weight: 700; color: var(--good);
     margin-bottom: 0.5rem;
