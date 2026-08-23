@@ -814,6 +814,7 @@ function renderChartReviewIntro() {
   }).join('');
   el.innerHTML =
     '<div class="chart-review-scroll" style="padding-top:0.9rem;">' +
+      '<img src="assets/img/chart-review-illustration.png?v=1" alt="" style="display:block;width:7rem;height:auto;margin:0 auto 1rem;" />' +
       '<div class="card">' + rows + '</div>' +
     '</div>' +
     '<div class="choice-row" style="padding-top:0.3rem;">' +
