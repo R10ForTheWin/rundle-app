@@ -737,6 +737,12 @@ function renderModuleDemoStep() {
           '<div class="demo-cursor" id="module-demo-cursor"><svg viewBox="0 0 24 24" fill="var(--sienna)" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"><path d="M4 4l7.07 17 2.51-7.39L21 11.07z"/></svg></div>' +
         '</div>' +
       '</div>';
+    // The question + all 4 choices can be taller than the viewport on a
+    // shorter screen -- since nothing here is manually scrollable during
+    // an auto-play, force the choices into view instead of leaving them
+    // silently cut off below the fold.
+    var choicesEl = document.getElementById('module-demo-choices');
+    if (choicesEl) choicesEl.scrollIntoView({ block: 'end' });
     clearModuleDemoTimers();
     scheduleModuleDemoTimer(function () { autoPlayModuleDemoChoice(chart); }, 900);
     return;
@@ -763,12 +769,11 @@ function renderModuleDemoStep() {
       '<div class="demo-confirm">&#10003; Confirmed</div></div>';
   }
   var drgBlock = chart.drgOld ? '<div class="demo-drg"><span class="demo-drg-old">' + chart.drgOld + '</span><span class="demo-drg-arrow">&rarr;</span><span class="demo-drg-new" style="animation-delay:0.3s">' + chart.drgNew + '</span></div>' : '';
-  var impactTag = chart.impact ? ' <span class="demo-impact" style="animation-delay:0.4s">' + chart.impact + '</span>' : '';
+  var impactTag = chart.impact ? '<div style="padding:0.5rem 0.85rem 0.7rem;"><span class="demo-impact" style="animation-delay:0.4s">' + chart.impact + '</span></div>' : '';
 
   el.innerHTML = head +
     '<div class="chart-review-scroll">' +
-      '<div class="chart-card demo-reveal">' + chartHead + codeBlock + drgBlock + '</div>' +
-      '<div class="prompt-box demo-explain">' + chart.explain + impactTag + '</div>' +
+      '<div class="chart-card demo-reveal">' + chartHead + codeBlock + drgBlock + impactTag + '</div>' +
     '</div>';
 }
 
