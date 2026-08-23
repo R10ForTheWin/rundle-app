@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,600&display=swap" />
-<link rel="stylesheet" href="css/app.css?v=75" />
+<link rel="stylesheet" href="css/app.css?v=76" />
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute">
@@ -78,11 +78,11 @@
       <p class="sub-lead" id="connect-sublead">Select the accounts Rundle should pull Renee's work history from.</p>
     </div>
     <div class="scroll section-pad" style="padding-top:0.3rem;">
-      <div class="check-row"><div class="check-box"><svg><use href="#i-check"/></svg></div><div class="check-logo"><img src="assets/img/logo-onet.png" alt="" /></div><div class="check-body"><div class="check-title">O&middot;NET</div><div class="check-sub">Occupation &amp; skill benchmarks</div></div></div>
-      <div class="check-row"><div class="check-box"><svg><use href="#i-check"/></svg></div><div class="check-logo"><img src="assets/img/logo-bls.jpg" alt="" /></div><div class="check-body"><div class="check-title">Bureau of Labor Statistics</div><div class="check-sub">Wage &amp; employment data</div></div></div>
-      <div class="check-row"><div class="check-box"><svg><use href="#i-check"/></svg></div><div class="check-logo"><img src="assets/img/logo-cos.png" alt="" /></div><div class="check-body"><div class="check-title">CareerOneStop</div><div class="check-sub">Certification &amp; training lookup</div></div></div>
-      <div class="check-row"><div class="check-box"><svg><use href="#i-check"/></svg></div><div class="check-logo wide"><img src="assets/img/logo-ahima.png" alt="" /></div><div class="check-body"><div class="check-title">AHIMA</div><div class="check-sub">Credential verification</div></div></div>
-      <div class="cta" id="connect-cta">Connect selected sources <svg><use href="#i-arrow"/></svg></div>
+      <div class="check-row" data-source="onet"><div class="check-box"><svg><use href="#i-check"/></svg></div><div class="check-logo"><img src="assets/img/logo-onet.png" alt="" /></div><div class="check-body"><div class="check-title">O&middot;NET</div><div class="check-sub">Occupation &amp; skill benchmarks</div></div></div>
+      <div class="check-row" data-source="bls"><div class="check-box"><svg><use href="#i-check"/></svg></div><div class="check-logo"><img src="assets/img/logo-bls.jpg" alt="" /></div><div class="check-body"><div class="check-title">Bureau of Labor Statistics</div><div class="check-sub">Wage &amp; employment data</div></div></div>
+      <div class="check-row" data-source="cos"><div class="check-box"><svg><use href="#i-check"/></svg></div><div class="check-logo"><img src="assets/img/logo-cos.png" alt="" /></div><div class="check-body"><div class="check-title">CareerOneStop</div><div class="check-sub">Certification &amp; training lookup</div></div></div>
+      <div class="check-row" data-source="ahima"><div class="check-box"><svg><use href="#i-check"/></svg></div><div class="check-logo wide"><img src="assets/img/logo-ahima.png" alt="" /></div><div class="check-body"><div class="check-title">AHIMA</div><div class="check-sub">Credential verification</div></div></div>
+      <div class="cta pending" id="connect-cta">Connect selected sources <svg><use href="#i-arrow"/></svg></div>
     </div>
 </section>
 
@@ -257,7 +257,7 @@
 </div>
 
 <script src="js/data.js?v=40"></script>
-<script src="js/render.js?v=51"></script>
-<script src="js/app.js?v=46"></script>
+<script src="js/render.js?v=52"></script>
+<script src="js/app.js?v=47"></script>
 </body>
 </html>

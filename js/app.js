@@ -33,7 +33,9 @@
   }
 
   function onScreenShow(id) {
-    if (id === 'credentials') {
+    if (id === 'connect') {
+      playConnectAutoCheck();
+    } else if (id === 'credentials') {
       playLoginTypewriter();
     } else if (id === 'download') {
       var nextBtn = document.getElementById('download-next-btn');

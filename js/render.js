@@ -137,6 +137,24 @@ function typePasswordReveal(el, text, speed, done) {
   })();
 }
 
+// Auto-checks the public-data sources (not AHIMA, which needs a real
+// login on the next screen) one after another, then flips the CTA from
+// pending copper to ready green once all three have checked in.
+function playConnectAutoCheck() {
+  var order = ['onet', 'bls', 'cos'];
+  var ctaBtn = document.getElementById('connect-cta');
+  var step = reduceMotion ? 0 : 550;
+  order.forEach(function (key, i) {
+    setTimeout(function () {
+      var row = document.querySelector('.check-row[data-source="' + key + '"]');
+      if (row) row.classList.add('checked');
+    }, 450 + i * step);
+  });
+  setTimeout(function () {
+    if (ctaBtn) ctaBtn.classList.remove('pending');
+  }, 450 + order.length * step + 250);
+}
+
 function playLoginTypewriter() {
   var loginUser = document.getElementById('login-user');
   var loginPass = document.getElementById('login-pass');
