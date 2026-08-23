@@ -1216,7 +1216,8 @@
 
   /* the deliberating cursor that weighs the two answer choices before "clicking" one */
   #screen-module-demo .choice-btn { cursor: default; transition: background 0.25s ease, border-color 0.25s ease; }
-  .choice-row#module-demo-choices { position: relative; }
+  .choice-row#module-demo-choices { position: relative; flex-direction: column; }
+  .choice-row#module-demo-choices .choice-btn { text-align: left; padding: 0.7rem 0.9rem; }
   .choice-btn.considering { border-color: var(--ochre); background: color-mix(in srgb, var(--ochre) 12%, var(--surface-raised)); }
   .choice-btn.chosen { border-color: var(--sienna); background: color-mix(in srgb, var(--ochre) 18%, var(--surface-raised)); color: var(--sienna); }
   .demo-cursor {

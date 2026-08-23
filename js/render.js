@@ -499,6 +499,7 @@ var MODULE_DEMO_CHARTS = [
     question: 'The physician&rsquo;s note names the exact organism. Does the AI&rsquo;s code capture that?',
     choices: [{ key: 'fix', label: 'Needs a more specific code' }, { key: 'right', label: 'Already specific enough' }],
     correct: 'fix',
+    isCorrection: true,
     newCode: 'J15.1 &middot; Pneumonia due to Pseudomonas',
     drgOld: 'DRG 179 &middot; Simple pneumonia',
     drgNew: 'DRG 177 &middot; Pneumonia w/ major complication',
@@ -512,6 +513,7 @@ var MODULE_DEMO_CHARTS = [
     question: 'Is this code already correct, or does it need a fix?',
     choices: [{ key: 'right', label: 'Looks right' }, { key: 'fix', label: 'Needs a fix' }],
     correct: 'right',
+    isCorrection: false,
     explain: 'AI got this one right. Confirming instead of &ldquo;fixing&rdquo; it keeps the false-positive rate down &mdash; over-correcting counts against a worker too.'
   },
   {
@@ -522,6 +524,7 @@ var MODULE_DEMO_CHARTS = [
     question: 'Labs show reduced kidney function. Did the AI capture that as a secondary diagnosis?',
     choices: [{ key: 'fix', label: 'Something&rsquo;s missing' }, { key: 'right', label: 'Nothing missing' }],
     correct: 'fix',
+    isCorrection: true,
     newCode: 'N17.9 &middot; Acute kidney injury',
     explain: 'Labs showed reduced kidney function the AI didn&rsquo;t code for. A missed secondary diagnosis undercounts how complex the case really was.',
     impact: '+$980 case value'
@@ -533,10 +536,46 @@ var MODULE_DEMO_CHARTS = [
     question: 'Which condition should be sequenced first &mdash; the infection, or the sepsis?',
     choices: [{ key: 'infection', label: 'The infection' }, { key: 'sepsis', label: 'The sepsis' }],
     correct: 'sepsis',
+    isCorrection: true,
     newCode: '1&#41; A41.9 sepsis &middot; 2&#41; T81.4XXA infection',
     explain: 'AI had the right two codes but listed them in the wrong order. Sequencing decides which condition drives the DRG &mdash; order matters as much as the code itself.'
+  },
+  {
+    title: 'Synthetic chart &middot; UTI', type: 'Inpatient &middot; 3-day stay',
+    label: 'Secondary diagnosis',
+    aiCode: 'N39.0 &middot; Urinary tract infection, site not specified',
+    question: 'No urine culture, no antibiotic order, no note describing an infection. What should happen to this code?',
+    choices: [
+      { key: 'keep', label: 'Keep it as coded' },
+      { key: 'remove', label: 'Remove it &mdash; not supported' },
+      { key: 'upgrade', label: 'Make it more specific instead' }
+    ],
+    correct: 'remove',
+    isCorrection: true,
+    removeCode: true,
+    explain: 'No culture, no antibiotic order, no clinical note backing up an infection. A code the documentation doesn&rsquo;t support gets removed, not made more specific &mdash; that would just be a more precise version of the same unsupported claim.',
+    impact: 'Improper payment averted'
+  },
+  {
+    title: 'Synthetic chart &middot; COPD exacerbation', type: 'Inpatient &middot; 4-day stay',
+    label: 'Secondary diagnosis',
+    aiCode: 'No secondary diagnosis coded',
+    ghost: true,
+    question: 'Labs show sodium at 128 mEq/L. The note says &ldquo;encouraged fluids, monitored levels.&rdquo; Which code fits?',
+    choices: [
+      { key: 'dehydration', label: 'E86.0 &middot; Dehydration' },
+      { key: 'hyponatremia', label: 'E87.1 &middot; Hyponatremia' },
+      { key: 'aki', label: 'N17.9 &middot; Acute kidney injury' }
+    ],
+    correct: 'hyponatremia',
+    isCorrection: true,
+    newCode: 'E87.1 &middot; Hyponatremia',
+    explain: '128 mEq/L is the lab definition of hyponatremia specifically. Dehydration and kidney injury are close clinical neighbors, but each needs its own supporting evidence in the note &mdash; the lab value only backs up one of the three.',
+    impact: '+$720 case value'
   }
 ];
+var MODULE_DEMO_CORRECTIONS = MODULE_DEMO_CHARTS.filter(function (c) { return c.isCorrection; }).length;
+var MODULE_DEMO_CONFIRMED = MODULE_DEMO_CHARTS.length - MODULE_DEMO_CORRECTIONS;
 var moduleDemoStep = 0;
 var moduleDemoAnswer = null;
 var moduleDemoTimers = [];
@@ -569,9 +608,11 @@ function answerModuleDemo(key) {
   }, reduceMotion ? 300 : 3200);
 }
 
-// Moves a cursor between the two answer choices like someone weighing
-// them, then "clicks" the correct one — the audience gets to guess
-// silently while it plays out, nothing to click themselves.
+// Moves a cursor between the answer choices like someone weighing them
+// (visiting up to 2 wrong ones first so a 3-option question still reads
+// as deliberation, not a guess), then "clicks" the correct one — the
+// audience gets to guess silently while it plays out, nothing to click
+// themselves.
 function autoPlayModuleDemoChoice(chart) {
   var cursor = document.getElementById('module-demo-cursor');
   var row = document.getElementById('module-demo-choices');
@@ -581,7 +622,9 @@ function autoPlayModuleDemoChoice(chart) {
   if (reduceMotion) { scheduleModuleDemoTimer(function () { answerModuleDemo(chart.correct); }, 200); return; }
 
   var correctIdx = chart.choices.findIndex(function (c) { return c.key === chart.correct; });
-  var otherIdx = correctIdx === 0 ? 1 : 0;
+  var otherIdxs = [];
+  for (var i = 0; i < btns.length; i++) { if (i !== correctIdx) otherIdxs.push(i); }
+  var visitOrder = otherIdxs.slice(0, 2).concat([correctIdx]);
 
   function moveTo(idx) {
     var btn = btns[idx];
@@ -591,15 +634,19 @@ function autoPlayModuleDemoChoice(chart) {
     cursor.style.top = (b.top - rowBox.top + b.height * 0.4) + 'px';
   }
 
-  moveTo(otherIdx);
+  moveTo(visitOrder[0]);
   cursor.classList.add('visible');
 
-  scheduleModuleDemoTimer(function () { btns[otherIdx].classList.add('considering'); }, 450);
-  scheduleModuleDemoTimer(function () {
-    btns[otherIdx].classList.remove('considering');
-    moveTo(correctIdx);
-    btns[correctIdx].classList.add('considering');
-  }, 1350);
+  var stepMs = Math.max(500, Math.floor(1800 / visitOrder.length));
+  visitOrder.forEach(function (idx, i) {
+    scheduleModuleDemoTimer(function () {
+      btns.forEach(function (b) { b.classList.remove('considering'); });
+      moveTo(idx);
+      btns[idx].classList.add('considering');
+    }, 450 + i * stepMs);
+  });
+
+  var clickAt = 450 + (visitOrder.length - 1) * stepMs + stepMs * 0.6;
   scheduleModuleDemoTimer(function () {
     btns[correctIdx].classList.remove('considering');
     btns[correctIdx].classList.add('chosen');
@@ -609,8 +656,8 @@ function autoPlayModuleDemoChoice(chart) {
     ring.style.top = cursor.style.top;
     row.appendChild(ring);
     cursor.classList.remove('visible');
-  }, 2150);
-  scheduleModuleDemoTimer(function () { answerModuleDemo(chart.correct); }, 2500);
+  }, clickAt);
+  scheduleModuleDemoTimer(function () { answerModuleDemo(chart.correct); }, clickAt + 350);
 }
 
 function renderModuleDemoStep() {
@@ -621,8 +668,8 @@ function renderModuleDemoStep() {
       '<div class="chart-review-scroll" style="padding-top:0.9rem;">' +
         '<div class="demo-summary demo-reveal">' +
           '<div class="evidence-preview">' +
-            '<span class="tag"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>Session complete</span>' +
-            '<div class="line">4 charts reviewed &middot; 3 corrections caught &middot; 1 confirmed &middot; nothing counts until this session is flipped to scored</div>' +
+            '<span class="tag"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>Demo complete</span>' +
+            '<div class="line">' + MODULE_DEMO_CHARTS.length + ' charts reviewed &middot; ' + MODULE_DEMO_CORRECTIONS + ' corrections caught &middot; ' + MODULE_DEMO_CONFIRMED + ' confirmed &middot; this was a preview walkthrough, not a scored session</div>' +
           '</div>' +
           '<div class="demo-continue-cta" id="module-demo-continue">Show my verified skills <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>' +
           '<div class="back-cta" id="module-demo-replay">&#8635; Replay demo</div>' +
@@ -635,7 +682,8 @@ function renderModuleDemoStep() {
   var dots = MODULE_DEMO_CHARTS.map(function (c, i) {
     return '<div class="progress-dot' + (i < moduleDemoStep ? ' done' : (i === moduleDemoStep ? ' active' : '')) + '"></div>';
   }).join('');
-  var head = '<div class="progress-row">' + dots + '<span class="progress-label">Module 2 &middot; chart ' + (moduleDemoStep + 1) + ' of ' + MODULE_DEMO_CHARTS.length + '</span></div>';
+  var head = '<div class="progress-row">' + dots + '<span class="progress-label">Module 2 &middot; chart ' + (moduleDemoStep + 1) + ' of ' + MODULE_DEMO_CHARTS.length + '</span></div>' +
+    '<div class="demo-ribbon" style="margin:0 1.1rem 0.6rem;">&#9654; Watching a demo &mdash; this plays itself, nothing to tap</div>';
   var chartHead = '<div class="chart-head"><span class="demo-chart-num">' + (moduleDemoStep + 1) + '</span><div><div class="id">' + chart.title + '</div><div class="type">' + chart.type + '</div></div></div>';
 
   if (!moduleDemoAnswer) {
@@ -671,6 +719,9 @@ function renderModuleDemoStep() {
         '<span class="demo-code-old mono">' + chart.aiCode + '</span>' +
         '<span class="demo-code-new mono" style="animation-delay:0.15s">' + chart.newCode + '</span>' +
       '</div></div></div>';
+  } else if (chart.removeCode) {
+    codeBlock = '<div class="code-row flagged"><div><div class="label">' + chart.label + '</div><div class="code mono demo-code-old">' + chart.aiCode + '</div></div>' +
+      '<div class="demo-confirm" style="color:var(--sienna);">&#10007; Removed</div></div>';
   } else {
     codeBlock = '<div class="code-row flagged"><div><div class="label">' + chart.label + '</div><div class="code mono">' + chart.aiCode + '</div></div>' +
       '<div class="demo-confirm">&#10003; Confirmed</div></div>';
@@ -1052,7 +1103,7 @@ function renderHome(p, story) {
 // ============================================================
 var ASSESSMENT_SKILL_RESULT = {
   name: 'AI-Assisted Chart Audit', icon: 'a', svg: 'i-target',
-  evidence: '4 charts reviewed &middot; 3 corrections caught &middot; 1 confirmed',
+  evidence: MODULE_DEMO_CHARTS.length + ' charts reviewed &middot; ' + MODULE_DEMO_CORRECTIONS + ' corrections caught &middot; ' + MODULE_DEMO_CONFIRMED + ' confirmed',
   tier: 'advanced', trust: 'simulated'
 };
 
@@ -1074,7 +1125,7 @@ function renderVerifiedSkills(p, story, assessmentDone) {
         '<div class="results-stat"><div class="results-stat-label">Credentials</div><div class="results-stat-value">1 verified</div><div class="results-stat-sub">' + p.cred + ', ' + p.status + '</div></div>' +
         '<div class="results-stat"><div class="results-stat-label">Employment</div><div class="results-stat-value">' + p.tenure + '</div><div class="results-stat-sub">Payroll confirmed</div></div>' +
         '<div class="results-stat"><div class="results-stat-label">Records reviewed</div><div class="results-stat-value">' + story.skills.length + ' of ' + story.skills.length + '</div><div class="results-stat-sub">0 gaps disclosed</div></div>' +
-        '<div class="results-stat"><div class="results-stat-label">Assessment</div><div class="results-stat-value">' + story.sim.accuracy + '%</div><div class="results-stat-sub">Across 4 charts</div></div>' +
+        '<div class="results-stat"><div class="results-stat-label">Assessment</div><div class="results-stat-value">' + story.sim.accuracy + '%</div><div class="results-stat-sub">Across ' + MODULE_DEMO_CHARTS.length + ' charts</div></div>' +
         '<div class="results-cred-row"><span>Credential valid through <strong>' + p.renew + '</strong>. We will remind you when it is time to renew.</span><span class="trust employer">Simulation-verified</span></div>' +
       '</div>';
   }
