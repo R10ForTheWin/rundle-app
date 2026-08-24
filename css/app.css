@@ -1249,25 +1249,32 @@
   .done-badge::after { right: 0.35rem; transform: rotate(-14deg); }
   .done-badge svg { width: 1.5rem; height: 1.5rem; color: #fff; }
   .module-badge-img {
-    width: 7rem; height: auto; flex: none;
+    width: 7rem; height: auto; flex: none; position: relative; z-index: 1;
     filter: drop-shadow(0 0.35rem 0.7rem color-mix(in srgb, var(--sienna) 45%, transparent));
   }
-  .badge-sparkle-wrap { position: relative; display: flex; }
+  .badge-sparkle-wrap { position: relative; display: flex; align-items: center; justify-content: center; }
+  .badge-flash {
+    position: absolute; top: 50%; left: 50%; width: 7rem; height: 7rem; border-radius: 999px;
+    background: radial-gradient(circle, color-mix(in srgb, var(--amber) 55%, transparent) 0%, transparent 72%);
+    transform: translate(-50%, -50%) scale(0); opacity: 0; z-index: 0;
+    animation: badgeFlashPulse 1s ease-out both;
+  }
+  @keyframes badgeFlashPulse {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3); }
+    30% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(1.9); }
+  }
   .badge-sparkle {
-    position: absolute; width: 1rem; height: 1rem; opacity: 0; z-index: 1;
-    animation: badgeSparklePop 1.7s ease-out both;
+    position: absolute; top: 50%; left: 50%; opacity: 0; z-index: 2;
+    margin: 0; --tx: 0rem; --ty: 0rem;
+    animation-name: badgeSparklePop; animation-timing-function: cubic-bezier(.22,.8,.32,1); animation-fill-mode: both;
   }
   .badge-sparkle svg { width: 100%; height: 100%; display: block; }
-  .badge-sparkle.s1 { top: -0.3rem; left: 0.3rem; width: 0.75rem; height: 0.75rem; color: var(--ochre); animation-delay: 0.1s; }
-  .badge-sparkle.s2 { top: 0.4rem; right: -0.5rem; width: 1.05rem; height: 1.05rem; color: var(--sienna); animation-delay: 0.28s; }
-  .badge-sparkle.s3 { top: 48%; right: -0.9rem; width: 0.7rem; height: 0.7rem; color: var(--good); animation-delay: 0.46s; }
-  .badge-sparkle.s4 { bottom: 0.6rem; left: -0.7rem; width: 0.85rem; height: 0.85rem; color: var(--ochre); animation-delay: 0.36s; }
-  .badge-sparkle.s5 { top: -0.5rem; left: 48%; width: 0.6rem; height: 0.6rem; color: var(--sienna); animation-delay: 0.6s; }
   @keyframes badgeSparklePop {
-    0% { opacity: 0; transform: scale(0) rotate(0deg); }
-    35% { opacity: 1; transform: scale(1.2) rotate(20deg); }
-    60% { opacity: 1; transform: scale(0.85) rotate(-10deg); }
-    100% { opacity: 0; transform: scale(0.5) rotate(6deg); }
+    0% { opacity: 0; transform: translate(-50%, -50%) translate(0, 0) scale(0) rotate(0deg); }
+    25% { opacity: 1; transform: translate(-50%, -50%) translate(calc(var(--tx) * 0.5), calc(var(--ty) * 0.5)) scale(1.3) rotate(50deg); }
+    60% { opacity: 1; transform: translate(-50%, -50%) translate(var(--tx), var(--ty)) scale(0.9) rotate(140deg); }
+    100% { opacity: 0; transform: translate(-50%, -50%) translate(calc(var(--tx) * 1.15), calc(var(--ty) * 1.15)) scale(0.4) rotate(180deg); }
   }
   .credential-badge { width: 2.7rem; height: 2.7rem; flex: none; position: relative; display: flex; align-items: center; justify-content: center; }
   .credential-badge svg { width: 100%; height: 100%; filter: drop-shadow(0 0.2rem 0.35rem color-mix(in srgb, var(--sienna) 45%, transparent)); }
