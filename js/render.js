@@ -598,8 +598,11 @@ var MODULE_DEMO_CHARTS = [
     impact: 'Improper payment averted'
   }
 ];
-var MODULE_DEMO_CORRECTIONS = MODULE_DEMO_CHARTS.filter(function (c) { return c.isCorrection; }).length;
-var MODULE_DEMO_CONFIRMED = MODULE_DEMO_CHARTS.length - MODULE_DEMO_CORRECTIONS;
+// The demo itself only walks through MODULE_DEMO_CHARTS.length charts, but
+// its results screen reports what a real ~40-minute Module 1 session would
+// plausibly show, not the toy demo count.
+var DEMO_RESULT_CHARTS = 30;
+var DEMO_RESULT_PCT = 98;
 var moduleDemoStep = 0;
 var moduleDemoAnswer = null;
 var moduleDemoTimers = [];
@@ -621,6 +624,8 @@ function renderModuleDemo() {
   if (body) body.innerHTML = '';
   var badge = document.getElementById('module-demo-rec-badge');
   if (badge) badge.style.display = 'none';
+  var title = document.getElementById('module-demo-title');
+  if (title) title.textContent = 'Chart Coding Review';
   var modal = document.getElementById('recording-consent-modal');
   if (modal) modal.style.display = 'flex';
 }
@@ -705,16 +710,26 @@ function renderModuleDemoStep() {
   var el = document.getElementById('module-demo-body');
   if (!el) return;
   if (moduleDemoStep >= MODULE_DEMO_CHARTS.length) {
+    var title = document.getElementById('module-demo-title');
+    if (title) title.textContent = 'RESULTS';
     el.innerHTML =
       '<div class="chart-review-scroll" style="padding-top:0.9rem;">' +
         '<div class="demo-summary demo-reveal">' +
           '<div class="evidence-preview">' +
             '<span class="tag"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>Demo complete</span>' +
-            '<div class="line">' + MODULE_DEMO_CHARTS.length + ' charts reviewed &middot; ' + MODULE_DEMO_CORRECTIONS + ' corrections caught &middot; ' + MODULE_DEMO_CONFIRMED + ' confirmed</div>' +
+            '<div class="demo-stat-bar">' +
+              '<div class="demo-stat-bar-head"><span>Charts reviewed</span><span class="demo-stat-bar-num" id="demo-bar-charts-num">0</span></div>' +
+              '<div class="demo-stat-bar-track"><div class="demo-stat-bar-fill charts" id="demo-bar-charts-fill"></div></div>' +
+            '</div>' +
+            '<div class="demo-stat-bar">' +
+              '<div class="demo-stat-bar-head"><span>Corrections caught</span><span class="demo-stat-bar-num" id="demo-bar-pct-num">0%</span></div>' +
+              '<div class="demo-stat-bar-track"><div class="demo-stat-bar-fill pct" id="demo-bar-pct-fill"></div></div>' +
+            '</div>' +
           '</div>' +
           '<div class="demo-continue-cta" id="module-demo-continue">Show my new verified skills <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>' +
         '</div>' +
       '</div>';
+    animateDemoResultBars();
     return;
   }
 
@@ -749,6 +764,39 @@ function renderModuleDemoStep() {
   if (choicesEl) choicesEl.scrollIntoView({ block: 'end' });
   clearModuleDemoTimers();
   scheduleModuleDemoTimer(function () { autoPlayModuleDemoChoice(chart); }, 900);
+}
+
+// Fills both results bars (charts reviewed, % corrections caught) from 0
+// together, counting the number up in step with the fill — same rAF-tween
+// approach as the match-card fit rings, just driving a width instead of a
+// conic-gradient custom property.
+function animateDemoResultBars() {
+  var chartsFill = document.getElementById('demo-bar-charts-fill');
+  var chartsNum = document.getElementById('demo-bar-charts-num');
+  var pctFill = document.getElementById('demo-bar-pct-fill');
+  var pctNum = document.getElementById('demo-bar-pct-num');
+  if (!chartsFill || !pctFill) return;
+  if (reduceMotion) {
+    chartsFill.style.width = '100%';
+    chartsNum.textContent = DEMO_RESULT_CHARTS;
+    pctFill.style.width = DEMO_RESULT_PCT + '%';
+    pctNum.textContent = DEMO_RESULT_PCT + '%';
+    return;
+  }
+  var duration = 1300;
+  var start = null;
+  function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+  function tick(ts) {
+    if (start === null) start = ts;
+    var t = Math.min(1, (ts - start) / duration);
+    var eased = easeOutCubic(t);
+    chartsFill.style.width = (100 * eased).toFixed(1) + '%';
+    chartsNum.textContent = Math.round(DEMO_RESULT_CHARTS * eased);
+    pctFill.style.width = (DEMO_RESULT_PCT * eased).toFixed(1) + '%';
+    pctNum.textContent = Math.round(DEMO_RESULT_PCT * eased) + '%';
+    if (t < 1) requestAnimationFrame(tick);
+  }
+  setTimeout(function () { requestAnimationFrame(tick); }, 300);
 }
 
 function renderReviewTab(skillName, reviewDone) {
@@ -1114,7 +1162,7 @@ function renderHome(p, story) {
 // ============================================================
 var ASSESSMENT_SKILL_RESULT = {
   name: 'Chart Coding Review', icon: 'a', svg: 'i-target',
-  evidence: MODULE_DEMO_CHARTS.length + ' charts reviewed &middot; ' + MODULE_DEMO_CORRECTIONS + ' corrections caught &middot; ' + MODULE_DEMO_CONFIRMED + ' confirmed',
+  evidence: DEMO_RESULT_CHARTS + ' charts reviewed &middot; ' + DEMO_RESULT_PCT + '% of corrections caught',
   tier: 'advanced', trust: 'simulated'
 };
 

@@ -1022,6 +1022,15 @@
     background: var(--good-bg); padding: 0.18rem 0.5rem; border-radius: 999px; margin-bottom: 0.5rem;
   }
   .evidence-preview .line { font-size: 0.76rem; line-height: 1.5; color: var(--ink); }
+  .demo-stat-bar { margin-top: 0.7rem; }
+  .demo-stat-bar:first-of-type { margin-top: 0.15rem; }
+  .demo-stat-bar-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 0.3rem; }
+  .demo-stat-bar-head span:first-child { font-size: 0.68rem; color: var(--ink-soft); font-weight: 600; }
+  .demo-stat-bar-num { font-family: 'Fraunces'; font-weight: 700; font-size: 1.15rem; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .demo-stat-bar-track { height: 0.55rem; border-radius: 999px; background: var(--line); overflow: hidden; }
+  .demo-stat-bar-fill { height: 100%; width: 0%; border-radius: 999px; transition: none; }
+  .demo-stat-bar-fill.charts { background: linear-gradient(90deg, var(--ochre), var(--sienna)); }
+  .demo-stat-bar-fill.pct { background: linear-gradient(90deg, #5FA38C, var(--good)); }
 
   /* ---------- Employment step (payroll connect / resume upload) ---------- */
   .employment-providers { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; margin-top: 0.4rem; }
