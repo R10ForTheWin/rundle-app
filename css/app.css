@@ -1201,6 +1201,10 @@
   .done-badge::before { left: 0.35rem; transform: rotate(14deg); }
   .done-badge::after { right: 0.35rem; transform: rotate(-14deg); }
   .done-badge svg { width: 1.5rem; height: 1.5rem; color: #fff; }
+  .module-badge-img {
+    width: 7rem; height: auto; flex: none;
+    filter: drop-shadow(0 0.35rem 0.7rem color-mix(in srgb, var(--sienna) 45%, transparent));
+  }
   .credential-badge { width: 2.7rem; height: 2.7rem; flex: none; position: relative; display: flex; align-items: center; justify-content: center; }
   .credential-badge svg { width: 100%; height: 100%; filter: drop-shadow(0 0.2rem 0.35rem color-mix(in srgb, var(--sienna) 45%, transparent)); }
   .credential-badge::before, .credential-badge::after {
