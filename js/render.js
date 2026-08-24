@@ -713,7 +713,6 @@ function renderModuleDemoStep() {
             '<div class="line">' + MODULE_DEMO_CHARTS.length + ' charts reviewed &middot; ' + MODULE_DEMO_CORRECTIONS + ' corrections caught &middot; ' + MODULE_DEMO_CONFIRMED + ' confirmed &middot; this was a preview walkthrough, not a scored session</div>' +
           '</div>' +
           '<div class="demo-continue-cta" id="module-demo-continue">Show my new verified skills <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>' +
-          '<div class="back-cta" id="module-demo-replay">&#8635; Replay demo</div>' +
         '</div>' +
       '</div>';
     return;
@@ -794,7 +793,6 @@ function renderChartReviewIntro() {
   }).join('');
   el.innerHTML =
     '<div class="chart-review-scroll" style="padding-top:0.9rem;">' +
-      '<img src="assets/img/chart-review-illustration.png?v=1" alt="" style="display:block;width:7rem;height:auto;margin:0 auto 1rem;" />' +
       '<div class="card">' + rows + '</div>' +
     '</div>' +
     '<div class="choice-row" style="padding-top:0.3rem;">' +
@@ -1145,7 +1143,6 @@ function renderVerifiedSkills(p, story, assessmentDone) {
   if (assessmentDone) {
     heroBlock =
       '<div class="done-wrap" style="padding-top:0.3rem;padding-bottom:0.4rem;">' +
-        '<img class="module-badge-rudy" src="assets/img/rudy-ladder.webp" alt="" />' +
         '<img class="module-badge-img" src="assets/img/module1-badge.png?v=3" alt="Module 1 badge" />' +
         '<h2>Module 1 complete</h2>' +
         '<p>You now have <strong style="color:var(--ink);">' + skills.length + ' verified skills</strong> &mdash; 1 new, earned from this assessment.</p>' +

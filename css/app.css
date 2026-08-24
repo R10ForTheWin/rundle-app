@@ -1158,8 +1158,8 @@
   .gw-side { flex: none; text-align: right; }
   .gw-time { font-size: 0.64rem; color: var(--ink-soft); margin-bottom: 0.35rem; }
   .gw-start-btn {
-    font-size: 0.68rem; font-weight: 700; color: #fff; background: linear-gradient(135deg, var(--demo-accent), #4C1D95);
-    box-shadow: 0 0.2rem 0.5rem -0.1rem color-mix(in srgb, var(--demo-accent) 55%, transparent);
+    font-size: 0.68rem; font-weight: 700; color: #fff; background: linear-gradient(135deg, #5FA38C, var(--good));
+    box-shadow: 0 0.2rem 0.5rem -0.1rem color-mix(in srgb, var(--good) 55%, transparent);
     padding: 0.35rem 0.7rem; border-radius: 0.55rem; cursor: pointer; white-space: nowrap;
   }
   .gw-unavailable { font-size: 0.6rem; color: var(--ink-soft); white-space: nowrap; }
@@ -1240,7 +1240,6 @@
   .done-badge::before { left: 0.35rem; transform: rotate(14deg); }
   .done-badge::after { right: 0.35rem; transform: rotate(-14deg); }
   .done-badge svg { width: 1.5rem; height: 1.5rem; color: #fff; }
-  .module-badge-rudy { width: 8rem; height: auto; flex: none; margin-bottom: -1.1rem; }
   .module-badge-img {
     width: 7rem; height: auto; flex: none;
     filter: drop-shadow(0 0.35rem 0.7rem color-mix(in srgb, var(--sienna) 45%, transparent));
@@ -1328,8 +1327,9 @@
   }
   .demo-question-text {
     padding: 0.6rem 0.85rem; font-size: 0.78rem; font-weight: 700; color: var(--ink);
-    border-bottom: 1px solid var(--line);
+    border-bottom: 1px solid var(--line); background: #fff;
   }
+  #screen-module-demo .code-row.flagged { background: #fff; }
   .choice-row#module-demo-choices { position: relative; flex-direction: column; padding: 0.6rem 0 0; gap: 0.5rem; margin-top: 0.6rem; }
   .choice-row#module-demo-choices .choice-btn { text-align: left; padding: 0.6rem 0.8rem; display: flex; align-items: center; gap: 0.6rem; }
   .choice-letter {
