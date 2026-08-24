@@ -621,7 +621,7 @@
   .cover-screen {
     flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;
     text-align: center; padding: 2rem 1.6rem; gap: 1.1rem;
-    background: url('../assets/img/bg-cover.png?v=2') center/cover no-repeat;
+    background: url('../assets/img/bg-cover.png?v=2') center/cover no-repeat, var(--bg);
   }
   .cover-mark { width: 2.5rem; height: 2.5rem; position: relative; z-index: 1; }
   .cover-rudy {
