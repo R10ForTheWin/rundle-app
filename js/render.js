@@ -252,9 +252,9 @@ function employmentHistoryCard(story) {
     return '<div class="tl-item"><div class="tl-date">' + e.from + ' &mdash; ' + e.to + '</div><div class="tl-title">' + e.title + '</div><div class="tl-sub">' + e.role + '</div></div>';
   }).join('');
   var head = employmentConnection.kind === 'payroll'
-    ? '<span class="ep-logo" style="height:1.1rem;padding:0.1rem 0.3rem;"><img src="assets/img/' + employmentConnection.brand.logo + '" alt="' + employmentConnection.sourceLabel + '" /></span>Verified from ' + employmentConnection.sourceLabel + '<span class="trust employer">Employer-verified</span>'
-    : '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>Extracted from your resume<span class="trust documented">Documented</span>';
-  return '<div class="card employment-result-card"><div class="employment-result-head">' + head + '</div><div class="timeline">' + tl + '</div></div>';
+    ? '<span class="ep-logo" style="height:1.1rem;padding:0.1rem 0.3rem;"><img src="assets/img/' + employmentConnection.brand.logo + '" alt="' + employmentConnection.sourceLabel + '" /></span><span class="trust employer">Employer-verified</span>'
+    : '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg><span class="trust documented">Documented</span>';
+  return '<div class="card employment-result-card"><div class="card-title-row"><span class="card-title">Work history</span></div><div class="employment-result-head">' + head + '</div><div class="timeline">' + tl + '</div></div>';
 }
 
 function renderEmployment(persona, story) {
@@ -1164,7 +1164,7 @@ function renderVerifiedSkills(p, story, assessmentDone) {
       (p.status === 'active' ? 'Active, verified' : 'In progress') + '</div></div></div></div>';
   el.innerHTML =
     heroBlock +
-    '<div class="card"><div class="card-title-row"><span class="card-title">Verified skills</span><span class="count-chip">' + skills.length + ' skills</span></div>' +
+    '<div class="card"><div class="card-title-row"><span class="card-title">Verified skills</span></div>' +
       '<div class="skill-list-head"><div class="skill-list-head-spacer"></div><div class="skill-list-head-name"></div>' +
         '<div class="skill-list-head-badges"><span>Level</span><span>Evidence</span></div></div>' +
       skillRows +
