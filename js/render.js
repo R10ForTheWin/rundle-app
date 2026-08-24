@@ -710,7 +710,7 @@ function renderModuleDemoStep() {
         '<div class="demo-summary demo-reveal">' +
           '<div class="evidence-preview">' +
             '<span class="tag"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>Demo complete</span>' +
-            '<div class="line">' + MODULE_DEMO_CHARTS.length + ' charts reviewed &middot; ' + MODULE_DEMO_CORRECTIONS + ' corrections caught &middot; ' + MODULE_DEMO_CONFIRMED + ' confirmed &middot; this was a preview walkthrough, not a scored session</div>' +
+            '<div class="line">' + MODULE_DEMO_CHARTS.length + ' charts reviewed &middot; ' + MODULE_DEMO_CORRECTIONS + ' corrections caught &middot; ' + MODULE_DEMO_CONFIRMED + ' confirmed</div>' +
           '</div>' +
           '<div class="demo-continue-cta" id="module-demo-continue">Show my new verified skills <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>' +
         '</div>' +
