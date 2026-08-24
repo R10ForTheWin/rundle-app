@@ -1166,8 +1166,7 @@ function renderVerifiedSkills(p, story, assessmentDone) {
       '<div style="display:flex;align-items:center;gap:0.8rem;"><div class="credential-badge">' + credentialBadgeSvg() + '</div>' +
       '<div><div style="font-size:0.85rem;font-weight:700;">' + p.cred + ' &middot; AHIMA</div><div class="status-ok"><svg><use href="#i-check"/></svg>' +
       (p.status === 'active' ? 'Active, verified' : 'In progress') + '</div></div></div></div>';
-  el.innerHTML =
-    heroBlock +
+  var restHtml =
     '<div class="card"><div class="card-title-row"><span class="card-title">Verified skills</span></div>' +
       '<div class="skill-list-head"><div class="skill-list-head-spacer"></div><div class="skill-list-head-name"></div>' +
         '<div class="skill-list-head-badges"><span>Level</span><span>Evidence</span></div></div>' +
@@ -1177,6 +1176,27 @@ function renderVerifiedSkills(p, story, assessmentDone) {
     employmentHistoryCard(story);
   var continueBtn = document.getElementById('verified-skills-continue-btn');
   if (continueBtn) continueBtn.textContent = assessmentDone ? 'Continue' : 'Continue to assessment';
+
+  if (!assessmentDone) {
+    el.innerHTML = restHtml;
+    return;
+  }
+  // Badge moment: show only the sparkle fanfare first, with the screen
+  // scrolled to the top so it's actually seen (this container can still
+  // be scrolled down from the pre-assessment visit to this same screen) —
+  // only once the fanfare finishes does the rest of the content get
+  // inserted and the page follow it down.
+  el.innerHTML = heroBlock;
+  var scrollEl = el.closest('.scroll');
+  if (scrollEl) scrollEl.scrollTop = 0;
+  var revealRest = function () {
+    el.insertAdjacentHTML('beforeend', restHtml);
+    if (scrollEl && !reduceMotion) {
+      scrollEl.scrollTo({ top: scrollEl.scrollHeight, behavior: 'smooth' });
+    }
+  };
+  if (reduceMotion) revealRest();
+  else setTimeout(revealRest, 2300);
 }
 
 // ============================================================
