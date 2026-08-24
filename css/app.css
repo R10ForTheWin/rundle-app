@@ -1125,8 +1125,8 @@
   .gw-side { flex: none; text-align: right; }
   .gw-time { font-size: 0.64rem; color: var(--ink-soft); margin-bottom: 0.35rem; }
   .gw-start-btn {
-    font-size: 0.68rem; font-weight: 700; color: #fff; background: linear-gradient(135deg, var(--sienna), #7A3A18);
-    box-shadow: 0 0.2rem 0.5rem -0.1rem color-mix(in srgb, var(--sienna) 55%, transparent);
+    font-size: 0.68rem; font-weight: 700; color: #fff; background: linear-gradient(135deg, var(--demo-accent), #4C1D95);
+    box-shadow: 0 0.2rem 0.5rem -0.1rem color-mix(in srgb, var(--demo-accent) 55%, transparent);
     padding: 0.35rem 0.7rem; border-radius: 0.55rem; cursor: pointer; white-space: nowrap;
   }
   .gw-unavailable { font-size: 0.6rem; color: var(--ink-soft); white-space: nowrap; }
@@ -1304,9 +1304,12 @@
     font-family: 'Fraunces'; font-weight: 700; font-size: 0.7rem; color: var(--ink-soft);
     transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
   }
-  .choice-btn.considering { border-color: var(--ochre); background: color-mix(in srgb, var(--ochre) 12%, var(--surface-raised)); }
+  #screen-module-demo .choice-btn.considering {
+    border-color: var(--ochre); background: color-mix(in srgb, var(--ochre) 30%, var(--surface-raised));
+    box-shadow: 0 0 0 1px var(--ochre), 0 0.25rem 0.5rem -0.1rem color-mix(in srgb, var(--ochre) 45%, transparent);
+  }
   .choice-btn.considering .choice-letter { border-color: var(--ochre); background: var(--ochre); color: #fff; }
-  .choice-btn.chosen { border-color: var(--sienna); background: color-mix(in srgb, var(--ochre) 18%, var(--surface-raised)); color: var(--sienna); }
+  #screen-module-demo .choice-btn.chosen { border-color: var(--sienna); background: color-mix(in srgb, var(--ochre) 18%, var(--surface-raised)); color: var(--sienna); }
   .choice-btn.chosen .choice-letter { border-color: var(--sienna); background: var(--sienna); color: #fff; }
   .demo-cursor {
     position: absolute; width: 1.1rem; height: 1.1rem; z-index: 5; opacity: 0; pointer-events: none;

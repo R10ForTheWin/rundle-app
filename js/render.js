@@ -514,7 +514,7 @@ var CHART_REVIEW_SUMMARY = CHART_REVIEW_CHARTS.length + ' flagged charts reviewe
 // ============================================================
 var MODULE_DEMO_CHARTS = [
   {
-    title: 'Synthetic chart &middot; Diabetic CKD', type: 'Inpatient &middot; 3-day stay',
+    title: 'Diabetic CKD', type: 'Inpatient',
     label: 'Principal diagnosis',
     aiCode: 'E11.22 &middot; Diabetes with diabetic CKD, plus N18.31',
     question: 'The provider never writes that the CKD is caused by the diabetes. Does the AI&rsquo;s link still hold?',
@@ -529,7 +529,7 @@ var MODULE_DEMO_CHARTS = [
     explain: 'The word &ldquo;with&rdquo; in the ICD-10-CM index presumes a causal relationship unless the record states another cause &mdash; no query needed. Reaching for a query here is the most common wrong answer in the module, a habit left from before that convention was clarified.'
   },
   {
-    title: 'Synthetic chart &middot; Sepsis', type: 'Inpatient &middot; 4-day stay',
+    title: 'Sepsis', type: 'Inpatient',
     label: 'Diagnosis sequence',
     aiCode: '1&#41; N39.0 UTI &middot; 2&#41; A41.51 sepsis due to E. coli',
     question: 'BP 82/48, lactate 4.2, pressors for 12 hours, sepsis present on admission. Which comes first &mdash; the UTI, or the sepsis?',
@@ -546,7 +546,7 @@ var MODULE_DEMO_CHARTS = [
     impact: '+$3,400 case value'
   },
   {
-    title: 'Synthetic chart &middot; UTI', type: 'Inpatient &middot; 3-day stay',
+    title: 'UTI', type: 'Inpatient',
     label: 'Secondary diagnosis',
     aiCode: 'N39.0 &middot; Urinary tract infection, site not specified',
     question: 'No urine culture, no antibiotic order, no note describing an infection. What should happen to this code?',
@@ -563,7 +563,7 @@ var MODULE_DEMO_CHARTS = [
     impact: 'Improper payment averted'
   },
   {
-    title: 'Synthetic chart &middot; COPD exacerbation', type: 'Inpatient &middot; 4-day stay',
+    title: 'COPD exacerbation', type: 'Inpatient',
     label: 'Secondary diagnosis',
     aiCode: 'No secondary diagnosis coded',
     ghost: true,
@@ -581,7 +581,7 @@ var MODULE_DEMO_CHARTS = [
     impact: '+$720 case value'
   },
   {
-    title: 'Synthetic chart &middot; Heart failure history', type: 'Inpatient &middot; 3-day stay',
+    title: 'Heart failure history', type: 'Inpatient',
     label: 'Secondary diagnosis (AI flag)',
     aiCode: 'I50.32 &middot; Chronic diastolic heart failure (41% confidence)',
     question: 'Copied forward from an old history list &mdash; no workup, no mention this stay. Trust the score?',
@@ -735,7 +735,7 @@ function renderModuleDemoStep() {
     '<div class="chart-review-scroll">' +
       '<div class="chart-card demo-reveal">' +
         chartHead +
-        '<div class="demo-question-text">Review this AI-coded entry &mdash; what&rsquo;s the right call?</div>' +
+        '<div class="demo-question-text">' + chart.question + '</div>' +
         '<div class="code-row flagged"><div><div class="label">' + chart.label + '</div><div class="code mono">' + chart.aiCode + '</div></div></div>' +
       '</div>' +
       '<div class="choice-row" id="module-demo-choices">' + choiceBtns +
@@ -1145,7 +1145,7 @@ function renderVerifiedSkills(p, story, assessmentDone) {
   if (assessmentDone) {
     heroBlock =
       '<div class="done-wrap" style="padding-top:0.3rem;padding-bottom:0.4rem;">' +
-        '<img class="module-badge-img" src="assets/img/module1-badge.png?v=2" alt="Module 1 badge" />' +
+        '<img class="module-badge-img" src="assets/img/module1-badge.png?v=3" alt="Module 1 badge" />' +
         '<h2>Module 1 complete</h2>' +
         '<p>You now have <strong style="color:var(--ink);">' + skills.length + ' verified skills</strong> &mdash; 1 new, earned from this assessment.</p>' +
       '</div>';
@@ -1166,13 +1166,13 @@ function renderVerifiedSkills(p, story, assessmentDone) {
       (p.status === 'active' ? 'Active, verified' : 'In progress') + '</div></div></div></div>';
   el.innerHTML =
     heroBlock +
-    credentialCard +
-    employmentHistoryCard(story) +
     '<div class="card"><div class="card-title-row"><span class="card-title">Verified skills</span><span class="count-chip">' + skills.length + ' skills</span></div>' +
       '<div class="skill-list-head"><div class="skill-list-head-spacer"></div><div class="skill-list-head-name"></div>' +
         '<div class="skill-list-head-badges"><span>Level</span><span>Evidence</span></div></div>' +
       skillRows +
-    '</div>';
+    '</div>' +
+    credentialCard +
+    employmentHistoryCard(story);
   var continueBtn = document.getElementById('verified-skills-continue-btn');
   if (continueBtn) continueBtn.textContent = assessmentDone ? 'Continue' : 'Continue to assessment';
 }
