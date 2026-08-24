@@ -1181,22 +1181,25 @@ function credentialBadgeSvg() {
 // A big, fun burst of sparkles radiating out from the Module 1 badge —
 // randomized angle/distance/size/color/timing so it reads as an actual
 // explosion rather than a fixed decorative ring. Skipped entirely under
-// prefers-reduced-motion (checked by the caller).
-var SPARKLE_COLORS = ['var(--ochre)', 'var(--sienna)', 'var(--amber)', 'var(--good)', '#5FA38C'];
+// prefers-reduced-motion (checked by the caller). Sparkles sit BEHIND the
+// badge (see .badge-sparkle-wrap z-index in CSS) so the shield itself is
+// never obscured by one crossing in front of it — they only read where
+// they clear its silhouette.
+var SPARKLE_COLORS = ['#FFFFFF', '#FFE9A8', '#FFC94D', '#FFF3D6', '#CFF3E6'];
 var SPARKLE_SVG = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0 14 10 24 12 14 14 12 24 10 14 0 12 10 10Z"/></svg>';
 function badgeSparkleBurst() {
-  var count = 20;
+  var count = 22;
   var sparkles = [];
   for (var i = 0; i < count; i++) {
-    var angle = (360 / count) * i + (Math.random() * 18 - 9);
+    var angle = (360 / count) * i + (Math.random() * 14 - 7);
     var rad = angle * Math.PI / 180;
-    var dist = 2.6 + Math.random() * 4.4;
-    var size = i % 4 === 0 ? 1.5 + Math.random() * 0.9 : 0.55 + Math.random() * 0.9;
+    var dist = 3.4 + Math.random() * 4.6;
+    var size = i % 4 === 0 ? 1.3 + Math.random() * 0.7 : 0.5 + Math.random() * 0.75;
     var tx = (Math.cos(rad) * dist).toFixed(2);
     var ty = (Math.sin(rad) * dist).toFixed(2);
     var color = SPARKLE_COLORS[i % SPARKLE_COLORS.length];
-    var delay = (Math.random() * 0.55).toFixed(2);
-    var dur = (1.5 + Math.random() * 0.7).toFixed(2);
+    var delay = (Math.random() * 0.3).toFixed(2);
+    var dur = (1.05 + Math.random() * 0.35).toFixed(2);
     sparkles.push(
       '<span class="badge-sparkle" style="--tx:' + tx + 'rem;--ty:' + ty + 'rem;width:' + size.toFixed(2) + 'rem;height:' + size.toFixed(2) + 'rem;color:' + color + ';animation-delay:' + delay + 's;animation-duration:' + dur + 's;">' + SPARKLE_SVG + '</span>'
     );
@@ -1266,7 +1269,7 @@ function renderVerifiedSkills(p, story, assessmentDone) {
     }
   };
   if (reduceMotion) revealRest();
-  else setTimeout(revealRest, 2750);
+  else setTimeout(revealRest, 2000);
 }
 
 // ============================================================
