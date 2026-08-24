@@ -1240,6 +1240,7 @@
   .done-badge::before { left: 0.35rem; transform: rotate(14deg); }
   .done-badge::after { right: 0.35rem; transform: rotate(-14deg); }
   .done-badge svg { width: 1.5rem; height: 1.5rem; color: #fff; }
+  .module-badge-rudy { width: 8rem; height: auto; flex: none; margin-bottom: -1.1rem; }
   .module-badge-img {
     width: 7rem; height: auto; flex: none;
     filter: drop-shadow(0 0.35rem 0.7rem color-mix(in srgb, var(--sienna) 45%, transparent));

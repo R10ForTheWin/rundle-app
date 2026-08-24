@@ -1145,6 +1145,7 @@ function renderVerifiedSkills(p, story, assessmentDone) {
   if (assessmentDone) {
     heroBlock =
       '<div class="done-wrap" style="padding-top:0.3rem;padding-bottom:0.4rem;">' +
+        '<img class="module-badge-rudy" src="assets/img/rudy-ladder.webp" alt="" />' +
         '<img class="module-badge-img" src="assets/img/module1-badge.png?v=3" alt="Module 1 badge" />' +
         '<h2>Module 1 complete</h2>' +
         '<p>You now have <strong style="color:var(--ink);">' + skills.length + ' verified skills</strong> &mdash; 1 new, earned from this assessment.</p>' +
