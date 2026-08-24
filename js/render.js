@@ -294,9 +294,9 @@ function renderEmployment(persona, story) {
     '</div>' +
     '<div id="employment-result"></div>';
   var continueBtn = document.getElementById('employment-continue-btn');
-  if (continueBtn) continueBtn.classList.add('pending');
+  if (continueBtn) { continueBtn.classList.add('pending'); continueBtn.textContent = 'Continue'; }
   var bottomCta = document.getElementById('employment-bottom-cta');
-  if (bottomCta) bottomCta.style.display = '';
+  if (bottomCta) bottomCta.style.display = 'none';
 }
 
 function toggleProviderSelect(tile) {
@@ -307,16 +307,13 @@ function toggleProviderSelect(tile) {
   }
   var btn = document.getElementById('employment-connect-btn');
   var altSection = document.getElementById('employment-alt-section');
-  var bottomCta = document.getElementById('employment-bottom-cta');
   if (wasSelected) {
     if (btn) { btn.classList.add('pending'); btn.textContent = 'Select a provider to connect'; }
     if (altSection) altSection.style.display = '';
-    if (bottomCta) bottomCta.style.display = '';
     return;
   }
   tile.classList.add('selected');
   if (btn) { btn.classList.remove('pending'); btn.textContent = 'Connect to ' + tile.dataset.provider; }
-  if (bottomCta) bottomCta.style.display = 'none';
   if (altSection) altSection.style.display = 'none';
 }
 
@@ -383,7 +380,7 @@ function connectEmployment(el, sourceLabel, kind) {
     }, reduceMotion ? 0 : 1500);
 
     setTimeout(function () {
-      if (connectBtn) { connectBtn.classList.add('done'); connectBtn.textContent = 'Connected — Continue'; }
+      if (connectBtn) connectBtn.classList.add('done');
       employmentConnection = { kind: 'payroll', sourceLabel: sourceLabel, brand: brand };
       if (result) {
         var empStory = STORY[employmentPersona.id];
@@ -400,8 +397,6 @@ function connectEmployment(el, sourceLabel, kind) {
         if (newCard && !reduceMotion) setTimeout(function () { newCard.scrollIntoView({ behavior: 'smooth', block: 'end' }); }, 50);
       }
       unlockEmploymentContinue();
-      var bottomCta = document.getElementById('employment-bottom-cta');
-      if (bottomCta) bottomCta.style.display = 'none';
     }, reduceMotion ? 0 : 2400);
     return;
   }
@@ -427,7 +422,9 @@ function connectEmployment(el, sourceLabel, kind) {
 
 function unlockEmploymentContinue() {
   var continueBtn = document.getElementById('employment-continue-btn');
-  if (continueBtn) continueBtn.classList.remove('pending');
+  if (continueBtn) { continueBtn.classList.remove('pending'); continueBtn.textContent = 'Connected — Continue'; }
+  var bottomCta = document.getElementById('employment-bottom-cta');
+  if (bottomCta) bottomCta.style.display = '';
 }
 
 function playDownload(persona, onDone) {

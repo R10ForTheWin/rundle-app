@@ -155,7 +155,7 @@
 
     var connectBtn = e.target.closest('#employment-connect-btn');
     if (connectBtn) {
-      if (connectBtn.classList.contains('done')) { showScreen('connect'); return; }
+      if (connectBtn.classList.contains('done')) return;
       if (!connectBtn.classList.contains('pending')) {
         var selectedProvider = document.querySelector('.employment-provider.selected');
         if (selectedProvider) connectEmployment(selectedProvider, selectedProvider.dataset.provider, 'payroll');

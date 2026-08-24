@@ -1037,8 +1037,8 @@
   .employment-connect-cta.pending {
     cursor: default; background: linear-gradient(135deg, var(--amber), var(--ochre)); color: rgba(255,255,255,0.75);
   }
-  .employment-connect-cta.done { cursor: pointer; }
-  .employment-connect-cta:not(.pending):active { transform: scale(0.98); }
+  .employment-connect-cta.done { cursor: default; }
+  .employment-connect-cta:not(.pending):not(.done):active { transform: scale(0.98); }
   .employment-or { text-align: center; font-size: 0.68rem; color: var(--ink-soft); margin: 0.7rem 0; }
   .employment-upload {
     display: flex; align-items: center; gap: 0.7rem; cursor: pointer; margin-top: 0.5rem;
