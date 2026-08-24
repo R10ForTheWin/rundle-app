@@ -12,7 +12,7 @@ var reduceMotion = osReduceMotion;
 // Source-document builders (Downloading screen)
 // ============================================================
 var sources = [
-  { key: 'cos', url: 'careeronestop.org/.../find-certifications.aspx', label: 'CareerOneStop' },
+  { key: 'aapc', url: 'aapc.com/certification/directory', label: 'AAPC' },
   { key: 'onet', url: 'onetonline.org/link/summary/29-2072.00', label: 'O·NET OnLine' },
   { key: 'bls', url: 'bls.gov/oes/current/oes292072.htm', label: 'U.S. Bureau of Labor Statistics' },
   { key: 'ahima', url: 'ahima.org/certification/verify', label: 'AHIMA' }
@@ -64,20 +64,20 @@ function blsDoc(p) { var name = p.name;
     '</div>';
 }
 
-function cosDoc(p) { var name = p.name;
+function aapcDoc(p) { var name = p.name;
   return '' +
-    '<div class="src-doc src-cos">' +
-      '<div class="src-chrome"><span class="sdot"></span><span class="sdot"></span><span class="sdot"></span><span class="surl">careeronestop.org/.../find-certifications.aspx</span></div>' +
-      '<div class="src-head"><div class="mark img"><img src="assets/img/logo-cos.png" alt="" /></div><div><div class="org">CareerOneStop</div><div class="sub">Sponsored by the U.S. Department of Labor</div></div></div>' +
+    '<div class="src-doc src-aapc">' +
+      '<div class="src-chrome"><span class="sdot"></span><span class="sdot"></span><span class="sdot"></span><span class="surl">aapc.com/certification/directory</span></div>' +
+      '<div class="src-head"><div class="mark img wide"><img src="assets/img/logo-aapc.svg" alt="" /></div><div><div class="org">AAPC</div><div class="sub">Medical coding &amp; billing certification body</div></div></div>' +
       '<div class="src-body">' +
-        '<div class="row"><span class="k">Certification</span><span class="v">Certified Coding Specialist (CCS)</span></div>' +
-        '<div class="row"><span class="k">Organization</span><span class="v">AHIMA</span></div>' +
+        '<div class="row"><span class="k">Certification</span><span class="v">Certified Professional Coder (CPC)</span></div>' +
+        '<div class="row"><span class="k">Organization</span><span class="v">AAPC</span></div>' +
         '<div class="row"><span class="k">Type</span><span class="v">National Certification</span></div>' +
         '<div class="row"><span class="k">Education/Training Req&rsquo;d?</span><span class="v">Yes</span></div>' +
         '<div class="row"><span class="k">Work Experience Req&rsquo;d?</span><span class="v">Yes</span></div>' +
         '<div class="row"><span class="k">Renewal Required?</span><span class="v">Every 2 Year(s)</span></div>' +
       '</div>' +
-      '<div class="src-foot">Referenced for ' + name + ' &middot; CareerOneStop Certification Finder</div>' +
+      '<div class="src-foot">Referenced for ' + name + ' &middot; AAPC Certification Directory</div>' +
     '</div>';
 }
 
@@ -106,7 +106,7 @@ function ahimaDoc(p) {
     '</div>';
 }
 
-var docBuilders = { onet: onetDoc, bls: blsDoc, cos: cosDoc, ahima: ahimaDoc };
+var docBuilders = { onet: onetDoc, bls: blsDoc, aapc: aapcDoc, ahima: ahimaDoc };
 
 // ============================================================
 // Login typewriter (credentials screen)
@@ -146,7 +146,7 @@ function typePasswordReveal(el, text, speed, done) {
 // already got its real login on an earlier screen — this box just
 // confirms it's included.
 function playConnectAutoCheck() {
-  var order = ['onet', 'bls', 'cos', 'ahima'];
+  var order = ['onet', 'bls', 'aapc', 'ahima'];
   var ctaBtn = document.getElementById('connect-cta');
   var step = reduceMotion ? 0 : 550;
   order.forEach(function (key, i) {
@@ -1408,10 +1408,10 @@ function renderProfile(p, story) {
   var tl = story.employer.map(function (e) {
     return '<div class="tl-item"><div class="tl-date">' + e.from + ' &mdash; ' + e.to + '</div><div class="tl-title">' + e.title + '</div><div class="tl-sub">' + e.role + ' &middot; ' + e.note + '</div></div>';
   }).join('');
-  var sourceLogos = { cos: 'logo-cos.png', onet: 'logo-onet.png', bls: 'logo-bls.jpg', ahima: 'logo-ahima.png' };
-  var sourceLinks = { cos: 'https://www.careeronestop.org/', onet: 'https://www.onetonline.org/', bls: 'https://www.bls.gov/', ahima: 'https://www.ahima.org/' };
+  var sourceLogos = { aapc: 'logo-aapc.svg', onet: 'logo-onet.png', bls: 'logo-bls.jpg', ahima: 'logo-ahima.png' };
+  var sourceLinks = { aapc: 'https://www.aapc.com/', onet: 'https://www.onetonline.org/', bls: 'https://www.bls.gov/', ahima: 'https://www.ahima.org/' };
   var sourceRows = sources.map(function (s) {
-    var wide = s.key === 'ahima' ? ' wide' : '';
+    var wide = (s.key === 'ahima' || s.key === 'aapc') ? ' wide' : '';
     return '<a class="check-row" href="' + sourceLinks[s.key] + '" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;"><div class="check-logo' + wide + '"><img src="assets/img/' + sourceLogos[s.key] + '" alt="" /></div>' +
       '<div class="check-body" style="flex:1;min-width:0;"><div class="check-title">' + s.label + '</div><div class="check-sub">' + s.url + '</div></div>' +
       '<div class="status-ok" style="margin-left:auto;flex:none;white-space:nowrap;"><svg><use href="#i-check"/></svg>Connected</div></a>';

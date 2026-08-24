@@ -831,7 +831,7 @@
   .src-foot { padding: 0.3rem 0.55rem; font-size: 0.5rem; color: #8A8A87; border-top: 1px solid #EEEEEC; font-style: italic; }
   .src-onet .src-head { background: #1B3A6B; }
   .src-bls .src-head { background: #14213D; }
-  .src-cos .src-head { background: #A6192E; }
+  .src-aapc .src-head { background: #034246; }
   .src-ahima .src-head { background: #0F6E8C; }
   .src-status { font-size: 0.58rem; font-weight: 700; padding: 0.1rem 0.4rem; border-radius: 999px; }
   .src-status.active { background: #E1F0E4; color: #2C6E3F; }
