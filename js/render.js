@@ -1462,10 +1462,26 @@ function renderProfile(p, story) {
       '<div class="check-body" style="flex:1;min-width:0;"><div class="check-title">' + s.label + '</div><div class="check-sub">' + s.url + '</div></div>' +
       '<div class="status-ok" style="margin-left:auto;flex:none;white-space:nowrap;"><svg><use href="#i-check"/></svg>Connected</div></a>';
   }).join('');
+  // Whichever payroll provider (or resume) the worker used to confirm work
+  // history is its own connected source too -- surface it here alongside
+  // the public benchmarking/credential sources instead of only on the
+  // Verified Skills work-history card.
+  var payrollRow = '';
+  if (employmentConnection && employmentConnection.kind === 'payroll') {
+    var b = employmentConnection.brand;
+    payrollRow = '<div class="check-row" style="cursor:default;"><div class="check-logo"><img src="assets/img/' + b.logo + '" alt="" /></div>' +
+      '<div class="check-body" style="flex:1;min-width:0;"><div class="check-title">' + employmentConnection.sourceLabel + '</div><div class="check-sub">Employment &amp; payroll verification</div></div>' +
+      '<div class="status-ok" style="margin-left:auto;flex:none;white-space:nowrap;"><svg><use href="#i-check"/></svg>Connected</div></div>';
+  } else if (employmentConnection && employmentConnection.kind === 'resume') {
+    payrollRow = '<div class="check-row" style="cursor:default;"><div class="check-logo" style="display:flex;align-items:center;justify-content:center;color:var(--sienna);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M12 4 7 9M12 4l5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg></div>' +
+      '<div class="check-body" style="flex:1;min-width:0;"><div class="check-title">Resume upload</div><div class="check-sub">Work history extraction</div></div>' +
+      '<div class="status-ok" style="margin-left:auto;flex:none;white-space:nowrap;"><svg><use href="#i-check"/></svg>Connected</div></div>';
+  }
+  var sourceCount = sources.length + (payrollRow ? 1 : 0);
   el.innerHTML =
     '<div class="card"><div class="card-title-row"><span class="card-title">Credential</span></div>' + credBody + '</div>' +
     '<div class="card"><div class="card-title-row"><span class="card-title">Employment history</span></div><div class="timeline">' + tl + '</div></div>' +
-    '<div class="card"><div class="card-title-row"><span class="card-title">Data sources</span><span class="count-chip">' + sources.length + ' connected</span></div>' + sourceRows + '</div>' +
+    '<div class="card"><div class="card-title-row"><span class="card-title">Data sources</span><span class="count-chip">' + sourceCount + ' connected</span></div>' + sourceRows + payrollRow + '</div>' +
     '<div class="card"><div class="card-title-row"><span class="card-title">Who can see this</span></div>' +
       '<div class="toggle-row"><div><div class="t">Visible to employers</div><div class="d">Skills, credential, tenure</div></div><div class="switch on"></div></div>' +
       '<div class="toggle-row"><div><div class="t">Visible to training partners</div><div class="d">For funded course matching</div></div><div class="switch on"></div></div>' +
