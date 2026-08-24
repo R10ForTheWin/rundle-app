@@ -3,7 +3,7 @@
 // this file decides which screen is visible and what triggers what.
 
 (function () {
-  var SCREENS = ['cover', 'picker', 'credentials', 'employment', 'connect', 'download', 'verified-skills',
+  var SCREENS = ['qr', 'cover', 'picker', 'credentials', 'employment', 'connect', 'download', 'verified-skills',
     'assessment-gateway', 'module-demo', 'mapping',
     'home', 'review', 'chart-review', 'match-detail', 'training', 'profile', 'positions'];
 
@@ -22,7 +22,7 @@
   // and found the gesture again. Always starts off on a fresh load.
   var demoFast = false;
   var SCREEN_LABELS = {
-    cover: 'Cover', picker: 'Choose persona', connect: 'Connect sources',
+    qr: 'Audience QR', cover: 'Cover', picker: 'Choose persona', connect: 'Connect sources',
     credentials: 'AHIMA login', download: 'Downloading data', employment: 'Confirm work history',
     'verified-skills': 'Verified skills', 'assessment-gateway': 'Assessment gateway',
     'module-demo': 'Module 1 demo', mapping: 'Skill mapping', home: 'Job matches',
@@ -127,6 +127,8 @@
 
     var tab = e.target.closest('.tab[data-target]');
     if (tab) { showScreen(tab.dataset.target); return; }
+
+    if (e.target.closest('#qr-skip-cta')) { showScreen('cover'); return; }
 
     if (e.target.closest('#cover-cta')) { showScreen('picker'); return; }
 
@@ -306,7 +308,7 @@
   }
 
   renderPicker();
-  showScreen('cover');
+  showScreen('qr');
 
   // Safety net: the cover GIF fades in via its own onload, but if that
   // somehow never fires (odd cache edge case), don't leave it invisible.

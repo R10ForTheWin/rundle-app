@@ -662,6 +662,39 @@
   }
   .cover-foot { position: absolute; bottom: 1.2rem; left: 0; right: 0; text-align: center; font-size: 0.62rem; color: var(--ink-soft); }
 
+  /* ---------- Pre-cover "audience QR" slide -- UCLA blue/gold, shown
+     to a presenter's audience before the app demo itself starts ---------- */
+  .qr-screen {
+    flex: 1; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 2rem 1.6rem; gap: 0.8rem;
+    background:
+      radial-gradient(120% 90% at 15% -10%, rgba(255,209,0,0.16), transparent),
+      linear-gradient(165deg, #2774AE 0%, #1E5A8A 55%, #123655 100%);
+  }
+  .qr-bruin-icon { width: 3.6rem; height: 3.6rem; flex: none; filter: drop-shadow(0 0.3rem 0.6rem rgba(0,0,0,0.25)); }
+  .qr-eyebrow {
+    font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em;
+    color: #FFD100;
+  }
+  .qr-head {
+    font-family: 'Fraunces'; font-weight: 600; font-size: 1.5rem; line-height: 1.25;
+    color: #fff; text-shadow: 0 0.12rem 0.5rem rgba(0,0,0,0.25);
+  }
+  .qr-card {
+    margin-top: 0.4rem; background: #fff; border-radius: 1.1rem; padding: 1rem;
+    box-shadow: 0 0.6rem 1.6rem -0.3rem rgba(0,0,0,0.35), 0 0 0 0.3rem rgba(255,209,0,0.9);
+  }
+  .qr-code-img { display: block; width: 9.5rem; height: 9.5rem; }
+  .qr-url {
+    font-family: ui-monospace, Menlo, monospace; font-size: 0.72rem; letter-spacing: 0.01em;
+    color: rgba(255,255,255,0.85);
+  }
+  .qr-skip {
+    margin-top: 1rem; font-size: 0.7rem; font-weight: 600; color: rgba(255,255,255,0.65);
+    cursor: pointer; padding: 0.4rem 0.7rem; border-radius: 999px; transition: color 0.2s ease, background 0.2s ease;
+  }
+  .qr-skip:hover, .qr-skip:active { color: #fff; background: rgba(255,255,255,0.12); }
+
   /* Persona picker */
   .persona-card {
     display: flex; align-items: center; gap: 0.65rem;

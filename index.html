@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,600&display=swap" />
-<link rel="stylesheet" href="css/app.css?v=103" />
+<link rel="stylesheet" href="css/app.css?v=104" />
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute">
@@ -42,6 +42,25 @@
 
 
 <div id="app">
+<section class="screen" id="screen-qr" data-screen="qr">
+    <div class="qr-screen">
+      <svg class="qr-bruin-icon" viewBox="0 0 100 100" aria-hidden="true">
+        <circle cx="23" cy="21" r="13" fill="#FFD100"/>
+        <circle cx="77" cy="21" r="13" fill="#FFD100"/>
+        <circle cx="50" cy="52" r="37" fill="#FFD100"/>
+        <ellipse cx="50" cy="61" rx="15" ry="11" fill="#2774AE"/>
+        <circle cx="50" cy="53" r="4.5" fill="#2774AE"/>
+        <circle cx="35" cy="47" r="3.6" fill="#2774AE"/>
+        <circle cx="65" cy="47" r="3.6" fill="#2774AE"/>
+      </svg>
+      <div class="qr-eyebrow">Audiences</div>
+      <div class="qr-head">Scan to open Rundle<br />on your personal device</div>
+      <div class="qr-card"><img class="qr-code-img" src="assets/img/qr-rundle.svg" alt="QR code linking to the Rundle prototype" /></div>
+      <div class="qr-url">r10forthewin.github.io/rundle-app</div>
+      <div class="qr-skip" id="qr-skip-cta">Continue to the demo &rarr;</div>
+    </div>
+</section>
+
 <section class="screen" id="screen-cover" data-screen="cover">
     <div class="cover-screen">
       <div class="cover-brand-row">
@@ -288,6 +307,6 @@
 
 <script src="js/data.js?v=44"></script>
 <script src="js/render.js?v=85"></script>
-<script src="js/app.js?v=58"></script>
+<script src="js/app.js?v=59"></script>
 </body>
 </html>
