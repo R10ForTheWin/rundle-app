@@ -76,7 +76,7 @@
         showScreen('home', { skipHistory: true });
       });
     } else if (id === 'home') {
-      animateMatchRingsIn(document.getElementById('home-content'));
+      revealMatchCardsIn(document.getElementById('home-content'));
     } else if (id === 'review') {
       renderReviewTab(STORY[selectedPersona.id].skillDetail.name, chartReviewDone);
     } else if (id === 'chart-review') {

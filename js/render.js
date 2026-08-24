@@ -1081,12 +1081,9 @@ function renderHome(p, story) {
   renderIdentity('home-identity', p);
   var el = document.getElementById('home-content');
   if (!el) return;
-  var revealCls = reduceMotion ? '' : ' reveal-row';
   var matchRows = story.matches.map(function (m, i) {
-    var delay = 0.15 + i * 0.09;
-    var cardStyle = '--fit:0' + (reduceMotion ? '' : ';animation-delay:' + delay.toFixed(2) + 's');
     var topCls = i === 0 ? ' match-card-top' : '';
-    return '<div class="card match-card' + topCls + revealCls + '" data-match-idx="' + i + '" data-fit="' + m.fit + '" style="' + cardStyle + '"><div class="match-scores">' +
+    return '<div class="card match-card' + topCls + '" data-match-idx="' + i + '" data-fit="' + m.fit + '" style="--fit:0"><div class="match-scores">' +
       '<div class="fit-ring"><span>' + m.fit + '%</span></div>' +
       (m.transfer != null ? '<div class="transfer-badge"><span>' + m.transfer + '</span><em>transfer</em></div>' : '') +
       '</div>' +
@@ -1104,9 +1101,9 @@ function renderHome(p, story) {
       '<div class="matches-empty-bubble"><p>More roles will show up here as you verify more skills.</p></div>' +
     '</div>' +
     matchRows;
-  // Rings stay at --fit:0 here — animateMatchRingsIn() sweeps them once the
-  // screen is actually visible; bumping while display:none has no paint to
-  // transition from, so the fill would just snap in with no animation.
+  // Cards stay hidden and rings stay at --fit:0 here — revealMatchCardsIn()
+  // plays the actual reveal once the screen is visible; doing it here would
+  // run against display:none, which has no paint to transition from.
 }
 
 // ============================================================
@@ -1141,9 +1138,16 @@ function renderVerifiedSkills(p, story, assessmentDone) {
   if (assessmentDone) skills.unshift(ASSESSMENT_SKILL_RESULT);
   var heroBlock = '';
   if (assessmentDone) {
+    var sparkleSvg = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0 14 10 24 12 14 14 12 24 10 14 0 12 10 10Z"/></svg>';
+    var badgeSparkles = reduceMotion ? '' : [1, 2, 3, 4, 5].map(function (i) {
+      return '<span class="badge-sparkle s' + i + '">' + sparkleSvg + '</span>';
+    }).join('');
     heroBlock =
       '<div class="done-wrap" style="padding-top:0.3rem;padding-bottom:0.4rem;">' +
-        '<img class="module-badge-img" src="assets/img/module1-badge.png?v=3" alt="Module 1 badge" />' +
+        '<div class="badge-sparkle-wrap">' +
+          badgeSparkles +
+          '<img class="module-badge-img" src="assets/img/module1-badge.png?v=3" alt="Module 1 badge" />' +
+        '</div>' +
         '<h2>Module 1 complete</h2>' +
         '<p>You now have <strong style="color:var(--ink);">' + skills.length + ' verified skills</strong> &mdash; 1 new, earned from this assessment.</p>' +
       '</div>';
@@ -1205,39 +1209,57 @@ function renderAssessmentGateway() {
   el.innerHTML = rows;
 }
 
-// Sweeps every ring on screen from 0 up to its real fit value (clockwise,
-// via the conic-gradient reading --fit). Driven by a manual rAF tween rather
-// than a CSS transition on the custom property — a transition would depend
-// on the browser supporting @property-registered animatable custom
-// properties, which isn't universal; setting the value directly every frame
-// works anywhere conic-gradient itself works.
-function animateMatchRingsIn(container) {
+// Reveals match cards one at a time — each card fades/slides in, THEN its
+// fit-ring sweeps 0 to its real value (clockwise, via the conic-gradient
+// reading --fit), and only once that finishes does the next card appear.
+// The ring sweep itself is a manual rAF tween rather than a CSS transition
+// on the custom property — a transition would depend on the browser
+// supporting @property-registered animatable custom properties, which
+// isn't universal; setting the value directly every frame works anywhere
+// conic-gradient itself works.
+var matchRevealToken = 0;
+function revealMatchCardsIn(container) {
   if (!container) return;
-  var cards = container.querySelectorAll('.match-card');
+  var cards = Array.prototype.slice.call(container.querySelectorAll('.match-card'));
   if (!cards.length) return;
+  var myToken = ++matchRevealToken;
   if (reduceMotion) {
-    cards.forEach(function (c) { c.style.setProperty('--fit', c.dataset.fit); });
+    cards.forEach(function (c) { c.classList.add('revealed'); c.style.setProperty('--fit', c.dataset.fit); });
     return;
   }
-  cards.forEach(function (c) { c.style.setProperty('--fit', 0); });
-  var duration = 1400;
-  var start = null;
+  cards.forEach(function (c) { c.classList.remove('revealed'); c.style.setProperty('--fit', 0); });
+  var cardRevealMs = 450;
+  var ringSweepMs = 900;
+  var gapMs = 150;
   function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
-  function tick(ts) {
-    if (start === null) start = ts;
-    var t = Math.min(1, (ts - start) / duration);
-    var eased = easeOutCubic(t);
-    cards.forEach(function (c) {
-      var target = parseFloat(c.dataset.fit) || 0;
-      c.style.setProperty('--fit', (target * eased).toFixed(1));
-    });
-    if (t < 1) requestAnimationFrame(tick);
+  function sweepRing(card, cb) {
+    var target = parseFloat(card.dataset.fit) || 0;
+    var start = null;
+    function tick(ts) {
+      if (myToken !== matchRevealToken) return; // a newer render superseded this run
+      if (start === null) start = ts;
+      var t = Math.min(1, (ts - start) / ringSweepMs);
+      card.style.setProperty('--fit', (target * easeOutCubic(t)).toFixed(1));
+      if (t < 1) requestAnimationFrame(tick); else cb();
+    }
+    requestAnimationFrame(tick);
   }
-  // Let the 0% state actually get painted (and the screen transition settle)
-  // before the sweep starts — starting it in the same frame the screen
-  // becomes visible meant most of the sweep had already finished by the
-  // time it was actually on screen, so only the tail end was ever seen.
-  setTimeout(function () { requestAnimationFrame(tick); }, 300);
+  function next(i) {
+    if (myToken !== matchRevealToken || i >= cards.length) return;
+    var card = cards[i];
+    card.classList.add('revealed');
+    setTimeout(function () {
+      if (myToken !== matchRevealToken) return;
+      sweepRing(card, function () {
+        setTimeout(function () { next(i + 1); }, gapMs);
+      });
+    }, cardRevealMs);
+  }
+  // Let the hidden state actually get painted (and the screen transition
+  // settle) before the sequence starts — starting it in the same frame the
+  // screen becomes visible meant the first card's transition never had a
+  // 0% state to animate from.
+  setTimeout(function () { next(0); }, 300);
 }
 
 function renderGap(p, story) {
