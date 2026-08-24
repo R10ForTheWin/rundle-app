@@ -1118,7 +1118,7 @@ function renderHome(p, story) {
 // skill earned from that demo.
 // ============================================================
 var ASSESSMENT_SKILL_RESULT = {
-  name: 'AI-Assisted Chart Audit', icon: 'a', svg: 'i-target',
+  name: 'Chart Coding Review', icon: 'a', svg: 'i-target',
   evidence: MODULE_DEMO_CHARTS.length + ' charts reviewed &middot; ' + MODULE_DEMO_CORRECTIONS + ' corrections caught &middot; ' + MODULE_DEMO_CONFIRMED + ' confirmed',
   tier: 'advanced', trust: 'simulated'
 };
@@ -1145,7 +1145,7 @@ function renderVerifiedSkills(p, story, assessmentDone) {
   if (assessmentDone) {
     heroBlock =
       '<div class="done-wrap" style="padding-top:0.3rem;padding-bottom:0.4rem;">' +
-        '<img class="module-badge-img" src="assets/img/module1-badge.png?v=1" alt="Module 1 badge" />' +
+        '<img class="module-badge-img" src="assets/img/module1-badge.png?v=2" alt="Module 1 badge" />' +
         '<h2>Module 1 complete</h2>' +
         '<p>You now have <strong style="color:var(--ink);">' + skills.length + ' verified skills</strong> &mdash; 1 new, earned from this assessment.</p>' +
       '</div>';
