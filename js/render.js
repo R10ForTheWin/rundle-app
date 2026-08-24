@@ -1258,16 +1258,11 @@ function renderVerifiedSkills(p, story, assessmentDone) {
   // scrolled to the top so it's actually seen (this container can still
   // be scrolled down from the pre-assessment visit to this same screen) —
   // only once the fanfare finishes does the rest of the content get
-  // inserted and the page follow it down.
+  // inserted, left for the user to scroll to themselves.
   el.innerHTML = heroBlock;
   var scrollEl = el.closest('.scroll');
   if (scrollEl) scrollEl.scrollTop = 0;
-  var revealRest = function () {
-    el.insertAdjacentHTML('beforeend', restHtml);
-    if (scrollEl && !reduceMotion) {
-      scrollEl.scrollTo({ top: scrollEl.scrollHeight, behavior: 'smooth' });
-    }
-  };
+  var revealRest = function () { el.insertAdjacentHTML('beforeend', restHtml); };
   if (reduceMotion) revealRest();
   else setTimeout(revealRest, 2000);
 }
