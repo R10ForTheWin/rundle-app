@@ -277,21 +277,23 @@ function renderEmployment(persona, story) {
       '<img class="matches-empty-avatar" src="assets/img/rudy-note.png?v=3" alt="Rudy" />' +
       '<div class="matches-empty-bubble"><p>Pick whichever one holds your paystubs &mdash; I&rsquo;ll do the rest.</p></div>' +
     '</div>' +
-    '<div class="card reveal-row" style="animation-delay:0.05s"><div class="card-title-row"><span class="card-title">Connect your payroll account</span></div>' +
-      '<div class="employment-providers" id="employment-providers">' + providerRows + '</div>' +
-      '<div class="employment-hint">Your employer is never contacted. 200+ providers supported.</div>' +
-      '<div class="employment-connect-cta pending" id="employment-connect-btn">Select a provider to connect</div>' +
-    '</div>' +
-    '<div id="employment-alt-section">' +
-      '<div class="employment-or reveal-row" style="animation-delay:0.3s">or</div>' +
-      '<div class="card employment-manual reveal-row" style="animation-delay:0.35s">' +
-        '<div class="employment-upload" id="employment-upload">' +
-          '<div class="employment-upload-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M12 4 7 9M12 4l5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg></div>' +
-          '<div><div class="employment-upload-title">Upload your resume</div><div class="employment-upload-sub">PDF or DOCX &mdash; we&rsquo;ll pull your work history from it</div></div>' +
-          '<div class="ep-status"><span class="ep-spin"></span><span class="ep-check">&#10003; Extracted</span></div>' +
+    '<div class="employment-collapse" id="employment-connect-section"><div class="employment-collapse-inner">' +
+      '<div class="card reveal-row" style="animation-delay:0.05s"><div class="card-title-row"><span class="card-title">Connect your payroll account</span></div>' +
+        '<div class="employment-providers" id="employment-providers">' + providerRows + '</div>' +
+        '<div class="employment-hint">Your employer is never contacted. 200+ providers supported.</div>' +
+        '<div class="employment-connect-cta pending" id="employment-connect-btn">Select a provider to connect</div>' +
+      '</div>' +
+      '<div id="employment-alt-section">' +
+        '<div class="employment-or reveal-row" style="animation-delay:0.3s">or</div>' +
+        '<div class="card employment-manual reveal-row" style="animation-delay:0.35s">' +
+          '<div class="employment-upload" id="employment-upload">' +
+            '<div class="employment-upload-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M12 4 7 9M12 4l5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg></div>' +
+            '<div><div class="employment-upload-title">Upload your resume</div><div class="employment-upload-sub">PDF or DOCX &mdash; we&rsquo;ll pull your work history from it</div></div>' +
+            '<div class="ep-status"><span class="ep-spin"></span><span class="ep-check">&#10003; Extracted</span></div>' +
+          '</div>' +
         '</div>' +
       '</div>' +
-    '</div>' +
+    '</div></div>' +
     '<div id="employment-result"></div>';
   var continueBtn = document.getElementById('employment-continue-btn');
   if (continueBtn) { continueBtn.classList.add('pending'); continueBtn.textContent = 'Continue'; }
@@ -425,6 +427,11 @@ function unlockEmploymentContinue() {
   if (continueBtn) { continueBtn.classList.remove('pending'); continueBtn.textContent = 'Connected — Continue'; }
   var bottomCta = document.getElementById('employment-bottom-cta');
   if (bottomCta) bottomCta.style.display = '';
+  // The provider/upload card already said "Connected" -- once the real
+  // continue action shows up at the bottom, having both on screen at
+  // once just repeats the same word twice, so fold the top one away.
+  var connectSection = document.getElementById('employment-connect-section');
+  if (connectSection) connectSection.classList.add('collapsed');
 }
 
 function playDownload(persona, onDone) {

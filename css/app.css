@@ -1039,6 +1039,12 @@
   }
   .employment-connect-cta.done { cursor: default; }
   .employment-connect-cta:not(.pending):not(.done):active { transform: scale(0.98); }
+  .employment-collapse {
+    display: grid; grid-template-rows: 1fr; opacity: 1;
+    transition: grid-template-rows 0.5s ease, opacity 0.4s ease;
+  }
+  .employment-collapse.collapsed { grid-template-rows: 0fr; opacity: 0; }
+  .employment-collapse-inner { overflow: hidden; min-height: 0; }
   .employment-or { text-align: center; font-size: 0.68rem; color: var(--ink-soft); margin: 0.7rem 0; }
   .employment-upload {
     display: flex; align-items: center; gap: 0.7rem; cursor: pointer; margin-top: 0.5rem;
@@ -1371,6 +1377,7 @@
     }
     .demo-code-old { text-decoration: line-through; opacity: 0.55; }
     .demo-code-ghost { display: none; }
+    .employment-collapse { transition: none; }
   }
 
   /* hidden presenter tool: a faint dot so it can be found on purpose,
