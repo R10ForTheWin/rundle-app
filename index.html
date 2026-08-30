@@ -102,9 +102,9 @@
       <p class="sub-lead" id="connect-sublead">Trusted workforce and credentialing sources Rundle uses to benchmark your skills against the role.</p>
     </div>
     <div class="scroll section-pad" style="padding-top:0.3rem;">
-      <div class="check-row" data-source="onet"><div class="check-box"><svg><use href="#i-check"/></svg></div><div class="check-logo"><img src="assets/img/logo-onet.png" alt="" /></div><div class="check-body"><div class="check-title">O&middot;NET</div><div class="check-sub">Occupation &amp; skill benchmarks</div></div></div>
+      <div class="check-row" data-source="onet"><div class="check-box"><svg><use href="#i-check"/></svg></div><div class="check-logo"><img src="assets/img/logo-onet.png" alt="" /></div><div class="check-body"><div class="check-title">O&middot;NET</div><div class="check-fullname">Occupational Information Network</div><div class="check-sub">Occupation &amp; skill benchmarks</div></div></div>
       <div class="check-row" data-source="bls"><div class="check-box"><svg><use href="#i-check"/></svg></div><div class="check-logo"><img src="assets/img/logo-bls.jpg" alt="" /></div><div class="check-body"><div class="check-title">Bureau of Labor Statistics</div><div class="check-sub">Wage &amp; employment data</div></div></div>
-      <div class="check-row" data-source="aapc"><div class="check-box"><svg><use href="#i-check"/></svg></div><div class="check-logo wide"><img src="assets/img/logo-aapc.svg" alt="" /></div><div class="check-body"><div class="check-title">AAPC</div><div class="check-sub">Certification &amp; training lookup</div></div></div>
+      <div class="check-row" data-source="aapc"><div class="check-box"><svg><use href="#i-check"/></svg></div><div class="check-logo wide"><img src="assets/img/logo-aapc.svg" alt="" /></div><div class="check-body"><div class="check-title">AAPC</div><div class="check-fullname">American Academy of Professional Coders</div><div class="check-sub">Certification &amp; training lookup</div></div></div>
       <div class="check-row" data-source="ahima"><div class="check-box"><svg><use href="#i-check"/></svg></div><div class="check-logo wide"><img src="assets/img/logo-ahima.png" alt="" /></div><div class="check-body"><div class="check-title">AHIMA</div><div class="check-sub">Credential verification</div></div></div>
       <div class="cta pending" id="connect-cta">Connect selected sources <svg><use href="#i-arrow"/></svg></div>
     </div>
@@ -146,13 +146,11 @@
     </div>
     <div id="no-resume-modal" style="display:none;position:absolute;inset:0;z-index:50;align-items:center;justify-content:center;background:rgba(20,20,15,.5);">
       <div style="background:#fff;border-radius:1rem;padding:1.4rem 1.3rem;width:82%;max-width:20rem;box-shadow:0 1rem 2rem rgba(0,0,0,.3);text-align:center;">
-        <div style="width:2.6rem;height:2.6rem;border-radius:999px;background:var(--sienna);display:flex;align-items:center;justify-content:center;margin:0 auto 0.8rem;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13H7Z"/><path d="M14 3v5h5"/><path d="M9 17l2.5-6 2.5 6"/></svg>
-        </div>
+        <img src="assets/img/rudy-thinking.png" alt="Rudy" style="display:block;width:5.2rem;height:auto;margin:0 auto 0.7rem;" />
         <div style="font-family:'Fraunces';font-weight:600;font-size:1rem;margin-bottom:0.5rem;">Why no resumes?</div>
-        <p style="font-size:0.76rem;color:var(--ink-soft);line-height:1.55;margin:0 0 0.6rem;text-align:left;">Resumes are built on self-reported credentials and narrative, not verified proof that someone can actually perform the work.</p>
-        <p style="font-size:0.76rem;color:var(--ink);font-weight:700;line-height:1.55;margin:0 0 0.6rem;text-align:left;">Resume ingestion also creates unnecessary AI security risks, including hidden prompt-injection instructions embedded in uploaded documents that can manipulate or contaminate automated screening systems.</p>
-        <p style="font-size:0.76rem;color:var(--ink-soft);line-height:1.55;margin:0 0 1.1rem;text-align:left;">By avoiding resumes entirely, Rundle reduces that attack surface and replaces unverifiable claims with structured, auditable performance evidence and a live assessment of what a worker can actually do.</p>
+        <p style="font-size:0.76rem;color:var(--ink-soft);line-height:1.55;margin:0 0 0.6rem;text-align:left;">Resumes are self-reported &mdash; the applicant next to you can claim whatever they want, true or not. Skipping them means you're never competing against an exaggerated resume or a made-up credential.</p>
+        <p style="font-size:0.76rem;color:var(--ink);font-weight:700;line-height:1.55;margin:0 0 0.6rem;text-align:left;">It also closes a real risk: uploaded resumes can carry hidden prompt-injection instructions built to manipulate the AI systems screening candidates &mdash; letting manipulative applicants game the process without anyone noticing.</p>
+        <p style="font-size:0.76rem;color:var(--ink-soft);line-height:1.55;margin:0 0 1.1rem;text-align:left;">By working only from verified sources, Rundle makes sure the only thing that decides your match is what you can actually prove &mdash; not who told the best story.</p>
         <div class="cta" id="no-resume-ack" style="margin-top:0;">Continue</div>
       </div>
     </div>
