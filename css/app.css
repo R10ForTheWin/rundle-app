@@ -433,14 +433,16 @@
   .matches-empty-bubble {
     position: relative; text-align: left; max-width: 12.5rem;
     background: var(--surface-raised); border: 1px solid var(--line);
-    border-radius: 0.9rem; padding: 0.55rem 0.75rem;
+    border-radius: 0.9rem; padding: 0.6rem 0.8rem;
+    box-shadow: 0 0.3rem 0.7rem -0.3rem hsl(var(--shadow-color) / 0.25);
   }
   .matches-empty-bubble::before {
     content: ''; position: absolute; left: -0.42rem; top: 50%; margin-top: -0.4rem;
     border-width: 0.4rem 0.5rem 0.4rem 0; border-style: solid;
     border-color: transparent var(--surface-raised) transparent transparent;
+    filter: drop-shadow(-0.05rem 0 0.05rem hsl(var(--shadow-color) / 0.08));
   }
-  .matches-empty-bubble p { font-size: 0.72rem; color: var(--ink-soft); line-height: 1.45; margin: 0; }
+  .matches-empty-bubble p { font-size: 0.72rem; color: var(--ink-soft); line-height: 1.5; margin: 0; }
   @property --fit {
     syntax: '<number>';
     inherits: true;
@@ -959,6 +961,16 @@
     pointer-events: none;
   }
   .fly-doc svg { width: 0.7rem; height: 0.7rem; }
+  /* Labeled variant used on the Downloading screen so the org + what it's
+     used for (skills, wages, certs, credentials) stays readable in flight. */
+  .fly-doc.labeled {
+    width: auto; height: auto; min-width: 9rem; max-width: 11rem;
+    flex-direction: column; align-items: flex-start; gap: 0.15rem;
+    border-radius: 0.6rem; padding: 0.55rem 0.75rem;
+    transition: transform 3.4s cubic-bezier(.3,.6,.4,1), opacity 0.4s ease 3s;
+  }
+  .fly-doc-org { font-weight: 700; font-size: 0.82rem; line-height: 1.2; }
+  .fly-doc-desc { font-size: 0.68rem; line-height: 1.2; color: rgba(255,255,255,0.85); }
   @keyframes inboxPulse { 0%, 100% { transform: scale(1); } 40% { transform: scale(1.18); } }
   .dl-inbox.pulse { animation: inboxPulse 0.4s ease; }
   @media (prefers-reduced-motion: reduce) {
@@ -1154,30 +1166,42 @@
   }
   .gw-module {
     display: flex; align-items: flex-start; gap: 0.7rem; background: var(--surface-raised);
-    border: 1.5px solid var(--line); border-radius: 0.9rem; padding: 0.75rem 0.8rem; margin-bottom: 0.6rem;
+    border: 1.5px solid var(--line); border-radius: 0.9rem; padding: 0.85rem 0.9rem; margin-bottom: 0.6rem;
+    transition: box-shadow 0.2s ease;
   }
-  .gw-module-active { border-color: var(--good); background: color-mix(in srgb, var(--good) 6%, var(--surface-raised)); }
+  .gw-module-active {
+    border-color: var(--good); background: linear-gradient(155deg, var(--surface-raised), color-mix(in srgb, var(--good) 7%, var(--surface-raised)));
+    box-shadow: 0 0.4rem 1rem rgba(47,107,87,.14);
+  }
   .gw-num {
-    width: 1.6rem; height: 1.6rem; border-radius: 999px; flex: none; margin-top: 0.05rem;
+    width: 1.7rem; height: 1.7rem; border-radius: 999px; flex: none; margin-top: 0.05rem;
     background: var(--line); color: var(--ink-soft);
-    display: flex; align-items: center; justify-content: center; font-family: 'Fraunces'; font-weight: 700; font-size: 0.74rem;
+    display: flex; align-items: center; justify-content: center; font-family: 'Fraunces'; font-weight: 700; font-size: 0.76rem;
   }
-  .gw-num-active { background: linear-gradient(135deg, var(--amber), var(--ochre)); color: #fff; }
-  .gw-body { flex: 1; min-width: 0; }
+  .gw-num-active {
+    background: linear-gradient(135deg, var(--amber), var(--ochre)); color: #fff;
+    box-shadow: 0 0.18rem 0.4rem -0.08rem color-mix(in srgb, var(--ochre) 60%, transparent);
+  }
+  .gw-body { flex: 1; min-width: 0; padding-top: 0.05rem; }
   .gw-title-row { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
-  .gw-name { font-size: 0.84rem; font-weight: 700; }
+  .gw-name { font-size: 0.86rem; font-weight: 700; letter-spacing: -0.005em; }
   .gw-tag {
     font-size: 0.56rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em;
     background: var(--good-bg); color: var(--good);
     padding: 0.1rem 0.4rem; border-radius: 999px;
   }
-  .gw-desc { font-size: 0.7rem; color: var(--ink-soft); margin-top: 0.2rem; line-height: 1.4; }
-  .gw-side { flex: none; text-align: right; }
-  .gw-time { font-size: 0.64rem; color: var(--ink-soft); margin-bottom: 0.35rem; }
+  .gw-desc { font-size: 0.71rem; color: var(--ink-soft); margin-top: 0.25rem; line-height: 1.48; }
+  .gw-side { flex: none; text-align: right; padding-top: 0.05rem; }
+  .gw-time { font-size: 0.64rem; font-weight: 600; color: var(--ink-soft); margin-bottom: 0.4rem; }
   .gw-start-btn {
     font-size: 0.68rem; font-weight: 700; color: #fff; background: linear-gradient(135deg, #5FA38C, var(--good));
-    box-shadow: 0 0.2rem 0.5rem -0.1rem color-mix(in srgb, var(--good) 55%, transparent);
-    padding: 0.35rem 0.7rem; border-radius: 0.55rem; cursor: pointer; white-space: nowrap;
+    box-shadow: 0 0.22rem 0.55rem -0.1rem color-mix(in srgb, var(--good) 55%, transparent);
+    padding: 0.4rem 0.8rem; border-radius: 0.55rem; cursor: pointer; white-space: nowrap;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+  }
+  .gw-start-btn:active {
+    transform: scale(0.96);
+    box-shadow: 0 0.12rem 0.3rem -0.05rem color-mix(in srgb, var(--good) 55%, transparent);
   }
   .gw-unavailable { font-size: 0.6rem; color: var(--ink-soft); white-space: nowrap; }
 

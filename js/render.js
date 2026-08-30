@@ -206,23 +206,42 @@ function confirmLogin(onDone) {
 var dlMount = document.getElementById('download-list');
 var dlToken = 0;
 
-function flyToInbox(sourceEl, inboxId) {
+// What each source provides, shown on the labeled fly-doc card as it
+// crosses the screen — readable mid-flight rather than just a generic
+// file icon. Just the descriptor, not the org name.
+var SOURCE_TAGS = {
+  onet: { label: 'Skills & occupations' },
+  bls: { label: 'Wages & employment' },
+  aapc: { label: 'Training & certifications' },
+  ahima: { label: 'Credentials & standards' }
+};
+
+function flyToInbox(sourceEl, inboxId, label, desc, onArrive) {
   var screenEl = sourceEl.closest('.screen');
   var inbox = document.getElementById(inboxId || 'dl-inbox');
-  if (!screenEl || !inbox || reduceMotion) return;
+  if (!screenEl || !inbox || reduceMotion) { if (onArrive) onArrive(); return; }
+  var labeled = !!label;
   var screenRect = screenEl.getBoundingClientRect();
   var fromRect = sourceEl.getBoundingClientRect();
   var toRect = inbox.getBoundingClientRect();
   var fly = document.createElement('div');
-  fly.className = 'fly-doc';
-  fly.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13H7Z"/><path d="M14 3v5h5"/></svg>';
-  fly.style.left = (fromRect.left - screenRect.left + fromRect.width / 2 - 10) + 'px';
-  fly.style.top = (fromRect.top - screenRect.top + 8) + 'px';
+  fly.className = 'fly-doc' + (labeled ? ' labeled' : '');
+  fly.innerHTML = labeled
+    ? '<span class="fly-doc-org">' + label + '</span>' + (desc ? '<span class="fly-doc-desc">' + desc + '</span>' : '')
+    : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13H7Z"/><path d="M14 3v5h5"/></svg>';
   screenEl.appendChild(fly);
+  var flyRect = fly.getBoundingClientRect();
+  var fromCenterX = fromRect.left - screenRect.left + fromRect.width / 2;
+  var fromTop = fromRect.top - screenRect.top + 8;
+  var startLeft = fromCenterX - flyRect.width / 2;
+  fly.style.left = startLeft + 'px';
+  fly.style.top = fromTop + 'px';
   requestAnimationFrame(function () {
-    var dx = (toRect.left - screenRect.left + toRect.width / 2 - 10) - (fromRect.left - screenRect.left + fromRect.width / 2 - 10);
-    var dy = (toRect.top - screenRect.top + toRect.height / 2 - 10) - (fromRect.top - screenRect.top + 8);
-    fly.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(0.4)';
+    var toCenterX = toRect.left - screenRect.left + toRect.width / 2;
+    var toCenterY = toRect.top - screenRect.top + toRect.height / 2;
+    var dx = (toCenterX - flyRect.width / 2) - startLeft;
+    var dy = (toCenterY - flyRect.height / 2) - fromTop;
+    fly.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(0.35)';
     fly.style.opacity = '0';
   });
   setTimeout(function () {
@@ -230,7 +249,8 @@ function flyToInbox(sourceEl, inboxId) {
     inbox.classList.remove('pulse');
     void inbox.offsetWidth;
     inbox.classList.add('pulse');
-  }, 1650);
+    if (onArrive) onArrive();
+  }, labeled ? 3450 : 1650);
 }
 
 // ============================================================
@@ -375,9 +395,14 @@ function connectEmployment(el, sourceLabel, kind) {
       el.classList.add('connected');
       if (connectBtn) { connectBtn.classList.remove('pending'); connectBtn.textContent = 'Connected to ' + sourceLabel; }
       var skel = document.getElementById('employment-skel');
-      if (skel) flyToInbox(skel, 'employment-inbox');
       var countEl = document.getElementById('employment-inbox-count');
-      if (countEl) countEl.textContent = '1/1';
+      if (skel) {
+        flyToInbox(skel, 'employment-inbox', 'Career History', undefined, function () {
+          if (countEl) countEl.textContent = '1/1';
+        });
+      } else if (countEl) {
+        countEl.textContent = '1/1';
+      }
       if (result) result.innerHTML = '<div class="reveal-row">' + payrollDoc(sourceLabel, brand, employmentPersona) + '</div>';
     }, reduceMotion ? 0 : 1500);
 
@@ -444,22 +469,28 @@ function playDownload(persona, onDone) {
   var countEl = document.getElementById('dl-count');
   var received = 0;
   if (countEl) countEl.textContent = '0/' + sources.length;
-  var step = reduceMotion ? 0 : 1900;
+  var step = reduceMotion ? 0 : 4200;
   sources.forEach(function (s, i) {
     setTimeout(function () {
       if (myToken !== dlToken) return; // a newer selection superseded this run
       var slot = document.getElementById('slot-' + persona.id + '-' + s.key);
+      var markArrived = function () {
+        if (myToken !== dlToken) return;
+        received++;
+        if (countEl) countEl.textContent = received + '/' + sources.length;
+        if (i === sources.length - 1) {
+          var st = document.getElementById('dl-status');
+          if (st) st.textContent = 'All sources verified for ' + persona.name + '.';
+          if (onDone) setTimeout(onDone, reduceMotion ? 300 : 600);
+        }
+      };
       if (slot) {
-        flyToInbox(slot);
+        var tag = SOURCE_TAGS[s.key];
+        flyToInbox(slot, undefined, tag && tag.label, undefined, markArrived);
         slot.outerHTML = docBuilders[s.key](persona);
         dlMount.scrollTo({ top: dlMount.scrollHeight, behavior: reduceMotion ? 'auto' : 'smooth' });
-      }
-      received++;
-      if (countEl) countEl.textContent = received + '/' + sources.length;
-      if (i === sources.length - 1) {
-        var st = document.getElementById('dl-status');
-        if (st) st.textContent = 'All sources verified for ' + persona.name + '.';
-        if (onDone) setTimeout(onDone, 1200);
+      } else {
+        markArrived();
       }
     }, reduceMotion ? 0 : step * (i + 1) + 700);
   });
@@ -561,24 +592,6 @@ var MODULE_DEMO_CHARTS = [
     removeCode: true,
     explain: 'No culture, no antibiotic order, no clinical note backing up an infection. A code the documentation doesn&rsquo;t support gets removed, not made more specific or sent back on a query &mdash; there&rsquo;s nothing in the chart for a query to confirm.',
     impact: 'Improper payment averted'
-  },
-  {
-    title: 'COPD exacerbation', type: 'Inpatient',
-    label: 'Secondary diagnosis',
-    aiCode: 'No secondary diagnosis coded',
-    ghost: true,
-    question: 'Labs show sodium at 128 mEq/L. The note says &ldquo;encouraged fluids, monitored levels.&rdquo; Which code fits?',
-    choices: [
-      { key: 'dehydration', label: 'E86.0 &middot; Dehydration' },
-      { key: 'hyponatremia', label: 'E87.1 &middot; Hyponatremia' },
-      { key: 'aki', label: 'N17.9 &middot; Acute kidney injury' },
-      { key: 'fluid', label: 'E87.8 &middot; Other fluid balance disorder' }
-    ],
-    correct: 'hyponatremia',
-    isCorrection: true,
-    newCode: 'E87.1 &middot; Hyponatremia',
-    explain: '128 mEq/L is the lab definition of hyponatremia specifically. The other three are close clinical neighbors &mdash; a vaguer fluid-balance code included &mdash; but each needs its own supporting evidence in the note, and the lab value only backs up one of them.',
-    impact: '+$720 case value'
   },
   {
     title: 'Heart failure history', type: 'Inpatient',

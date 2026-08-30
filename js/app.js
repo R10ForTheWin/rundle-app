@@ -117,7 +117,7 @@
       });
     }
     var sub = document.getElementById('connect-sublead');
-    if (sub) sub.textContent = 'Public sources Rundle uses to benchmark your skills against the role.';
+    if (sub) sub.textContent = 'Trusted workforce and credentialing sources Rundle uses to benchmark your skills against the role.';
   }
 
   // ---- Click delegation ----
