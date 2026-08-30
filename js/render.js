@@ -30,7 +30,7 @@ function onetDoc(p) { var name = p.name;
   return '' +
     '<div class="src-doc src-onet">' +
       '<div class="src-chrome"><span class="sdot"></span><span class="sdot"></span><span class="sdot"></span><span class="surl">onetonline.org/link/summary/29-2072.00</span></div>' +
-      '<div class="src-head"><div class="mark img"><img src="assets/img/logo-onet.png" alt="" /></div><div><div class="org">O&middot;NET OnLine</div><div class="sub">Sponsored by the U.S. Department of Labor, Employment &amp; Training Administration</div></div></div>' +
+      '<div class="src-head"><div class="mark img"><img src="assets/img/logo-onet.png" alt="" /></div><div class="src-head-text"><div class="org">O&middot;NET OnLine</div><div class="sub">Sponsored by the U.S. Dept. of Labor, Employment &amp; Training Administration</div></div></div>' +
       '<div class="src-body">' +
         '<div class="row"><span class="k">Occupation</span><span class="v">Medical Records Specialists</span></div>' +
         '<div class="row"><span class="k">O&middot;NET-SOC Code</span><span class="v">29-2072.00</span></div>' +
@@ -51,7 +51,7 @@ function blsDoc(p) { var name = p.name;
   return '' +
     '<div class="src-doc src-bls">' +
       '<div class="src-chrome"><span class="sdot"></span><span class="sdot"></span><span class="sdot"></span><span class="surl">bls.gov/oes/current/oes292072.htm</span></div>' +
-      '<div class="src-head"><div class="mark img"><img src="assets/img/logo-bls.jpg" alt="" /></div><div><div class="org">U.S. Bureau of Labor Statistics</div><div class="sub">Occupational Employment &amp; Wage Statistics</div></div></div>' +
+      '<div class="src-head"><div class="mark img"><img src="assets/img/logo-bls.jpg" alt="" /></div><div class="src-head-text"><div class="org">U.S. Bureau of Labor Statistics</div><div class="sub">Occupational Employment &amp; Wage Statistics</div></div></div>' +
       '<div class="src-body">' +
         '<div class="row"><span class="k">SOC Code</span><span class="v">29-2072</span></div>' +
         '<div class="row"><span class="k">Employment (2024)</span><span class="v">194,800</span></div>' +
@@ -68,7 +68,7 @@ function aapcDoc(p) { var name = p.name;
   return '' +
     '<div class="src-doc src-aapc">' +
       '<div class="src-chrome"><span class="sdot"></span><span class="sdot"></span><span class="sdot"></span><span class="surl">aapc.com/certification/directory</span></div>' +
-      '<div class="src-head"><div class="mark img wide"><img src="assets/img/logo-aapc.svg" alt="" /></div><div><div class="org">AAPC</div><div class="sub">Medical coding &amp; billing certification body</div></div></div>' +
+      '<div class="src-head"><div class="mark img wide"><img src="assets/img/logo-aapc.svg" alt="" /></div><div class="src-head-text"><div class="org">AAPC</div><div class="sub">Medical coding &amp; billing certification body</div></div></div>' +
       '<div class="src-body">' +
         '<div class="row"><span class="k">Certification</span><span class="v">Certified Professional Coder (CPC)</span></div>' +
         '<div class="row"><span class="k">Organization</span><span class="v">AAPC</span></div>' +
@@ -95,7 +95,7 @@ function ahimaDoc(p) {
   return '' +
     '<div class="src-doc src-ahima">' +
       '<div class="src-chrome"><span class="sdot"></span><span class="sdot"></span><span class="sdot"></span><span class="surl">ahima.org/certification/verify</span></div>' +
-      '<div class="src-head"><div class="mark img wide"><img src="assets/img/logo-ahima.png" alt="" /></div><div><div class="org">AHIMA</div><div class="sub">American Health Information Management Association &middot; Credential Verification</div></div></div>' +
+      '<div class="src-head"><div class="mark img wide"><img src="assets/img/logo-ahima.png" alt="" /></div><div class="src-head-text"><div class="org">AHIMA</div><div class="sub">American Health Information Mgmt. Assoc. &middot; Credential Verification</div></div></div>' +
       '<div class="src-body">' +
         '<div class="row"><span class="k">Name</span><span class="v">' + p.name + '</span></div>' +
         '<div class="row"><span class="k">Credential</span><span class="v">' + p.cred + '</span></div>' +
@@ -206,51 +206,150 @@ function confirmLogin(onDone) {
 var dlMount = document.getElementById('download-list');
 var dlToken = 0;
 
-// What each source provides, shown on the labeled fly-doc card as it
-// crosses the screen — readable mid-flight rather than just a generic
-// file icon. Just the descriptor, not the org name.
-var SOURCE_TAGS = {
-  onet: { label: 'Skills & occupations' },
-  bls: { label: 'Wages & employment' },
-  aapc: { label: 'Training & certifications' },
-  ahima: { label: 'Credentials & standards' }
+// Illustrated data-card assets for each source, plus the single Work
+// History payroll card. Real DOM/CSS handles positioning; these PNGs are
+// just the branded card art (see playCardFlight below).
+var CARD_ART = {
+  onet: 'assets/img/rundle_skills_occupations.png',
+  bls: 'assets/img/rundle_wages_employment.png',
+  aapc: 'assets/img/rundle_training_certifications.png',
+  ahima: 'assets/img/rundle_credentials_standards.png',
+  career: 'assets/img/rundle_career_history.png'
 };
 
-function flyToInbox(sourceEl, inboxId, label, desc, onArrive) {
-  var screenEl = sourceEl.closest('.screen');
-  var inbox = document.getElementById(inboxId || 'dl-inbox');
-  if (!screenEl || !inbox || reduceMotion) { if (onArrive) onArrive(); return; }
-  var labeled = !!label;
+// Spawns one illustrated card, holds it so it's readable, then arcs it up
+// into the counter pill. If originEl is given (e.g. a just-rendered
+// source doc's banner), the card spawns small in that banner's reserved
+// right-hand gutter and travels forward into reading position — like it's
+// lifting off the document — before holding; otherwise it just settles
+// in place at the reading position (used where there's no document to
+// originate from, e.g. the single Work History payroll card). Either way
+// the flight itself is a real curved (not straight-line) path sampled
+// with an accelerating ease so it feels tossed rather than slid, with a
+// touch of motion blur at peak speed and a late fade so it merges into
+// the pill rather than vanishing mid-air. Calls onArrive once the pill
+// has actually received it.
+function playCardFlight(imgKey, screenEl, pillEl, onArrive, originEl) {
+  var imgSrc = CARD_ART[imgKey];
+  if (!screenEl || !pillEl || !imgSrc) { if (onArrive) onArrive(); return; }
+
+  var card = document.createElement('div');
+  card.className = 'card-fly';
+  card.innerHTML = '<img src="' + imgSrc + '" alt="" />';
+  screenEl.appendChild(card);
+
+  function pulsePill() {
+    pillEl.classList.remove('pill-arrive');
+    void pillEl.offsetWidth;
+    pillEl.classList.add('pill-arrive');
+  }
+
+  if (reduceMotion) {
+    card.classList.add('reduced');
+    var pRect = pillEl.getBoundingClientRect();
+    var sRect = screenEl.getBoundingClientRect();
+    var cRect = card.getBoundingClientRect();
+    card.style.left = ((pRect.left - sRect.left) + pRect.width / 2 - cRect.width / 2) + 'px';
+    card.style.top = ((pRect.top - sRect.top) + pRect.height / 2 - cRect.height / 2) + 'px';
+    card.style.opacity = '0';
+    requestAnimationFrame(function () {
+      card.style.transition = 'opacity 0.2s ease';
+      card.style.opacity = '1';
+    });
+    setTimeout(function () {
+      card.style.opacity = '0';
+      setTimeout(function () {
+        card.remove();
+        pulsePill();
+        if (onArrive) onArrive();
+      }, 220);
+    }, 260);
+    return;
+  }
+
+  var cardRect = card.getBoundingClientRect();
   var screenRect = screenEl.getBoundingClientRect();
-  var fromRect = sourceEl.getBoundingClientRect();
-  var toRect = inbox.getBoundingClientRect();
-  var fly = document.createElement('div');
-  fly.className = 'fly-doc' + (labeled ? ' labeled' : '');
-  fly.innerHTML = labeled
-    ? '<span class="fly-doc-org">' + label + '</span>' + (desc ? '<span class="fly-doc-desc">' + desc + '</span>' : '')
-    : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l5 5v13H7Z"/><path d="M14 3v5h5"/></svg>';
-  screenEl.appendChild(fly);
-  var flyRect = fly.getBoundingClientRect();
-  var fromCenterX = fromRect.left - screenRect.left + fromRect.width / 2;
-  var fromTop = fromRect.top - screenRect.top + 8;
-  var startLeft = fromCenterX - flyRect.width / 2;
-  fly.style.left = startLeft + 'px';
-  fly.style.top = fromTop + 'px';
-  requestAnimationFrame(function () {
-    var toCenterX = toRect.left - screenRect.left + toRect.width / 2;
-    var toCenterY = toRect.top - screenRect.top + toRect.height / 2;
-    var dx = (toCenterX - flyRect.width / 2) - startLeft;
-    var dy = (toCenterY - flyRect.height / 2) - fromTop;
-    fly.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(0.35)';
-    fly.style.opacity = '0';
-  });
-  setTimeout(function () {
-    fly.remove();
-    inbox.classList.remove('pulse');
-    void inbox.offsetWidth;
-    inbox.classList.add('pulse');
-    if (onArrive) onArrive();
-  }, labeled ? 3450 : 1650);
+  // Reading position: vertical center of the screen, slightly right of
+  // center. Every card ends up here before it flies, whether it spawned
+  // here directly or traveled in from a document banner.
+  var readCenterX = screenRect.width * 0.58;
+  var readCenterY = screenRect.height * 0.5;
+
+  var baseCenterX, baseCenterY, spawnScale, entranceMs;
+  if (originEl) {
+    var originRect = originEl.getBoundingClientRect();
+    // The banner's right-hand gutter (see .src-head padding-right) is
+    // reserved blank space — spawn there, not on top of its text.
+    baseCenterX = (originRect.left - screenRect.left) + originRect.width - 28;
+    baseCenterY = (originRect.top - screenRect.top) + originRect.height / 2;
+    spawnScale = 0.4;
+    entranceMs = 320;
+  } else {
+    baseCenterX = readCenterX;
+    baseCenterY = readCenterY;
+    spawnScale = 0.92;
+    entranceMs = 180;
+  }
+  card.style.left = (baseCenterX - cardRect.width / 2) + 'px';
+  card.style.top = (baseCenterY - cardRect.height / 2) + 'px';
+
+  var dxRead = readCenterX - baseCenterX;
+  var dyRead = readCenterY - baseCenterY;
+
+  var spawnRot = (Math.random() * 6 - 3).toFixed(2); // -3..3deg
+  var flightExtraRot = 5 + Math.random() * 3; // 5..8deg clockwise
+  var holdMs = 450 + Math.random() * 150; // 450-600ms
+  var flightMs = 650 + Math.random() * 150; // 650-800ms
+
+  var entrance = card.animate([
+    { transform: 'translate(0,' + (dyRead + 20) + 'px) scale(' + spawnScale + ') rotate(' + spawnRot + 'deg)', opacity: 0 },
+    { transform: 'translate(' + dxRead + 'px,' + dyRead + 'px) scale(1) rotate(0deg)', opacity: 1 }
+  ], { duration: entranceMs, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'forwards' });
+
+  entrance.onfinish = function () {
+    setTimeout(function () {
+      var pillRect = pillEl.getBoundingClientRect();
+      var targetCenterX = (pillRect.left - screenRect.left) + pillRect.width / 2;
+      var targetCenterY = (pillRect.top - screenRect.top) + pillRect.height / 2;
+      var dxPill = targetCenterX - baseCenterX;
+      var dyPill = targetCenterY - baseCenterY;
+      var segDx = dxPill - dxRead;
+      var segDy = dyPill - dyRead;
+      var dist = Math.sqrt(segDx * segDx + segDy * segDy);
+      // Bow the control point up and away from the straight line so the
+      // path reads as a gentle arc rather than a diagonal slide.
+      var ctrlX = dxRead + segDx * 0.5;
+      var ctrlY = dyRead + segDy * 0.5 - dist * 0.22;
+
+      var steps = 24;
+      var frames = [];
+      for (var i = 0; i <= steps; i++) {
+        var t = i / steps;
+        var eased = Math.pow(t, 1.6); // accelerating (ease-in)
+        var mt = 1 - eased;
+        var x = mt * mt * dxRead + 2 * mt * eased * ctrlX + eased * eased * dxPill;
+        var y = mt * mt * dyRead + 2 * mt * eased * ctrlY + eased * eased * dyPill;
+        var scale = 1 + (0.35 - 1) * eased;
+        var rot = flightExtraRot * eased;
+        var opacity = t < 0.8 ? 1 : Math.max(0, 1 - (t - 0.8) / 0.2);
+        var blur;
+        if (t < 0.25) blur = (t / 0.25) * 1.6;
+        else if (t > 0.75) blur = ((1 - t) / 0.25) * 1.6;
+        else blur = 1.6;
+        frames.push({
+          transform: 'translate(' + x.toFixed(2) + 'px,' + y.toFixed(2) + 'px) scale(' + scale.toFixed(3) + ') rotate(' + rot.toFixed(2) + 'deg)',
+          opacity: opacity.toFixed(3),
+          filter: 'blur(' + blur.toFixed(2) + 'px)'
+        });
+      }
+      var flight = card.animate(frames, { duration: flightMs, easing: 'linear', fill: 'forwards' });
+      flight.onfinish = function () {
+        card.remove();
+        pulsePill();
+        if (onArrive) onArrive();
+      };
+    }, holdMs);
+  };
 }
 
 // ============================================================
@@ -363,7 +462,7 @@ function payrollDoc(sourceLabel, brand, persona) {
     '<div class="src-chrome"><span class="sdot"></span><span class="sdot"></span><span class="sdot"></span><span class="surl">' + brand.url + '</span></div>' +
     '<div class="src-head" style="background:' + brand.color + ';">' +
       '<div class="mark payroll-mark"><img src="assets/img/' + brand.logo + '" alt="' + sourceLabel + '" /></div>' +
-      '<div><div class="org">' + sourceLabel + '</div><div class="sub">Employment &amp; payroll records</div></div>' +
+      '<div class="src-head-text"><div class="org">' + sourceLabel + '</div><div class="sub">Employment &amp; payroll records</div></div>' +
     '</div>' +
     '<div class="src-body">' +
       '<div class="row"><span class="k">Employee</span><span class="v">' + persona.name + '</span></div>' +
@@ -394,16 +493,21 @@ function connectEmployment(el, sourceLabel, kind) {
       el.classList.remove('connecting');
       el.classList.add('connected');
       if (connectBtn) { connectBtn.classList.remove('pending'); connectBtn.textContent = 'Connected to ' + sourceLabel; }
-      var skel = document.getElementById('employment-skel');
       var countEl = document.getElementById('employment-inbox-count');
-      if (skel) {
-        flyToInbox(skel, 'employment-inbox', 'Career History', undefined, function () {
+      var empInbox = document.getElementById('employment-inbox');
+      var empScreen = el.closest('.screen');
+      var empOriginEl = null;
+      if (result) {
+        result.innerHTML = '<div class="reveal-row">' + payrollDoc(sourceLabel, brand, employmentPersona) + '</div>';
+        empOriginEl = result.querySelector('.src-head');
+      }
+      if (empScreen && empInbox) {
+        playCardFlight('career', empScreen, empInbox, function () {
           if (countEl) countEl.textContent = '1/1';
-        });
+        }, empOriginEl);
       } else if (countEl) {
         countEl.textContent = '1/1';
       }
-      if (result) result.innerHTML = '<div class="reveal-row">' + payrollDoc(sourceLabel, brand, employmentPersona) + '</div>';
     }, reduceMotion ? 0 : 1500);
 
     setTimeout(function () {
@@ -467,33 +571,49 @@ function playDownload(persona, onDone) {
   if (status) status.textContent = 'Pulling ' + persona.name.split(' ')[0] + '’s records from each source…';
   dlMount.innerHTML = sources.map(function (s) { return skeleton(persona.id, s); }).join('');
   var countEl = document.getElementById('dl-count');
+  var screenEl = dlMount.closest('.screen');
+  var pillEl = document.getElementById('dl-inbox');
   var received = 0;
   if (countEl) countEl.textContent = '0/' + sources.length;
-  var step = reduceMotion ? 0 : 4200;
-  sources.forEach(function (s, i) {
-    setTimeout(function () {
-      if (myToken !== dlToken) return; // a newer selection superseded this run
-      var slot = document.getElementById('slot-' + persona.id + '-' + s.key);
-      var markArrived = function () {
+
+  // Cards fly one at a time — each is fully launched, held, flown and
+  // landed before the next spawns (see playCardFlight), so this chains
+  // through sources.forEach via callback rather than fixed setTimeout
+  // offsets.
+  function runNext(i) {
+    if (myToken !== dlToken) return;
+    if (i >= sources.length) {
+      var st = document.getElementById('dl-status');
+      if (st) st.textContent = 'All sources verified for ' + persona.name + '.';
+      if (onDone) setTimeout(onDone, reduceMotion ? 300 : 600);
+      return;
+    }
+    var s = sources[i];
+    var slot = document.getElementById('slot-' + persona.id + '-' + s.key);
+    var originEl = null;
+    if (slot) {
+      slot.outerHTML = docBuilders[s.key](persona);
+      // outerHTML replacement swaps in place, so the new doc now sits at
+      // the same child index the skeleton just occupied.
+      var newDoc = dlMount.children[i];
+      if (newDoc) originEl = newDoc.querySelector('.src-head');
+      dlMount.scrollTo({ top: dlMount.scrollHeight, behavior: reduceMotion ? 'auto' : 'smooth' });
+    }
+    var launch = function () {
+      if (!screenEl || !pillEl) { runNext(i + 1); return; }
+      playCardFlight(s.key, screenEl, pillEl, function () {
         if (myToken !== dlToken) return;
         received++;
         if (countEl) countEl.textContent = received + '/' + sources.length;
-        if (i === sources.length - 1) {
-          var st = document.getElementById('dl-status');
-          if (st) st.textContent = 'All sources verified for ' + persona.name + '.';
-          if (onDone) setTimeout(onDone, reduceMotion ? 300 : 600);
-        }
-      };
-      if (slot) {
-        var tag = SOURCE_TAGS[s.key];
-        flyToInbox(slot, undefined, tag && tag.label, undefined, markArrived);
-        slot.outerHTML = docBuilders[s.key](persona);
-        dlMount.scrollTo({ top: dlMount.scrollHeight, behavior: reduceMotion ? 'auto' : 'smooth' });
-      } else {
-        markArrived();
-      }
-    }, reduceMotion ? 0 : step * (i + 1) + 700);
-  });
+        setTimeout(function () { runNext(i + 1); }, reduceMotion ? 0 : 250);
+      }, originEl);
+    };
+    // Give the list's smooth-scroll-into-view a moment to settle before
+    // measuring the banner's position, so the card spawns exactly on it.
+    setTimeout(launch, (originEl && !reduceMotion) ? 350 : 0);
+  }
+
+  setTimeout(function () { runNext(0); }, reduceMotion ? 0 : 600);
 }
 
 // ============================================================
