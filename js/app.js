@@ -5,7 +5,7 @@
 (function () {
   var SCREENS = ['qr', 'cover', 'picker', 'credentials', 'employment', 'connect', 'download', 'verified-skills',
     'assessment-gateway', 'module-demo', 'mapping',
-    'home', 'review', 'chart-review', 'match-detail', 'training', 'profile', 'positions'];
+    'home', 'review', 'chart-review', 'match-detail', 'training', 'profile', 'positions', 'goodbye'];
 
   var selectedPersona = PERSONAS[0];
   var chartReviewDone = false;
@@ -27,7 +27,8 @@
     'verified-skills': 'Verified skills', 'assessment-gateway': 'Assessment gateway',
     'module-demo': 'Module 1 demo', mapping: 'Skill mapping', home: 'Job matches',
     review: 'Review', 'chart-review': 'Chart review',
-    'match-detail': 'Match / gap detail', training: 'Training', profile: 'Profile', positions: 'Open positions'
+    'match-detail': 'Match / gap detail', training: 'Training', profile: 'Profile', positions: 'Open positions',
+    goodbye: 'Goodbye'
   };
 
   function showScreen(id, opts) {
@@ -131,6 +132,10 @@
     if (e.target.closest('#qr-skip-cta')) { showScreen('cover'); return; }
 
     if (e.target.closest('#cover-cta')) { showScreen('picker'); return; }
+
+    if (e.target.closest('#home-finish-btn')) { showScreen('goodbye'); return; }
+
+    if (e.target.closest('#goodbye-restart-btn')) { showScreen('cover', { skipHistory: true }); return; }
 
     var card = e.target.closest('.persona-card');
     if (card) {

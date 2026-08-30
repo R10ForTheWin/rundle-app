@@ -392,9 +392,9 @@ function renderEmployment(persona, story) {
       '</div>';
   }).join('');
   el.innerHTML =
-    '<div class="matches-empty-note reveal-row" style="animation-delay:0s;">' +
-      '<img class="matches-empty-avatar" src="assets/img/rudy-note.png?v=3" alt="Rudy" />' +
-      '<div class="matches-empty-bubble"><p>Pick whichever one holds your paystubs &mdash; I&rsquo;ll do the rest.</p><p class="bubble-note">Rundle doesn&rsquo;t accept resumes. <span class="bubble-link" id="no-resume-why">Click here to find out why.</span></p></div>' +
+    '<div class="matches-empty-note reveal-row" style="animation-delay:0s;" id="employment-rudy-note">' +
+      '<img class="matches-empty-avatar" id="employment-rudy-avatar" src="assets/img/rudy-note.png?v=3" alt="Rudy" />' +
+      '<div class="matches-empty-bubble" id="employment-rudy-bubble"><p>Pick whichever one holds your paystubs &mdash; I&rsquo;ll do the rest.</p></div>' +
     '</div>' +
     '<div class="employment-collapse" id="employment-connect-section"><div class="employment-collapse-inner">' +
       '<div class="card reveal-row" style="animation-delay:0.05s"><div class="card-title-row"><span class="card-title">Connect your payroll account</span></div>' +
@@ -408,6 +408,38 @@ function renderEmployment(persona, story) {
   if (continueBtn) { continueBtn.classList.add('pending'); continueBtn.textContent = 'Continue'; }
   var bottomCta = document.getElementById('employment-bottom-cta');
   if (bottomCta) bottomCta.style.display = 'none';
+  playEmploymentRudySequence();
+}
+
+// Rudy delivers this as two beats rather than one crowded bubble: the
+// paystub instruction first, then the bubble flips to the other side
+// with a re-pose (pointing, other hand) for the no-resumes line + link.
+// The new pose keeps his ladder on the same shoulder as the first beat
+// (unflipped) and points with the hand that ends up nearest the
+// bubble in its new position, so the swap reads as one continuous
+// gesture rather than a jarring cut. The second beat never
+// auto-advances away — it holds the clickable link on screen
+// indefinitely. Reduced motion skips the timed swap and shows both
+// lines together immediately, in the original layout.
+function playEmploymentRudySequence() {
+  var note = document.getElementById('employment-rudy-note');
+  var avatar = document.getElementById('employment-rudy-avatar');
+  var bubble = document.getElementById('employment-rudy-bubble');
+  if (!note || !avatar || !bubble) return;
+  var secondLine = '<p>Rundle doesn&rsquo;t accept resumes. <span class="bubble-link" id="no-resume-why">Click here to find out why.</span></p>';
+  if (reduceMotion) {
+    bubble.insertAdjacentHTML('beforeend', secondLine);
+    return;
+  }
+  setTimeout(function () {
+    note.classList.add('rudy-beat-out');
+    setTimeout(function () {
+      avatar.src = 'assets/img/rudy-point-alt.png';
+      bubble.innerHTML = secondLine;
+      note.classList.add('rudy-note-flip');
+      note.classList.remove('rudy-beat-out');
+    }, 320);
+  }, 3400);
 }
 
 function toggleProviderSelect(tile) {
@@ -1247,7 +1279,8 @@ function renderHome(p, story) {
       '<img class="home-hero-avatar" src="assets/img/rudy-home-wave.gif" alt="Rudy waving" />' +
       '<div class="matches-empty-bubble"><p>More roles will show up here as you verify more skills.</p></div>' +
     '</div>' +
-    matchRows;
+    matchRows +
+    '<div class="cta" id="home-finish-btn">All done!</div>';
   // Cards stay hidden and rings stay at --fit:0 here — revealMatchCardsIn()
   // plays the actual reveal once the screen is visible; doing it here would
   // run against display:none, which has no paint to transition from.
