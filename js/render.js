@@ -1638,7 +1638,9 @@ function renderProfile(p, story) {
     '<div class="card"><div class="card-title-row"><span class="card-title">Who can see this</span></div>' +
       '<div class="toggle-row"><div><div class="t">Visible to employers</div><div class="d">Skills, credential, tenure</div></div><div class="switch on"></div></div>' +
       '<div class="toggle-row"><div><div class="t">Visible to training partners</div><div class="d">For funded course matching</div></div><div class="switch on"></div></div>' +
-      '<div class="toggle-row"><div><div class="t">Include simulation detail</div><div class="d">Full task-level results</div></div><div class="switch off"></div></div></div>';
+      '<div class="toggle-row"><div><div class="t">Include simulation detail</div><div class="d">Full task-level results</div></div><div class="switch off"></div></div>' +
+      '<div class="dispute-btn" id="profile-dispute-btn">Contact Rundle: dispute permanent record</div>' +
+    '</div>';
 }
 
 function renderPositions(title, positions) {

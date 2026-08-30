@@ -334,6 +334,16 @@
   }
   .link-row svg { width: 0.85rem; height: 0.85rem; }
 
+  /* Muted secondary action — deliberately not the bright primary .cta
+     style, since this is a support/dispute utility, not part of the
+     main flow. Not wired up to anything yet. */
+  .dispute-btn {
+    margin-top: 0.9rem; text-align: center; font-size: 0.74rem; font-weight: 600;
+    color: var(--ink-soft); background: transparent; border: 1.5px solid var(--line);
+    border-radius: 0.7rem; padding: 0.6rem 0.7rem; cursor: pointer;
+  }
+  .dispute-btn:active { transform: scale(0.98); }
+
   .record-banner {
     background: linear-gradient(135deg, #1F4A3C, var(--good) 70%);
     color: #fff; border-radius: 1rem; padding: 0.95rem 1rem; margin-top: 0.7rem;
