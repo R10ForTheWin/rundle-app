@@ -417,34 +417,53 @@ function renderEmployment(persona, story) {
 }
 
 // Rudy delivers this as two beats rather than one crowded bubble: the
-// paystub instruction first, then a re-pose (pointing, other hand) for
-// the no-resumes line + link. Rudy himself is pinned dead-center of the
+// paystub instruction, and a re-pose (pointing, other hand) for the
+// no-resumes line + link. Rudy himself is pinned dead-center of the
 // stage for both beats (see #employment-rudy-avatar CSS) — only the
 // bubble hops from his right to his left, so he never visibly moves.
 // The new pose keeps his ladder on the same shoulder as the first beat
-// (unflipped). The second beat never auto-advances away — it holds the
-// clickable link on screen indefinitely. Reduced motion skips the
-// timed swap and shows both lines together immediately, on his
-// original side.
-function playEmploymentRudySequence() {
+// (unflipped). The two beats keep alternating on a timer for as long as
+// the screen is up, so the no-resumes link is never permanently out of
+// view. Reduced motion skips the toggling and shows both lines together
+// immediately, on the original side.
+var EMPLOYMENT_RUDY_LINES = {
+  1: { src: 'assets/img/rudy-note.png?v=3', html: '<p>Pick whichever one holds your paystubs &mdash; I&rsquo;ll do the rest.</p>', side: 'bubble-right' },
+  2: { src: 'assets/img/rudy-point-alt.png', html: '<p>Rundle doesn&rsquo;t accept resumes. <span class="bubble-link" id="no-resume-why">Click here to find out why.</span></p>', side: 'bubble-left' }
+};
+var employmentRudyBeat = 1;
+var employmentRudyIntervalId = null;
+
+function setEmploymentRudyBeat(n) {
   var note = document.getElementById('employment-rudy-note');
   var avatar = document.getElementById('employment-rudy-avatar');
   var bubble = document.getElementById('employment-rudy-bubble');
-  if (!note || !avatar || !bubble) return;
-  var secondLine = '<p>Rundle doesn&rsquo;t accept resumes. <span class="bubble-link" id="no-resume-why">Click here to find out why.</span></p>';
+  if (!note || !avatar || !bubble || n === employmentRudyBeat) return;
+  employmentRudyBeat = n;
+  var line = EMPLOYMENT_RUDY_LINES[n];
+  function apply() {
+    avatar.src = line.src;
+    bubble.innerHTML = line.html;
+    bubble.classList.remove('bubble-right', 'bubble-left');
+    bubble.classList.add(line.side);
+  }
+  if (reduceMotion) { apply(); return; }
+  note.classList.add('rudy-beat-out');
+  setTimeout(function () {
+    apply();
+    note.classList.remove('rudy-beat-out');
+  }, 320);
+}
+
+function playEmploymentRudySequence() {
+  employmentRudyBeat = 1;
+  if (employmentRudyIntervalId) { clearInterval(employmentRudyIntervalId); employmentRudyIntervalId = null; }
   if (reduceMotion) {
-    bubble.insertAdjacentHTML('beforeend', secondLine);
+    var bubble = document.getElementById('employment-rudy-bubble');
+    if (bubble) bubble.insertAdjacentHTML('beforeend', EMPLOYMENT_RUDY_LINES[2].html);
     return;
   }
-  setTimeout(function () {
-    note.classList.add('rudy-beat-out');
-    setTimeout(function () {
-      avatar.src = 'assets/img/rudy-point-alt.png';
-      bubble.innerHTML = secondLine;
-      bubble.classList.remove('bubble-right');
-      bubble.classList.add('bubble-left');
-      note.classList.remove('rudy-beat-out');
-    }, 320);
+  employmentRudyIntervalId = setInterval(function () {
+    setEmploymentRudyBeat(employmentRudyBeat === 1 ? 2 : 1);
   }, 3400);
 }
 
