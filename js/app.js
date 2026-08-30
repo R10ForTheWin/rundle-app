@@ -160,13 +160,21 @@
       if (connectBtn.classList.contains('done')) return;
       if (!connectBtn.classList.contains('pending')) {
         var selectedProvider = document.querySelector('.employment-provider.selected');
-        if (selectedProvider) connectEmployment(selectedProvider, selectedProvider.dataset.provider, 'payroll');
+        if (selectedProvider) connectEmployment(selectedProvider, selectedProvider.dataset.provider);
       }
       return;
     }
 
-    var uploadCard = e.target.closest('#employment-upload:not(.connected)');
-    if (uploadCard) { connectEmployment(uploadCard, 'your resume', 'resume'); return; }
+    if (e.target.closest('#no-resume-why')) {
+      var noResumeModal = document.getElementById('no-resume-modal');
+      if (noResumeModal) noResumeModal.style.display = 'flex';
+      return;
+    }
+    if (e.target.closest('#no-resume-ack') || e.target.id === 'no-resume-modal') {
+      var openModal = document.getElementById('no-resume-modal');
+      if (openModal) openModal.style.display = 'none';
+      return;
+    }
 
     if (e.target.closest('#employment-continue-btn')) {
       if (!e.target.closest('#employment-continue-btn').classList.contains('pending')) showScreen('connect');

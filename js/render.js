@@ -394,23 +394,13 @@ function renderEmployment(persona, story) {
   el.innerHTML =
     '<div class="matches-empty-note reveal-row" style="animation-delay:0s;">' +
       '<img class="matches-empty-avatar" src="assets/img/rudy-note.png?v=3" alt="Rudy" />' +
-      '<div class="matches-empty-bubble"><p>Pick whichever one holds your paystubs &mdash; I&rsquo;ll do the rest.</p></div>' +
+      '<div class="matches-empty-bubble"><p>Pick whichever one holds your paystubs &mdash; I&rsquo;ll do the rest.</p><p class="bubble-note">Rundle doesn&rsquo;t accept resumes. <span class="bubble-link" id="no-resume-why">Click here to find out why.</span></p></div>' +
     '</div>' +
     '<div class="employment-collapse" id="employment-connect-section"><div class="employment-collapse-inner">' +
       '<div class="card reveal-row" style="animation-delay:0.05s"><div class="card-title-row"><span class="card-title">Connect your payroll account</span></div>' +
         '<div class="employment-providers" id="employment-providers">' + providerRows + '</div>' +
         '<div class="employment-hint">Your employer is never contacted. 200+ providers supported.</div>' +
         '<div class="employment-connect-cta pending" id="employment-connect-btn">Select a provider to connect</div>' +
-      '</div>' +
-      '<div id="employment-alt-section">' +
-        '<div class="employment-or reveal-row" style="animation-delay:0.3s">or</div>' +
-        '<div class="card employment-manual reveal-row" style="animation-delay:0.35s">' +
-          '<div class="employment-upload" id="employment-upload">' +
-            '<div class="employment-upload-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M12 4 7 9M12 4l5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg></div>' +
-            '<div><div class="employment-upload-title">Upload your resume</div><div class="employment-upload-sub">PDF or DOCX &mdash; we&rsquo;ll pull your work history from it</div></div>' +
-            '<div class="ep-status"><span class="ep-spin"></span><span class="ep-check">&#10003; Extracted</span></div>' +
-          '</div>' +
-        '</div>' +
       '</div>' +
     '</div></div>' +
     '<div id="employment-result"></div>';
@@ -427,21 +417,18 @@ function toggleProviderSelect(tile) {
     providersEl.querySelectorAll('.employment-provider.selected').forEach(function (t) { t.classList.remove('selected'); });
   }
   var btn = document.getElementById('employment-connect-btn');
-  var altSection = document.getElementById('employment-alt-section');
   if (wasSelected) {
     if (btn) { btn.classList.add('pending'); btn.textContent = 'Select a provider to connect'; }
-    if (altSection) altSection.style.display = '';
     return;
   }
   tile.classList.add('selected');
   if (btn) { btn.classList.remove('pending'); btn.textContent = 'Connect to ' + tile.dataset.provider; }
-  if (altSection) altSection.style.display = 'none';
 }
 
 // Payroll providers get the same "pull a real source" treatment as the
 // Download screen — a browser-chrome skeleton that morphs into a doc
 // full of the worker's actual employment record, THEN the trust-tagged
-// timeline card underneath it. Resume/manual keep the simpler single-step reveal.
+// timeline card underneath it.
 var PAYROLL_BRAND = {
   Workday: { color: '#3069B5', logo: 'logo-workday.svg', url: 'workday.com/wd/employee/worker-history' },
   ADP: { color: '#EE2722', logo: 'logo-adp.svg', url: 'adp.com/workforcenow/employment-verification' },
@@ -475,7 +462,7 @@ function payrollDoc(sourceLabel, brand, persona) {
   '</div>';
 }
 
-function connectEmployment(el, sourceLabel, kind) {
+function connectEmployment(el, sourceLabel) {
   if (el.classList.contains('connecting') || el.classList.contains('connected')) return;
   el.classList.remove('selected');
   el.classList.add('connecting');
@@ -483,72 +470,51 @@ function connectEmployment(el, sourceLabel, kind) {
   var providersEl = document.getElementById('employment-providers');
   var result = document.getElementById('employment-result');
 
-  if (kind === 'payroll') {
-    if (providersEl) providersEl.classList.add('locked');
-    if (connectBtn) { connectBtn.classList.add('pending'); connectBtn.textContent = 'Connecting to ' + sourceLabel + '…'; }
-    var brand = PAYROLL_BRAND[sourceLabel] || { color: 'var(--sienna)', url: sourceLabel.toLowerCase() + '.com' };
-    if (result) result.innerHTML = '<div class="reveal-row">' + payrollSkeleton(sourceLabel, brand) + '</div>';
-
-    setTimeout(function () {
-      el.classList.remove('connecting');
-      el.classList.add('connected');
-      if (connectBtn) { connectBtn.classList.remove('pending'); connectBtn.textContent = 'Connected to ' + sourceLabel; }
-      var countEl = document.getElementById('employment-inbox-count');
-      var empInbox = document.getElementById('employment-inbox');
-      var empScreen = el.closest('.screen');
-      var empOriginEl = null;
-      if (result) {
-        result.innerHTML = '<div class="reveal-row">' + payrollDoc(sourceLabel, brand, employmentPersona) + '</div>';
-        empOriginEl = result.querySelector('.src-head');
-      }
-      if (empScreen && empInbox) {
-        playCardFlight('career', empScreen, empInbox, function () {
-          if (countEl) countEl.textContent = '1/1';
-        }, empOriginEl);
-      } else if (countEl) {
-        countEl.textContent = '1/1';
-      }
-    }, reduceMotion ? 0 : 1500);
-
-    setTimeout(function () {
-      if (connectBtn) connectBtn.classList.add('done');
-      employmentConnection = { kind: 'payroll', sourceLabel: sourceLabel, brand: brand };
-      if (result) {
-        var empStory = STORY[employmentPersona.id];
-        var tl = empStory.employer.map(function (e) {
-          return '<div class="tl-item"><div class="tl-date">' + e.from + ' &mdash; ' + e.to + '</div><div class="tl-title">' + e.title + '</div><div class="tl-sub">' + e.role + '</div></div>';
-        }).join('');
-        result.insertAdjacentHTML('beforeend',
-          '<div class="card employment-result-card reveal-row">' +
-            '<div class="employment-result-head"><span class="ep-logo" style="height:1.1rem;padding:0.1rem 0.3rem;"><img src="assets/img/' + brand.logo + '" alt="' + sourceLabel + '" /></span>Verified from ' + sourceLabel + '<span class="trust employer">Employer-verified</span></div>' +
-            '<div class="timeline">' + tl + '</div>' +
-          '</div>'
-        );
-        var newCard = result.lastElementChild;
-        if (newCard && !reduceMotion) setTimeout(function () { newCard.scrollIntoView({ behavior: 'smooth', block: 'end' }); }, 50);
-      }
-      unlockEmploymentContinue();
-    }, reduceMotion ? 0 : 2400);
-    return;
-  }
+  if (providersEl) providersEl.classList.add('locked');
+  if (connectBtn) { connectBtn.classList.add('pending'); connectBtn.textContent = 'Connecting to ' + sourceLabel + '…'; }
+  var brand = PAYROLL_BRAND[sourceLabel] || { color: 'var(--sienna)', url: sourceLabel.toLowerCase() + '.com' };
+  if (result) result.innerHTML = '<div class="reveal-row">' + payrollSkeleton(sourceLabel, brand) + '</div>';
 
   setTimeout(function () {
     el.classList.remove('connecting');
     el.classList.add('connected');
-    employmentConnection = { kind: 'resume' };
+    if (connectBtn) { connectBtn.classList.remove('pending'); connectBtn.textContent = 'Connected to ' + sourceLabel; }
+    var countEl = document.getElementById('employment-inbox-count');
+    var empInbox = document.getElementById('employment-inbox');
+    var empScreen = el.closest('.screen');
+    var empOriginEl = null;
+    if (result) {
+      result.innerHTML = '<div class="reveal-row">' + payrollDoc(sourceLabel, brand, employmentPersona) + '</div>';
+      empOriginEl = result.querySelector('.src-head');
+    }
+    if (empScreen && empInbox) {
+      playCardFlight('career', empScreen, empInbox, function () {
+        if (countEl) countEl.textContent = '1/1';
+      }, empOriginEl);
+    } else if (countEl) {
+      countEl.textContent = '1/1';
+    }
+  }, reduceMotion ? 0 : 1500);
+
+  setTimeout(function () {
+    if (connectBtn) connectBtn.classList.add('done');
+    employmentConnection = { kind: 'payroll', sourceLabel: sourceLabel, brand: brand };
     if (result) {
       var empStory = STORY[employmentPersona.id];
       var tl = empStory.employer.map(function (e) {
         return '<div class="tl-item"><div class="tl-date">' + e.from + ' &mdash; ' + e.to + '</div><div class="tl-title">' + e.title + '</div><div class="tl-sub">' + e.role + '</div></div>';
       }).join('');
-      result.innerHTML =
+      result.insertAdjacentHTML('beforeend',
         '<div class="card employment-result-card reveal-row">' +
-          '<div class="employment-result-head"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg>Extracted from your resume<span class="trust documented">Documented</span></div>' +
+          '<div class="employment-result-head"><span class="ep-logo" style="height:1.1rem;padding:0.1rem 0.3rem;"><img src="assets/img/' + brand.logo + '" alt="' + sourceLabel + '" /></span>Verified from ' + sourceLabel + '<span class="trust employer">Employer-verified</span></div>' +
           '<div class="timeline">' + tl + '</div>' +
-        '</div>';
+        '</div>'
+      );
+      var newCard = result.lastElementChild;
+      if (newCard && !reduceMotion) setTimeout(function () { newCard.scrollIntoView({ behavior: 'smooth', block: 'end' }); }, 50);
     }
     unlockEmploymentContinue();
-  }, 1100);
+  }, reduceMotion ? 0 : 2400);
 }
 
 function unlockEmploymentContinue() {
@@ -1595,19 +1561,15 @@ function renderProfile(p, story) {
       '<div class="check-body" style="flex:1;min-width:0;"><div class="check-title">' + s.label + '</div><div class="check-sub">' + s.url + '</div></div>' +
       '<div class="status-ok" style="margin-left:auto;flex:none;white-space:nowrap;"><svg><use href="#i-check"/></svg>Connected</div></a>';
   }).join('');
-  // Whichever payroll provider (or resume) the worker used to confirm work
-  // history is its own connected source too -- surface it here alongside
-  // the public benchmarking/credential sources instead of only on the
-  // Verified Skills work-history card.
+  // Whichever payroll provider the worker used to confirm work history is
+  // its own connected source too -- surface it here alongside the public
+  // benchmarking/credential sources instead of only on the Verified
+  // Skills work-history card.
   var payrollRow = '';
   if (employmentConnection && employmentConnection.kind === 'payroll') {
     var b = employmentConnection.brand;
     payrollRow = '<div class="check-row" style="cursor:default;"><div class="check-logo"><img src="assets/img/' + b.logo + '" alt="" /></div>' +
       '<div class="check-body" style="flex:1;min-width:0;"><div class="check-title">' + employmentConnection.sourceLabel + '</div><div class="check-sub">Employment &amp; payroll verification</div></div>' +
-      '<div class="status-ok" style="margin-left:auto;flex:none;white-space:nowrap;"><svg><use href="#i-check"/></svg>Connected</div></div>';
-  } else if (employmentConnection && employmentConnection.kind === 'resume') {
-    payrollRow = '<div class="check-row" style="cursor:default;"><div class="check-logo" style="display:flex;align-items:center;justify-content:center;color:var(--sienna);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M12 4 7 9M12 4l5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg></div>' +
-      '<div class="check-body" style="flex:1;min-width:0;"><div class="check-title">Resume upload</div><div class="check-sub">Work history extraction</div></div>' +
       '<div class="status-ok" style="margin-left:auto;flex:none;white-space:nowrap;"><svg><use href="#i-check"/></svg>Connected</div></div>';
   }
   var sourceCount = sources.length + (payrollRow ? 1 : 0);

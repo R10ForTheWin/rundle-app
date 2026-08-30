@@ -443,6 +443,8 @@
     filter: drop-shadow(-0.05rem 0 0.05rem hsl(var(--shadow-color) / 0.08));
   }
   .matches-empty-bubble p { font-size: 0.72rem; color: var(--ink-soft); line-height: 1.5; margin: 0; }
+  .matches-empty-bubble p.bubble-note { margin-top: 0.4rem; }
+  .bubble-link { color: var(--sienna); font-weight: 600; text-decoration: underline; cursor: pointer; }
   @property --fit {
     syntax: '<number>';
     inherits: true;
@@ -1115,47 +1117,12 @@
   }
   .employment-collapse.collapsed { grid-template-rows: 0fr; opacity: 0; }
   .employment-collapse-inner { overflow: hidden; min-height: 0; }
-  .employment-or { text-align: center; font-size: 0.68rem; color: var(--ink-soft); margin: 0.7rem 0; }
-  .employment-upload {
-    display: flex; align-items: center; gap: 0.7rem; cursor: pointer; margin-top: 0.5rem;
-    border: 1.5px dashed var(--line); border-radius: 0.7rem; padding: 0.6rem 0.7rem; background: var(--surface);
-  }
-  .employment-upload.connecting, .employment-upload.connected { border-color: var(--ochre); border-style: solid; }
-  .employment-upload-icon {
-    width: 2.1rem; height: 2.1rem; border-radius: 0.6rem; flex: none; color: var(--sienna);
-    background: color-mix(in srgb, var(--ochre) 12%, var(--surface-raised));
-    display: flex; align-items: center; justify-content: center;
-  }
-  .employment-upload-icon svg { width: 1rem; height: 1rem; }
-  .employment-upload-title { font-size: 0.8rem; font-weight: 700; }
-  .employment-upload-sub { font-size: 0.66rem; color: var(--ink-soft); margin-top: 0.1rem; }
-  .employment-upload .ep-status { margin-left: auto; flex: none; min-width: 4.5rem; }
-  .ep-status { min-height: 0.9rem; position: relative; }
-  .ep-spin, .ep-check { display: none; align-items: center; gap: 0.25rem; font-size: 0.62rem; font-weight: 600; color: var(--ochre); }
-  .ep-spin::before {
-    content: ''; width: 0.55rem; height: 0.55rem; border-radius: 999px;
-    border: 1.5px solid color-mix(in srgb, var(--ochre) 40%, transparent); border-top-color: var(--ochre);
-    animation: epSpin 0.7s linear infinite;
-  }
-  .employment-upload.connecting .ep-spin { display: flex; }
-  .employment-upload.connected .ep-check { display: flex; color: var(--good); }
   .employment-result-card { margin-top: 1.4rem; }
   .employment-result-head {
     display: flex; align-items: center; gap: 0.4rem; font-size: 0.76rem; font-weight: 700; color: var(--good);
     margin-bottom: 0.5rem;
   }
   .employment-result-head .trust { margin-left: auto; }
-  .employment-manual {
-    display: flex; flex-direction: column; gap: 0.15rem; margin-top: 0.7rem;
-    border-style: dashed;
-  }
-  .employment-manual-title { font-size: 0.78rem; font-weight: 700; }
-  .employment-manual-sub { font-size: 0.65rem; color: var(--ink-soft); line-height: 1.4; }
-  .employment-manual-cta {
-    align-self: flex-start; margin-top: 0.5rem; font-size: 0.72rem; font-weight: 600; color: var(--ink); background: var(--surface);
-    border: 1.5px solid var(--line); border-radius: 0.6rem; padding: 0.5rem 0.7rem; cursor: pointer; white-space: nowrap;
-  }
-  .employment-manual-divider { text-align: center; font-size: 0.66rem; color: var(--ink-soft); margin: 0.6rem 0 0; }
 
   /* ---------- Verified Skills: "New" tag on the post-assessment skill ---------- */
   /* Sits as a small ribbon on the icon's corner rather than inline with
