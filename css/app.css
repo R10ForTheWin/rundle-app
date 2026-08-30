@@ -425,8 +425,12 @@
     display: flex; flex-direction: row; align-items: center; justify-content: center;
     gap: 0.7rem; padding: 1.3rem 1.2rem 0.8rem;
   }
+  /* Height-locked, width-auto: different Rudy poses have different pose
+     silhouettes (arms raised wide vs. close to the body), so locking
+     both dimensions would letterbox a wider pose and render it smaller.
+     Matching on height alone keeps every pose the same apparent size. */
   .matches-empty-avatar {
-    width: 3.4rem; height: 5.3rem; flex: none; object-fit: contain;
+    height: 5.3rem; width: auto; max-width: 5rem; flex: none;
   }
   .home-hero-note { padding: 0.3rem 0.1rem 1.1rem; justify-content: flex-start; }
   .home-hero-avatar { width: 5.2rem; height: auto; flex: none; }
@@ -445,15 +449,23 @@
   .matches-empty-bubble p { font-size: 0.72rem; color: var(--ink-soft); line-height: 1.5; margin: 0; }
   .matches-empty-bubble p.bubble-note { margin-top: 0.4rem; }
   .bubble-link { color: var(--sienna); font-weight: 600; text-decoration: underline; cursor: pointer; }
+  /* Rudy is pinned dead-center of the stage (both beats use the same
+     spot, regardless of pose width) and the bubble hops between his
+     right and left — so he never visibly moves, only the bubble does. */
   #employment-rudy-note {
+    position: relative; min-height: 5.3rem;
     transition: opacity 0.3s ease, transform 0.3s ease;
   }
   #employment-rudy-note.rudy-beat-out { opacity: 0; transform: translateY(4px); }
-  /* Second beat: Rudy moves to the right, bubble to the left. Flipping
-     the row order (not the character art) keeps his ladder on the same
-     shoulder as beat one — only the bubble's tail needs to mirror. */
-  #employment-rudy-note.rudy-note-flip { flex-direction: row-reverse; }
-  .rudy-note-flip .matches-empty-bubble::before {
+  #employment-rudy-avatar {
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  }
+  #employment-rudy-bubble {
+    position: absolute; top: 50%; transform: translateY(-50%); max-width: 9.5rem;
+  }
+  #employment-rudy-bubble.bubble-right { left: calc(50% + 2.9rem); }
+  #employment-rudy-bubble.bubble-left { right: calc(50% + 2.9rem); }
+  #employment-rudy-bubble.bubble-left::before {
     left: auto; right: -0.42rem;
     border-width: 0.4rem 0 0.4rem 0.5rem;
     border-color: transparent transparent transparent var(--surface-raised);

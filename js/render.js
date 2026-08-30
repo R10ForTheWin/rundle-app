@@ -269,9 +269,13 @@ function playCardFlight(imgKey, screenEl, pillEl, onArrive, originEl) {
 
   var cardRect = card.getBoundingClientRect();
   var screenRect = screenEl.getBoundingClientRect();
-  // Reading position: vertical center of the screen, slightly right of
-  // center. Every card ends up here before it flies, whether it spawned
-  // here directly or traveled in from a document banner.
+  // Reading position: slightly right of center. Every card ends up here
+  // before it flies, whether it spawned here directly or traveled in
+  // from a document banner — but when there IS a banner, the reading
+  // spot keeps the banner's own vertical position (wherever the list's
+  // auto-scroll left it) rather than a fixed screen-center, so the card
+  // stays visually anchored to the thing it came from instead of
+  // drifting to an unrelated spot.
   var readCenterX = screenRect.width * 0.58;
   var readCenterY = screenRect.height * 0.5;
 
@@ -284,6 +288,7 @@ function playCardFlight(imgKey, screenEl, pillEl, onArrive, originEl) {
     baseCenterY = (originRect.top - screenRect.top) + originRect.height / 2;
     spawnScale = 0.4;
     entranceMs = 320;
+    readCenterY = baseCenterY;
   } else {
     baseCenterX = readCenterX;
     baseCenterY = readCenterY;
@@ -394,7 +399,7 @@ function renderEmployment(persona, story) {
   el.innerHTML =
     '<div class="matches-empty-note reveal-row" style="animation-delay:0s;" id="employment-rudy-note">' +
       '<img class="matches-empty-avatar" id="employment-rudy-avatar" src="assets/img/rudy-note.png?v=3" alt="Rudy" />' +
-      '<div class="matches-empty-bubble" id="employment-rudy-bubble"><p>Pick whichever one holds your paystubs &mdash; I&rsquo;ll do the rest.</p></div>' +
+      '<div class="matches-empty-bubble bubble-right" id="employment-rudy-bubble"><p>Pick whichever one holds your paystubs &mdash; I&rsquo;ll do the rest.</p></div>' +
     '</div>' +
     '<div class="employment-collapse" id="employment-connect-section"><div class="employment-collapse-inner">' +
       '<div class="card reveal-row" style="animation-delay:0.05s"><div class="card-title-row"><span class="card-title">Connect your payroll account</span></div>' +
@@ -412,15 +417,15 @@ function renderEmployment(persona, story) {
 }
 
 // Rudy delivers this as two beats rather than one crowded bubble: the
-// paystub instruction first, then the bubble flips to the other side
-// with a re-pose (pointing, other hand) for the no-resumes line + link.
+// paystub instruction first, then a re-pose (pointing, other hand) for
+// the no-resumes line + link. Rudy himself is pinned dead-center of the
+// stage for both beats (see #employment-rudy-avatar CSS) — only the
+// bubble hops from his right to his left, so he never visibly moves.
 // The new pose keeps his ladder on the same shoulder as the first beat
-// (unflipped) and points with the hand that ends up nearest the
-// bubble in its new position, so the swap reads as one continuous
-// gesture rather than a jarring cut. The second beat never
-// auto-advances away — it holds the clickable link on screen
-// indefinitely. Reduced motion skips the timed swap and shows both
-// lines together immediately, in the original layout.
+// (unflipped). The second beat never auto-advances away — it holds the
+// clickable link on screen indefinitely. Reduced motion skips the
+// timed swap and shows both lines together immediately, on his
+// original side.
 function playEmploymentRudySequence() {
   var note = document.getElementById('employment-rudy-note');
   var avatar = document.getElementById('employment-rudy-avatar');
@@ -436,7 +441,8 @@ function playEmploymentRudySequence() {
     setTimeout(function () {
       avatar.src = 'assets/img/rudy-point-alt.png';
       bubble.innerHTML = secondLine;
-      note.classList.add('rudy-note-flip');
+      bubble.classList.remove('bubble-right');
+      bubble.classList.add('bubble-left');
       note.classList.remove('rudy-beat-out');
     }, 320);
   }, 3400);
