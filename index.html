@@ -17,6 +17,93 @@
 <link rel="preload" as="image" href="assets/img/bg-cover.png?v=2" />
 </head>
 <body>
+<!-- ============================================================
+     RUNDLE DEMO-MODE BANNER
+     Paste this block immediately after <body> on every page.
+     Remove it (or set SHOW = false) when the APIs come back on.
+     ============================================================ -->
+
+<style>
+  :root { --rundle-demo-h: 44px; }
+
+  #rundle-demo-banner {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: var(--rundle-demo-h);
+    padding: 10px 52px 10px 16px;
+    background: #b4432c;
+    color: #fff;
+    font: 500 14px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    text-align: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,.25);
+  }
+
+  #rundle-demo-banner b { font-weight: 700; }
+
+  #rundle-demo-banner a {
+    color: #fff;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    white-space: nowrap;
+  }
+
+  #rundle-demo-close {
+    position: absolute;
+    top: 50%; right: 12px;
+    transform: translateY(-50%);
+    width: 28px; height: 28px;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: #fff;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  #rundle-demo-close:hover { background: rgba(255,255,255,.18); }
+
+  /* Push the page down so the banner never covers the header */
+  body.rundle-demo-on { padding-top: var(--rundle-demo-h); }
+
+  /* This app's shell (#app) is position:fixed with top:0 and height:100%, so
+     the body padding-top above has no effect on it and the banner would sit
+     on top of the app header. Offset the fixed shell itself instead, and
+     shrink its height by the same amount so the tab bar stays on screen. */
+  body.rundle-demo-on #app {
+    top: var(--rundle-demo-h);
+    height: calc(100% - var(--rundle-demo-h));
+  }
+
+  @media (max-width: 640px) {
+    :root { --rundle-demo-h: 60px; }
+    #rundle-demo-banner { font-size: 13px; padding-right: 44px; }
+  }
+
+  @media print { #rundle-demo-banner { display: none; } body.rundle-demo-on { padding-top: 0; } }
+</style>
+
+<div id="rundle-demo-banner" role="status" aria-live="polite">
+  <span>
+    <b>Demo mode.</b> Live APIs are turned off, so every screen runs on sample data.
+    Nothing here is broken. <a href="https://github.com/R10ForTheWin/rundle-app#readme">What this is</a>
+  </span>
+  <button id="rundle-demo-close" aria-label="Dismiss demo notice">&times;</button>
+</div>
+
+<script>
+  (function () {
+    document.body.classList.add('rundle-demo-on');
+    document.getElementById('rundle-demo-close').addEventListener('click', function () {
+      document.getElementById('rundle-demo-banner').remove();
+      document.body.classList.remove('rundle-demo-on');
+    });
+  })();
+</script>
 <svg width="0" height="0" style="position:absolute">
   <defs>
     <symbol id="i-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></symbol>
