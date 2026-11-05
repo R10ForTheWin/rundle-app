@@ -3,3 +3,8 @@ Rundle Previous/
 Rudy/
 Style/
 sythentic data.png
+
+# Secrets
+.env
+.env.*
+!.env.example
